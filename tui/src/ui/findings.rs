@@ -35,7 +35,9 @@ pub fn render(frame: &mut Frame, app: &App, area: Rect) {
     let list = List::new(items).block(
         Block::default()
             .borders(Borders::ALL)
-            .border_style(theme::BORDER)
+            .border_style(theme::pulse_border(
+                app.active_pane == ActivePane::Findings && app.worker_active,
+            ))
             .style(Style::default().bg(theme::PANEL))
             .title(Span::styled(title, Style::default().fg(theme::TEXT_SOFT))),
     );

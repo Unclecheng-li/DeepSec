@@ -154,12 +154,7 @@ pub fn render(frame: &mut Frame, app: &App) {
 }
 
 fn render_header(frame: &mut Frame, app: &App, area: Rect) {
-    let activity = if app.worker_active {
-        format!("{} running", theme::spinner_frame(true))
-    } else {
-        "idle".to_owned()
-    };
-    let header = Line::from(vec![
+    let mut spans = vec![
         Span::styled(
             " DeepSec ",
             Style::default().fg(theme::ACTION).add_modifier(Modifier::BOLD),
@@ -175,17 +170,30 @@ fn render_header(frame: &mut Frame, app: &App, area: Rect) {
             Style::default().fg(theme::permission_color(app.permission.label())),
         ),
         Span::raw("| "),
-        Span::styled(
-            activity,
-            Style::default().fg(if app.worker_active {
-                theme::GOLD
-            } else {
-                theme::TEXT_HINT
-            }),
-        ),
-    ]);
+    ];
+    if app.worker_active {
+        // Live "working" cluster: spinning glyph, bouncing equalizer, and a
+        // running elapsed-time readout — all animate off the wall clock so the
+        // surface feels alive without any extra state.
+        spans.push(Span::styled(
+            format!("{} running", theme::spinner_frame(true)),
+            Style::default().fg(theme::GOLD),
+        ));
+        spans.push(Span::raw(" "));
+        spans.push(Span::styled(
+            theme::equalizer_frame(),
+            Style::default().fg(theme::SEAFOAM),
+        ));
+        spans.push(Span::raw(" "));
+        spans.push(Span::styled(
+            theme::elapsed_label(app.worker_started_at),
+            Style::default().fg(theme::TEXT_SOFT),
+        ));
+    } else {
+        spans.push(Span::styled("idle", Style::default().fg(theme::TEXT_HINT)));
+    }
     frame.render_widget(
-        Paragraph::new(header).style(Style::default().bg(theme::CHROME)),
+        Paragraph::new(Line::from(spans)).style(Style::default().bg(theme::CHROME)),
         area,
     );
 }
@@ -193,35 +201,49 @@ fn render_header(frame: &mut Frame, app: &App, area: Rect) {
 /// Live progress bar — mirrors CodeWhale's phase strip so a running scan shows
 /// its current phase and finding count instead of a frozen transcript.
 fn render_phase_strip(frame: &mut Frame, app: &App, area: Rect) {
-    let text = if app.worker_active {
+    let line = if app.worker_active {
         if let Some(receipt) = app.active_receipt.as_ref() {
-            let spinner = theme::spinner_frame(true);
-            format!(
-                " {} {}  ·  {} finding(s)  ·  {}",
-                spinner,
-                receipt.phase,
-                receipt.findings,
-                receipt.command
-            )
+            let mut spans = vec![Span::styled(
+                format!(" {} {}  ·  ", theme::spinner_frame(true), receipt.phase),
+                Style::default().fg(theme::SEAFOAM),
+            )];
+            // The finding count pulses gold while a run is live and has already
+            // surfaced something, so a fresh hit reads as a heartbeat.
+            let fc_style = if receipt.findings > 0 && theme::blink_on() {
+                Style::default()
+                    .fg(theme::GOLD)
+                    .add_modifier(Modifier::BOLD)
+            } else {
+                Style::default().fg(theme::SEAFOAM)
+            };
+            spans.push(Span::styled(
+                format!("{} finding(s)", receipt.findings),
+                fc_style,
+            ));
+            spans.push(Span::styled(
+                format!("  ·  {}", receipt.command),
+                Style::default().fg(theme::SEAFOAM),
+            ));
+            Line::from(spans)
         } else {
-            format!(" {} working", theme::spinner_frame(true))
+            Line::from(Span::styled(
+                format!(" {} working", theme::spinner_frame(true)),
+                Style::default().fg(theme::SEAFOAM),
+            ))
         }
     } else if let Some(receipt) = app.last_receipt.as_ref() {
-        format!(
-            " {}  ·  {} finding(s)  ·  {}",
-            receipt.phase, receipt.findings, receipt.command
-        )
+        Line::from(Span::styled(
+            format!(
+                " {}  ·  {} finding(s)  ·  {}",
+                receipt.phase, receipt.findings, receipt.command
+            ),
+            Style::default().fg(theme::TEXT_HINT),
+        ))
     } else {
-        " ready".to_owned()
-    };
-    let style = if app.worker_active {
-        Style::default().fg(theme::SEAFOAM)
-    } else {
-        Style::default().fg(theme::TEXT_HINT)
+        Line::from(Span::styled(" ready", Style::default().fg(theme::TEXT_HINT)))
     };
     frame.render_widget(
-        Paragraph::new(Line::from(Span::styled(text, style)))
-            .style(Style::default().bg(theme::CHROME)),
+        Paragraph::new(line).style(Style::default().bg(theme::CHROME)),
         area,
     );
 }
@@ -375,11 +397,12 @@ fn render_hotbar(frame: &mut Frame, app: &App, area: Rect) {
 #[cfg(test)]
 mod tests {
     use std::sync::mpsc;
+    use std::time::Instant;
 
     use ratatui::{backend::TestBackend, Terminal};
 
     use super::render;
-    use crate::app::App;
+    use crate::app::{App, OperationReceipt};
 
     #[test]
     fn renders_a_composer_centered_security_workbench() {
@@ -402,6 +425,32 @@ mod tests {
         assert!(rendered.contains("Tab mode"));
         assert!(rendered.contains("ready"));
         assert!(!rendered.contains("[Skills] [Findings] [Output]"));
+    }
+
+    #[test]
+    fn header_shows_live_timer_and_running_state_while_a_worker_is_active() {
+        let (sender, _) = mpsc::channel();
+        let mut app = App::new(sender);
+        app.worker_active = true;
+        app.worker_started_at = Some(Instant::now());
+        app.active_receipt = Some(OperationReceipt {
+            command: "spear run https://example.com".into(),
+            phase: "Running".into(),
+            findings: 0,
+        });
+        let mut terminal = Terminal::new(TestBackend::new(120, 28)).unwrap();
+
+        terminal.draw(|frame| render(frame, &app)).unwrap();
+
+        let rendered = terminal
+            .backend()
+            .buffer()
+            .content
+            .iter()
+            .map(|cell| cell.symbol())
+            .collect::<String>();
+        assert!(rendered.contains("running"), "header must read 'running'");
+        assert!(rendered.contains("⏱"), "header must show the live elapsed timer");
     }
 
     #[test]

@@ -36,11 +36,20 @@ pub fn build_lines(app: &App) -> Vec<Line<'static>> {
 
 pub fn render(frame: &mut Frame, app: &App, area: Rect) {
     let lines = build_lines(app);
-    let title = if app.active_pane == ActivePane::Transcript {
-        "Session transcript *"
-    } else {
-        "Session transcript"
-    };
+    let focused = app.active_pane == ActivePane::Transcript;
+    let mut title_spans = vec![Span::styled(
+        if focused {
+            "Session transcript *"
+        } else {
+            "Session transcript"
+        },
+        Style::default().fg(theme::TEXT_SOFT),
+    )];
+    // Live stream indicator — a gold dot that breathes while output is flowing,
+    // so you can see the transcript is being written to in real time.
+    if app.worker_active && theme::blink_on() {
+        title_spans.push(Span::styled(" ●", Style::default().fg(theme::GOLD)));
+    }
     frame.render_widget(
         Paragraph::new(lines)
             .scroll((app.transcript_scroll, 0))
@@ -48,9 +57,9 @@ pub fn render(frame: &mut Frame, app: &App, area: Rect) {
             .block(
                 Block::default()
                     .borders(Borders::ALL)
-                    .border_style(theme::BORDER)
+                    .border_style(theme::pulse_border(focused && app.worker_active))
                     .style(Style::default().bg(theme::PANEL))
-                    .title(Span::styled(title, Style::default().fg(theme::TEXT_SOFT))),
+                    .title(Line::from(title_spans)),
             ),
         area,
     );

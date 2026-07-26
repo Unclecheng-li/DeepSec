@@ -1,6 +1,7 @@
 use std::env;
 use std::path::Path;
 use std::sync::mpsc::Sender;
+use std::time::Instant;
 
 use serde::{Deserialize, Serialize};
 
@@ -431,6 +432,9 @@ pub struct App {
     pub worker: Option<WorkerHandle>,
     pub active_receipt: Option<OperationReceipt>,
     pub last_receipt: Option<OperationReceipt>,
+    /// Monotonic instant the current worker started, used to render a live
+    /// elapsed-time readout (`mm:ss`) in the header while a command runs.
+    pub worker_started_at: Option<Instant>,
     pub show_attack_chain: bool,
     pub pending_spear: Option<Vec<String>>,
     pub skills: Vec<SkillNode>,
@@ -481,6 +485,7 @@ impl App {
             worker: None,
             active_receipt: None,
             last_receipt: None,
+            worker_started_at: None,
             show_attack_chain: false,
             pending_spear: None,
             skills: skill_tree(),
@@ -1071,6 +1076,7 @@ impl App {
             AppEvent::Finished(success) => {
                 self.worker = None;
                 self.worker_active = false;
+                self.worker_started_at = None;
                 if let Some(mut receipt) = self.active_receipt.take() {
                     receipt.phase = if success {
                         "Completed".to_owned()
@@ -1300,6 +1306,7 @@ impl App {
             return;
         }
         self.worker_active = true;
+        self.worker_started_at = Some(Instant::now());
         self.active_receipt = Some(OperationReceipt {
             command: args.join(" "),
             phase: "Starting".to_owned(),
@@ -1332,6 +1339,7 @@ impl App {
             }
         }
         self.worker_active = false;
+        self.worker_started_at = None;
         if let Some(mut receipt) = self.active_receipt.take() {
             receipt.phase = "Aborted".to_owned();
             self.last_receipt = Some(receipt);
