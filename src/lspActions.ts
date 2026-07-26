@@ -1,8 +1,8 @@
 import { CodeActionKind, type CodeAction, type Diagnostic, type Range } from "vscode-languageserver/node";
 import type { Finding } from "./types";
 
-export const lspIgnoreFindingCommand = "vibeguard.ignoreFinding";
-export const lspApplyFixCommand = "vibeguard.applyFix";
+export const lspIgnoreFindingCommand = "deepsec.ignoreFinding";
+export const lspApplyFixCommand = "deepsec.applyFix";
 export const lspApplyL3FixCommand = "deepsec.applyL3Fix";
 export const lspManualL3ReviewCommand = "deepsec.scanWithAi";
 export const lspCancelManualL3ReviewCommand = "deepsec.cancelAiScan";

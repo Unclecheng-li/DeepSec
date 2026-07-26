@@ -373,9 +373,9 @@ test("LSP ignore code actions persist a local rule and clear the matching diagno
       }
     }
   })) as { capabilities?: { executeCommandProvider?: { commands?: string[] } } };
-  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("vibeguard.ignoreFinding"), true);
-  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("vibeguard.applyFix"), true);
-  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("vibeguard.applyL3Fix"), true);
+  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("deepsec.ignoreFinding"), true);
+  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("deepsec.applyFix"), true);
+  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("deepsec.applyL3Fix"), true);
   client.notify("initialized", {});
 
   const uri = pathToFileURL(path.join(temporaryHome, "ignored-package.ts")).toString();
@@ -410,8 +410,8 @@ test("LSP ignore code actions persist a local rule and clear the matching diagno
   })) as Array<{ title?: string; command?: { command?: string; arguments?: unknown[] } }>;
   const fix = actions.find((action) => action.title === "Apply VibeGuard fix: Replace with react-virtualized");
   const ignore = actions.find((action) => action.title === "Ignore this VibeGuard finding");
-  assert.equal(fix?.command?.command, "vibeguard.applyFix");
-  assert.equal(ignore?.command?.command, "vibeguard.ignoreFinding");
+  assert.equal(fix?.command?.command, "deepsec.applyFix");
+  assert.equal(ignore?.command?.command, "deepsec.ignoreFinding");
   assert.ok(ignore?.command?.arguments);
 
   const fixExecution = client.startRequest("workspace/executeCommand", {
@@ -465,7 +465,7 @@ test("LSP manual AI scan requires remote approval and returns a typed L3 outcome
       }
     }
   })) as { capabilities?: { executeCommandProvider?: { commands?: string[] } } };
-  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("vibeguard.scanWithAi"), true);
+  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("deepsec.scanWithAi"), true);
   client.notify("initialized", {});
 
   const uri = pathToFileURL(path.join(temporaryHome, "manual-l3.ts")).toString();
@@ -480,7 +480,7 @@ test("LSP manual AI scan requires remote approval and returns a typed L3 outcome
   await client.nextDiagnostic(uri);
 
   const consent = (await client.request("workspace/executeCommand", {
-    command: "vibeguard.scanWithAi",
+    command: "deepsec.scanWithAi",
     arguments: [{ uri }]
   })) as { outcome?: { status?: string; errorCode?: string } };
   assert.equal(consent.outcome?.status, "consentRequired");
@@ -499,7 +499,7 @@ test("LSP manual AI scan requires remote approval and returns a typed L3 outcome
     }
   });
   const manual = (await client.request("workspace/executeCommand", {
-    command: "vibeguard.scanWithAi",
+    command: "deepsec.scanWithAi",
     arguments: [{ uri, remoteApproved: true }]
   })) as { outcome?: { status?: string; findings?: Array<{ detection_rule?: string }> }; stale?: boolean };
   assert.equal(manual.stale, false);
@@ -538,7 +538,7 @@ test("LSP cancels an in-flight manual L3 review through its command protocol", {
       }
     }
   })) as { capabilities?: { executeCommandProvider?: { commands?: string[] } } };
-  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("vibeguard.cancelAiScan"), true);
+  assert.equal(initialized.capabilities?.executeCommandProvider?.commands?.includes("deepsec.cancelAiScan"), true);
   client.notify("initialized", {});
 
   const uri = pathToFileURL(path.join(temporaryHome, "manual-l3-cancel.ts")).toString();
@@ -553,12 +553,12 @@ test("LSP cancels an in-flight manual L3 review through its command protocol", {
   await client.nextDiagnostic(uri);
 
   const reviewId = client.startRequest("workspace/executeCommand", {
-    command: "vibeguard.scanWithAi",
+    command: "deepsec.scanWithAi",
     arguments: [{ uri, remoteApproved: true }]
   });
   await new Promise((resolve) => setTimeout(resolve, 30));
   const cancelled = (await client.request("workspace/executeCommand", {
-    command: "vibeguard.cancelAiScan",
+    command: "deepsec.cancelAiScan",
     arguments: [{ uri }]
   })) as { cancelled?: boolean };
   assert.equal(cancelled.cancelled, true);
@@ -695,7 +695,7 @@ test("LSP requires confirmation before applying an L3 generated replacement", { 
   })) as Array<{ title?: string; edit?: unknown; command?: { command?: string; arguments?: unknown[] } }>;
   const fix = actions.find((action) => action.title === "Apply VibeGuard fix: Review LLM-generated replacement");
   assert.equal(fix?.edit, undefined);
-  assert.equal(fix?.command?.command, "vibeguard.applyL3Fix");
+  assert.equal(fix?.command?.command, "deepsec.applyL3Fix");
 
   const executionId = client.startRequest("workspace/executeCommand", {
     command: fix?.command?.command,
