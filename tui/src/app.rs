@@ -732,8 +732,8 @@ impl App {
     /// blocks the app in odd environments (or during tests).
     pub fn config_is_ready(&self) -> bool {
         let output = match exec::run_deepsec_sync(&["config", "show"]) {
-            Ok(o) => o,
-            Err(_) => return true,
+            Ok(o) if o.status.success() => o,
+            _ => return true,
         };
         let text = String::from_utf8_lossy(&output.stdout);
         for line in text.lines() {
