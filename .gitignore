@@ -52,3 +52,6 @@ __pycache__/
 # Environment files
 *.env
 !*.env.example
+
+# Test temp files
+tests/spear/.test-tmp/

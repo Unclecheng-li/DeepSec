@@ -1,1 +1,0 @@
-{"version": 1, "targets": ["attacker.example"], "valid_from": "2026-07-25T03:21:43.639964+00:00", "valid_until": "2026-07-25T03:27:43.639964+00:00", "prohibited_cidrs": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"], "signer": "security-team", "signature_algorithm": "hmac-sha256", "signature": "8518cf0ec1186b99a3e1e5dbcc3aeeca68a72c82d6f6d3aaf69fd18f8022f04c"}

@@ -1,1 +1,0 @@
-SECRET_KEY = "not-a-placeholder-secret-1234"

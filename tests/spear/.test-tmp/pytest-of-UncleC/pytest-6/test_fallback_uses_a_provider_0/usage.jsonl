@@ -1,1 +1,0 @@
-{"provider": "openai", "model": "openai-reason", "task": "reason", "input_tokens": 10, "output_tokens": 5, "estimated_cost_usd": 7.5e-05, "timestamp": "2026-07-25T04:02:53.240331+00:00"}

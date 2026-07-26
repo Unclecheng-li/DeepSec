@@ -1,9 +1,0 @@
-[llm]
-provider = "deepseek"
-api_key = "primary"
-fallbacks = ["openai", "local"]
-
-[llm.providers.openai]
-api_key = "openai-key"
-base_url = "https://openai.example/v1"
-chat_model = "gpt-custom"

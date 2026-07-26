@@ -1,1 +1,0 @@
-{"version": 1, "targets": ["192.168.1.5"], "valid_from": "2026-07-25T03:16:55.576060+00:00", "valid_until": "2026-07-25T03:22:55.576060+00:00", "prohibited_cidrs": ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"], "signer": "security-team", "signature_algorithm": "hmac-sha256", "signature": "d8ff0a95383fea4e944dfb313a5d4df9e96945e79c76edf843a5fc43e499777a"}
