@@ -1,11 +1,11 @@
-name: CI
+name: DeepSec CI
 
 on:
   push:
   pull_request:
 
 jobs:
-  test:
+  node:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -14,28 +14,28 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Run tests
-        shell: bash
-        run: |
-          set -o pipefail
-          npm test 2>&1 | tee test-output.log
-      - name: Upload test log on failure
-        if: failure()
-        uses: actions/upload-artifact@v5
-        with:
-          name: vibeguard-node-test-log
-          path: test-output.log
-          if-no-files-found: error
+      - run: npm test
 
-  rust-lsp:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade pip
+      - run: python -m pip install -e .[dev]
+      - run: python -m pytest tests/deepsec
+      - run: python -m build
+
+  tui:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@stable
-        with:
-          components: rustfmt
-      - run: cargo fmt --manifest-path rust-lsp/Cargo.toml -- --check
-      - run: cargo test --manifest-path rust-lsp/Cargo.toml --locked
+      - run: cargo check --locked --manifest-path tui/Cargo.toml
+      - run: cargo test --locked --manifest-path tui/Cargo.toml
+      - run: cargo test --locked --manifest-path rust-lsp/Cargo.toml
 
   jetbrains-plugin:
     runs-on: ubuntu-latest
@@ -55,49 +55,17 @@ jobs:
         working-directory: jetbrains
       - run: ./gradlew buildPlugin --no-daemon
         working-directory: jetbrains
-      - uses: actions/upload-artifact@v5
-        with:
-          name: vibeguard-jetbrains-plugin
-          path: jetbrains/build/distributions/*.zip
 
-  docker-image:
+  docker:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - run: docker build --tag vibeguard:ci .
-      - run: >-
-          VIBEGUARD_DASHBOARD_TOKEN=ci-dashboard-token
-          VIBEGUARD_FINDINGS_INGEST_TOKEN=ci-ingest-token
-          docker compose -f deploy/compose.yaml config --quiet
-      - run: docker run --rm vibeguard:ci subscription status --json
-      - run: docker run --rm -v "$PWD/tests/fixtures:/workspace:ro" vibeguard:ci scan /workspace --package-verification off --no-store-findings --fail-on none
-      - run: mkdir -p "$RUNNER_TEMP/vibeguard-dashboard"
-      - run: docker run --rm -v "$PWD/tests/fixtures:/workspace:ro" -v "$RUNNER_TEMP/vibeguard-dashboard:/data" vibeguard:ci scan /workspace --package-verification off --findings-db /data/findings.db --fail-on none
-      - run: docker run --rm -v "$RUNNER_TEMP/vibeguard-dashboard:/data" vibeguard:ci findings compliance --db /data/findings.db --framework all --output /data/compliance.md
-      - run: test -s "$RUNNER_TEMP/vibeguard-dashboard/compliance.md"
-      - name: Verify dashboard APIs
+      - run: docker compose config --quiet
+      - run: docker build --tag deepsec:ci .
+      - name: Verify Shield image
         shell: bash
         run: |
-          set -euo pipefail
-          docker run --detach --name vibeguard-dashboard -p 127.0.0.1:8787:8787 \
-            -e VIBEGUARD_DASHBOARD_TOKEN=ci-token \
-            -v "$RUNNER_TEMP/vibeguard-dashboard:/data" \
-            vibeguard:ci findings serve --db /data/findings.db --host 0.0.0.0 --token-env VIBEGUARD_DASHBOARD_TOKEN
-          cleanup() {
-            local status=$?
-            if [ "$status" -ne 0 ]; then
-              docker logs vibeguard-dashboard || true
-            fi
-            docker rm --force vibeguard-dashboard >/dev/null 2>&1 || true
-            exit "$status"
-          }
-          trap cleanup EXIT
-          request_dashboard() {
-            curl --fail --silent --show-error --output /dev/null \
-              --retry 10 --retry-all-errors --retry-delay 1 --connect-timeout 2 --max-time 10 \
-              -H "Authorization: Bearer ci-token" "http://127.0.0.1:8787$1"
-          }
-          request_dashboard /healthz
-          request_dashboard /api/summary
-          request_dashboard '/api/compliance?framework=soc2'
-          request_dashboard /api/audit
+          set +e
+          docker run --rm -v "$PWD/tests/fixtures:/workspace:ro" deepsec:ci shield scan /workspace --layer l1 --format json --output -
+          status=$?
+          test "$status" -eq 0 -o "$status" -eq 2

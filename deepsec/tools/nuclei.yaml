@@ -1,0 +1,16 @@
+name: nuclei
+description: Template-driven vulnerability scanner for authorized targets.
+category: verify
+install:
+  check: nuclei -version
+  command: go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
+  method: go_install
+parameters:
+  target: "{target}"
+  severity: "{severity:-medium,high,critical}"
+  timeout: 300
+output:
+  format: json
+  parse: true
+skills: [web/vulnerability-verification]
+min_role: [pentester, redteam]

@@ -1,0 +1,17 @@
+name: nmap
+description: Network scanner for host discovery and service detection.
+category: recon
+install:
+  check: nmap --version
+  command: scoop install nmap
+  method: scoop
+parameters:
+  host: "{target}"
+  ports: "{ports:-top-1000}"
+  scan_type: "{scan_type:-sV}"
+  timeout: 300
+output:
+  format: xml
+  parse: true
+skills: [recon/port-scan, recon/service-detection, recon/os-detection]
+min_role: [pentester, redteam, ctf_player]

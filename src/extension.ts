@@ -11,6 +11,7 @@ import {
   type LoadedVibeGuardConfig
 } from "./config";
 import { criticalAlertMessage } from "./criticalAlert";
+import { runDeepSecSpearCli } from "./deepsecBridge";
 import { loadCustomRules } from "./customRules";
 import { redactedSecretFixStillMatchesSource } from "./fixValidation";
 import { formatFindingsDashboard } from "./findings/dashboard";
@@ -47,7 +48,7 @@ import type { CodeFix, Finding, L3ReviewOutcome, PackageRegistry, ScanPerformanc
 
 const packageRegistries: PackageRegistry[] = ["npm", "pypi", "cargo", "gomod", "maven"];
 const llmProviders: LlmProvider[] = ["deepseek", "claude", "openai", "local", "vibeguard"];
-const firstRunOnboardingKey = "vibeguard.firstRunOnboardingShown";
+const firstRunOnboardingKey = "deepsec.firstRunOnboardingShown";
 const realtimeRemoteVerificationDelayMs = 600;
 
 const supportedLanguageIds = new Set([
@@ -111,14 +112,14 @@ const codeActionSelector: vscode.DocumentSelector = [
 
 export function activate(context: vscode.ExtensionContext): void {
   extensionContext = context;
-  diagnostics = vscode.languages.createDiagnosticCollection("vibeguard");
-  output = vscode.window.createOutputChannel("VibeGuard");
+  diagnostics = vscode.languages.createDiagnosticCollection("deepsec");
+  output = vscode.window.createOutputChannel("DeepSec");
   findingsProvider = new FindingsProvider(findingsByUri);
   l3Panel = new L3PanelProvider(createL3PanelHost());
   statusBar = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 92);
-  statusBar.command = "vibeguard.openReport";
-  statusBar.text = "VibeGuard";
-  statusBar.tooltip = "VibeGuard security findings";
+  statusBar.command = "deepsec.openReport";
+  statusBar.text = "DeepSec";
+  statusBar.tooltip = "DeepSec security findings";
   statusBar.show();
 
   const cachePath = path.join(context.globalStorageUri.fsPath, "package-cache.json");
@@ -137,39 +138,40 @@ export function activate(context: vscode.ExtensionContext): void {
     output,
     statusBar,
     l3Panel,
-    vscode.window.registerTreeDataProvider("vibeguardFindings", findingsProvider),
-    vscode.window.registerWebviewViewProvider("vibeguardL3Panel", l3Panel),
-    vscode.commands.registerCommand("vibeguard.scanCurrentFile", () => scanCurrentFile()),
-    vscode.commands.registerCommand("vibeguard.scanWorkspace", () => scanWorkspace()),
-    vscode.commands.registerCommand("vibeguard.scanWithAi", () => l3Panel.triggerScan()),
-    vscode.commands.registerCommand("vibeguard.clearFindings", () => clearFindings()),
-    vscode.commands.registerCommand("vibeguard.openReport", () => openReport()),
-    vscode.commands.registerCommand("vibeguard.exportDashboard", () => exportFindingsDashboard()),
-    vscode.commands.registerCommand("vibeguard.openIgnoreRules", () => openIgnoreRules()),
-    vscode.commands.registerCommand("vibeguard.syncPackageCache", () => syncPackageCache(true)),
-    vscode.commands.registerCommand("vibeguard.setLlmApiKey", () => setLlmApiKey()),
-    vscode.commands.registerCommand("vibeguard.deleteLlmApiKey", () => deleteLlmApiKey()),
-    vscode.commands.registerCommand("vibeguard.showLlmStatus", () => showLlmStatus()),
-    vscode.commands.registerCommand("vibeguard.showSubscriptionStatus", () => showSubscriptionStatus()),
-    vscode.commands.registerCommand("vibeguard.openFinding", (finding: Finding) => openFinding(finding)),
-    vscode.commands.registerCommand("vibeguard.ignoreFinding", (nodeOrFinding: TreeNode | Finding) =>
+    vscode.window.registerTreeDataProvider("deepsecFindings", findingsProvider),
+    vscode.window.registerWebviewViewProvider("deepsecL3Panel", l3Panel),
+    registerDeepSecCommand(context, "deepsec.scanCurrentFile", () => scanCurrentFile()),
+    registerDeepSecCommand(context, "deepsec.scanWorkspace", () => scanWorkspace()),
+    registerDeepSecCommand(context, "deepsec.scanWithAi", () => l3Panel.triggerScan()),
+    registerDeepSecCommand(context, "deepsec.spearRun", () => runSpearFromVsCode()),
+    registerDeepSecCommand(context, "deepsec.clearFindings", () => clearFindings()),
+    registerDeepSecCommand(context, "deepsec.openReport", () => openReport()),
+    registerDeepSecCommand(context, "deepsec.exportDashboard", () => exportFindingsDashboard()),
+    registerDeepSecCommand(context, "deepsec.openIgnoreRules", () => openIgnoreRules()),
+    registerDeepSecCommand(context, "deepsec.syncPackageCache", () => syncPackageCache(true)),
+    registerDeepSecCommand(context, "deepsec.setLlmApiKey", () => setLlmApiKey()),
+    registerDeepSecCommand(context, "deepsec.deleteLlmApiKey", () => deleteLlmApiKey()),
+    registerDeepSecCommand(context, "deepsec.showLlmStatus", () => showLlmStatus()),
+    registerDeepSecCommand(context, "deepsec.showSubscriptionStatus", () => showSubscriptionStatus()),
+    registerDeepSecCommand(context, "deepsec.openFinding", (finding: Finding) => openFinding(finding)),
+    registerDeepSecCommand(context, "deepsec.ignoreFinding", (nodeOrFinding: TreeNode | Finding) =>
       ignoreFinding(resolveFindingArgument(nodeOrFinding), "line")
     ),
-    vscode.commands.registerCommand("vibeguard.ignoreRuleInFile", (nodeOrFinding: TreeNode | Finding) =>
+    registerDeepSecCommand(context, "deepsec.ignoreRuleInFile", (nodeOrFinding: TreeNode | Finding) =>
       ignoreFinding(resolveFindingArgument(nodeOrFinding), "file")
     ),
-    vscode.commands.registerCommand("vibeguard.ignoreRuleGlobally", (nodeOrFinding: TreeNode | Finding) =>
+    registerDeepSecCommand(context, "deepsec.ignoreRuleGlobally", (nodeOrFinding: TreeNode | Finding) =>
       ignoreFinding(resolveFindingArgument(nodeOrFinding), "global")
     ),
-    vscode.commands.registerCommand("vibeguard.ignorePackage", (nodeOrFinding: TreeNode | Finding) =>
+    registerDeepSecCommand(context, "deepsec.ignorePackage", (nodeOrFinding: TreeNode | Finding) =>
       ignorePackage(resolveFindingArgument(nodeOrFinding))
     ),
-    vscode.commands.registerCommand("vibeguard.applyFix", (finding: Finding) => applyFindingFix(finding)),
-    vscode.commands.registerCommand("vibeguard.applyFindingFix", (nodeOrFinding: TreeNode | Finding) =>
+    registerDeepSecCommand(context, "deepsec.applyFix", (finding: Finding) => applyFindingFix(finding)),
+    registerDeepSecCommand(context, "deepsec.applyFindingFix", (nodeOrFinding: TreeNode | Finding) =>
       applyFindingFixFromSidebar(resolveFindingArgument(nodeOrFinding))
     ),
-    vscode.commands.registerCommand("vibeguard.applyAllSafeFixes", () => applyAllSafeFixes()),
-    vscode.commands.registerCommand("vibeguard.applyAllProFixes", () => applyAllProFixes()),
+    registerDeepSecCommand(context, "deepsec.applyAllSafeFixes", () => applyAllSafeFixes()),
+    registerDeepSecCommand(context, "deepsec.applyAllProFixes", () => applyAllProFixes()),
     vscode.languages.registerCodeActionsProvider(codeActionSelector, new VibeGuardCodeActionProvider(), {
       providedCodeActionKinds: [vscode.CodeActionKind.QuickFix]
     }),
@@ -217,10 +219,22 @@ export function deactivate(): void {
   findingStore?.close();
 }
 
+function registerDeepSecCommand(
+  context: vscode.ExtensionContext,
+  command: string,
+  callback: (...args: any[]) => unknown
+): vscode.Disposable {
+  const legacy = command.replace(/^deepsec\./, "vibeguard.");
+  if (legacy !== command) {
+    context.subscriptions.push(vscode.commands.registerCommand(legacy, callback));
+  }
+  return vscode.commands.registerCommand(command, callback);
+}
+
 async function scanCurrentFile(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    void vscode.window.showInformationMessage("VibeGuard: no active editor to scan.");
+    void vscode.window.showInformationMessage("DeepSec: no active editor to scan.");
     return;
   }
   await scanDocument(editor.document, { includeL2: true, includeL3: true, replaceAll: true });
@@ -234,7 +248,7 @@ async function scanWorkspace(): Promise<void> {
   ]);
   const files = [...new Map([...extensionFiles, ...dockerfiles].map((uri) => [uri.toString(), uri])).values()];
 
-  statusBar.text = "$(shield) VibeGuard scanning...";
+  statusBar.text = "$(shield) DeepSec scanning...";
   let scanned = 0;
   for (const uri of files) {
     const document = await vscode.workspace.openTextDocument(uri);
@@ -243,7 +257,59 @@ async function scanWorkspace(): Promise<void> {
     scanned += 1;
   }
   updateStatus();
-  void vscode.window.showInformationMessage(`VibeGuard scanned ${scanned} files.`);
+  void vscode.window.showInformationMessage(`DeepSec scanned ${scanned} files.`);
+}
+
+async function runSpearFromVsCode(): Promise<void> {
+  const target = await vscode.window.showInputBox({
+    title: "DeepSec Spear",
+    prompt: "Target in your signed authorization scope",
+    ignoreFocusOut: true,
+    validateInput: (value) => value.trim() ? undefined : "A target is required."
+  });
+  if (!target) {
+    return;
+  }
+  const selected = await vscode.window.showOpenDialog({
+    title: "Select signed DeepSec authorization manifest",
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    filters: { "JSON scope manifest": ["json"] }
+  });
+  const scopeManifest = selected?.[0];
+  if (!scopeManifest) {
+    return;
+  }
+  const confirmed = await vscode.window.showWarningMessage(
+    "Run DeepSec Spear against the selected target? The Python core verifies the signed scope and writes an audit record before any command runs.",
+    { modal: true },
+    "Run Spear"
+  );
+  if (confirmed !== "Run Spear") {
+    return;
+  }
+  const pythonPath = configuredOptionalString("deepsecPythonPath") ?? process.env.DEEPSEC_PYTHON;
+  if (!pythonPath) {
+    void vscode.window.showErrorMessage("DeepSec Spear needs deepsec.deepsecPythonPath or DEEPSEC_PYTHON.");
+    return;
+  }
+  output.show(true);
+  output.appendLine(`DeepSec Spear requested for ${target}.`);
+  try {
+    const result = await runDeepSecSpearCli({ target, scopeManifest: scopeManifest.fsPath, pythonPath });
+    if (result.stdout.trim()) {
+      output.appendLine(result.stdout.trim());
+    }
+    if (result.stderr.trim()) {
+      output.appendLine(result.stderr.trim());
+    }
+    void vscode.window.showInformationMessage("DeepSec Spear completed. Review the generated audit log and report.");
+  } catch (error) {
+    const detail = error instanceof Error ? error.message : String(error);
+    output.appendLine(`DeepSec Spear failed: ${detail}`);
+    void vscode.window.showErrorMessage("DeepSec Spear did not start or was rejected by its authorization gate. See the DeepSec output channel.");
+  }
 }
 
 function createL3PanelHost(): L3PanelHost {
@@ -261,7 +327,7 @@ function createL3PanelHost(): L3PanelHost {
     ignoreFinding,
     configureApiKey: setLlmApiKey,
     openSettings: async () => {
-      await vscode.commands.executeCommand("workbench.action.openSettings", "vibeguard.llmProvider");
+      await vscode.commands.executeCommand("workbench.action.openSettings", "deepsec.llmProvider");
     }
   };
 }
@@ -303,7 +369,7 @@ async function approveRemoteReview(config: L3PanelConfig): Promise<boolean> {
 }
 
 function remoteApprovalKey(provider: LlmProvider, endpoint: string): string {
-  return `vibeguard.l3.remoteReviewApproved.${provider}.${Buffer.from(endpoint).toString("base64url")}`;
+  return `deepsec.l3.remoteReviewApproved.${provider}.${Buffer.from(endpoint).toString("base64url")}`;
 }
 
 async function reviewDocumentWithAi(document: vscode.TextDocument, signal: AbortSignal): Promise<L3PanelReviewResult> {
@@ -1871,7 +1937,51 @@ function isSupportedDocument(document: vscode.TextDocument): boolean {
 }
 
 function configuration(): vscode.WorkspaceConfiguration {
-  return vscode.workspace.getConfiguration("vibeguard");
+  const primary = vscode.workspace.getConfiguration("deepsec");
+  const legacy = vscode.workspace.getConfiguration("vibeguard");
+  return new Proxy(primary, {
+    get(target, property, receiver) {
+      if (property === "get") {
+        return <T>(section: string, defaultValue?: T): T => {
+          const configured = configuredWorkspaceValue<T>(target, section) ?? configuredWorkspaceValue<T>(legacy, section);
+          const fallback = legacy.get<T>(section, defaultValue as T);
+          return (configured ?? target.get<T>(section, fallback)) as T;
+        };
+      }
+      if (property === "inspect") {
+        return <T>(section: string): any => {
+          const primaryInspect = target.inspect<T>(section);
+          const legacyInspect = legacy.inspect<T>(section);
+          if (!primaryInspect) {
+            return legacyInspect;
+          }
+          if (!legacyInspect) {
+            return primaryInspect;
+          }
+          return {
+            ...primaryInspect,
+            globalValue: primaryInspect.globalValue ?? legacyInspect.globalValue,
+            workspaceValue: primaryInspect.workspaceValue ?? legacyInspect.workspaceValue,
+            workspaceFolderValue: primaryInspect.workspaceFolderValue ?? legacyInspect.workspaceFolderValue,
+            globalLanguageValue: primaryInspect.globalLanguageValue ?? legacyInspect.globalLanguageValue,
+            workspaceLanguageValue: primaryInspect.workspaceLanguageValue ?? legacyInspect.workspaceLanguageValue,
+            workspaceFolderLanguageValue: primaryInspect.workspaceFolderLanguageValue ?? legacyInspect.workspaceFolderLanguageValue
+          };
+        };
+      }
+      return Reflect.get(target, property, receiver);
+    }
+  }) as vscode.WorkspaceConfiguration;
+}
+
+function configuredWorkspaceValue<T>(source: vscode.WorkspaceConfiguration, key: string): T | undefined {
+  const inspected = source.inspect<T>(key);
+  return inspected?.workspaceFolderLanguageValue ??
+    inspected?.workspaceFolderValue ??
+    inspected?.workspaceLanguageValue ??
+    inspected?.workspaceValue ??
+    inspected?.globalLanguageValue ??
+    inspected?.globalValue;
 }
 
 function configuredSettingOr<T>(key: string, fallback: T): T {
@@ -1913,7 +2023,7 @@ class FindingsProvider implements vscode.TreeDataProvider<TreeNode> {
       ? `${element.finding.dismissed_reason ?? "Dismissed"}\n${element.finding.suggestion ?? element.finding.evidence}`
       : element.finding.suggestion ?? element.finding.evidence;
     item.command = {
-      command: "vibeguard.openFinding",
+      command: "deepsec.openFinding",
       title: "Open Finding",
       arguments: [element.finding]
     };
@@ -1989,7 +2099,7 @@ class VibeGuardCodeActionProvider implements vscode.CodeActionProvider {
         action.isPreferred = index === 0 && finding.detection_layer !== "L3";
         if (finding.detection_layer === "L3") {
           action.command = {
-            command: "vibeguard.applyFix",
+            command: "deepsec.applyFix",
             title: action.title,
             arguments: [finding]
           };
@@ -1999,11 +2109,11 @@ class VibeGuardCodeActionProvider implements vscode.CodeActionProvider {
         actions.push(action);
       }
 
-      actions.push(commandAction("Ignore this VibeGuard finding", "vibeguard.ignoreFinding", finding, diagnostic));
-      actions.push(commandAction("Ignore this rule in this file", "vibeguard.ignoreRuleInFile", finding, diagnostic));
-      actions.push(commandAction("Ignore this rule globally", "vibeguard.ignoreRuleGlobally", finding, diagnostic));
+      actions.push(commandAction("Ignore this VibeGuard finding", "deepsec.ignoreFinding", finding, diagnostic));
+      actions.push(commandAction("Ignore this rule in this file", "deepsec.ignoreRuleInFile", finding, diagnostic));
+      actions.push(commandAction("Ignore this rule globally", "deepsec.ignoreRuleGlobally", finding, diagnostic));
       if (finding.type === "hallucinated_package") {
-        actions.push(commandAction(`Ignore package "${finding.evidence}"`, "vibeguard.ignorePackage", finding, diagnostic));
+        actions.push(commandAction(`Ignore package "${finding.evidence}"`, "deepsec.ignorePackage", finding, diagnostic));
       }
     }
     return actions;

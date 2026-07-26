@@ -3,9 +3,9 @@ import type { Finding } from "./types";
 
 export const lspIgnoreFindingCommand = "vibeguard.ignoreFinding";
 export const lspApplyFixCommand = "vibeguard.applyFix";
-export const lspApplyL3FixCommand = "vibeguard.applyL3Fix";
-export const lspManualL3ReviewCommand = "vibeguard.scanWithAi";
-export const lspCancelManualL3ReviewCommand = "vibeguard.cancelAiScan";
+export const lspApplyL3FixCommand = "deepsec.applyL3Fix";
+export const lspManualL3ReviewCommand = "deepsec.scanWithAi";
+export const lspCancelManualL3ReviewCommand = "deepsec.cancelAiScan";
 export type LspIgnoreScope = "line" | "file" | "global" | "package";
 
 export interface LspIgnoreFindingCommandArgument {

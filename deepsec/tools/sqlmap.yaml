@@ -1,0 +1,18 @@
+name: sqlmap
+description: SQL injection verification tool for explicitly authorized web targets.
+category: exploit
+install:
+  check: sqlmap --version
+  command: pip install sqlmap
+  method: pip
+parameters:
+  url: "{target_url}"
+  data: "{post_data}"
+  risk: 3
+  level: 5
+  threads: 4
+output:
+  format: json
+  parse: true
+skills: [sqli/detail, sqli/blind, sqli/time-based]
+min_role: [pentester, redteam, ctf_player]

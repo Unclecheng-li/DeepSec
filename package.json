@@ -1,21 +1,21 @@
 {
-  "name": "vibeguard-security",
-  "displayName": "VibeGuard AI Security",
-  "description": "AI-generated code security scanner for hallucinated packages, hardcoded secrets, unsafe configs, and common AI coding mistakes.",
-  "version": "0.1.5",
+  "name": "deepsec-security",
+  "displayName": "DeepSec",
+  "description": "DeepSec Shield and Spear security auditing for AI-generated code.",
+  "version": "0.2.0",
   "publisher": "unclecheng",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vibeguard/vibeguard.git"
+    "url": "https://github.com/Unclecheng-li/VibeGuard.git"
   },
   "private": true,
   "type": "commonjs",
   "icon": "media/VibeGuardIcon.png",
   "main": "./dist/extension.js",
   "bin": {
-    "vibeguard": "./dist/cli.js",
-    "vibeguard-lsp": "./dist/lspServer.js"
+    "deepsec-vscode": "./dist/cli.js",
+    "deepsec-lsp": "./dist/lspServer.js"
   },
   "engines": {
     "vscode": "^1.92.0"
@@ -30,154 +30,160 @@
   ],
   "activationEvents": [
     "onStartupFinished",
-    "onCommand:vibeguard.scanCurrentFile",
-    "onCommand:vibeguard.scanWorkspace",
-    "onCommand:vibeguard.scanWithAi",
-    "onCommand:vibeguard.syncPackageCache",
-    "onCommand:vibeguard.exportDashboard",
-    "onCommand:vibeguard.setLlmApiKey",
-    "onCommand:vibeguard.deleteLlmApiKey",
-    "onCommand:vibeguard.showLlmStatus",
-    "onCommand:vibeguard.showSubscriptionStatus",
-    "onCommand:vibeguard.applyFix",
-    "onCommand:vibeguard.applyFindingFix",
-    "onCommand:vibeguard.applyAllSafeFixes",
-    "onCommand:vibeguard.applyAllProFixes",
-    "onView:vibeguardFindings",
-    "onView:vibeguardL3Panel"
+    "onCommand:deepsec.scanCurrentFile",
+    "onCommand:deepsec.scanWorkspace",
+    "onCommand:deepsec.scanWithAi",
+    "onCommand:deepsec.spearRun",
+    "onCommand:deepsec.syncPackageCache",
+    "onCommand:deepsec.exportDashboard",
+    "onCommand:deepsec.setLlmApiKey",
+    "onCommand:deepsec.deleteLlmApiKey",
+    "onCommand:deepsec.showLlmStatus",
+    "onCommand:deepsec.showSubscriptionStatus",
+    "onCommand:deepsec.applyFix",
+    "onCommand:deepsec.applyFindingFix",
+    "onCommand:deepsec.applyAllSafeFixes",
+    "onCommand:deepsec.applyAllProFixes",
+    "onView:deepsecFindings",
+    "onView:deepsecL3Panel"
   ],
   "contributes": {
     "commands": [
       {
-        "command": "vibeguard.scanCurrentFile",
-        "title": "VibeGuard: Scan Current File"
+        "command": "deepsec.scanCurrentFile",
+        "title": "DeepSec: Scan Current File"
       },
       {
-        "command": "vibeguard.scanWorkspace",
-        "title": "VibeGuard: Scan Workspace"
+        "command": "deepsec.scanWorkspace",
+        "title": "DeepSec: Scan Workspace"
       },
       {
-        "command": "vibeguard.scanWithAi",
-        "title": "VibeGuard: Scan with AI",
+        "command": "deepsec.scanWithAi",
+        "title": "DeepSec: Scan with AI",
         "icon": "$(sparkle)"
       },
       {
-        "command": "vibeguard.clearFindings",
-        "title": "VibeGuard: Clear Findings"
+        "command": "deepsec.spearRun",
+        "title": "DeepSec: Run Spear",
+        "icon": "$(beaker)"
       },
       {
-        "command": "vibeguard.openReport",
-        "title": "VibeGuard: Open Findings Report"
+        "command": "deepsec.clearFindings",
+        "title": "DeepSec: Clear Findings"
       },
       {
-        "command": "vibeguard.exportDashboard",
-        "title": "VibeGuard: Export Findings Dashboard"
+        "command": "deepsec.openReport",
+        "title": "DeepSec: Open Findings Report"
       },
       {
-        "command": "vibeguard.openIgnoreRules",
-        "title": "VibeGuard: Open Ignore Rules"
+        "command": "deepsec.exportDashboard",
+        "title": "DeepSec: Export Findings Dashboard"
       },
       {
-        "command": "vibeguard.syncPackageCache",
-        "title": "VibeGuard: Sync Package Cache"
+        "command": "deepsec.openIgnoreRules",
+        "title": "DeepSec: Open Ignore Rules"
       },
       {
-        "command": "vibeguard.setLlmApiKey",
-        "title": "VibeGuard: Set LLM API Key"
+        "command": "deepsec.syncPackageCache",
+        "title": "DeepSec: Sync Package Cache"
       },
       {
-        "command": "vibeguard.deleteLlmApiKey",
-        "title": "VibeGuard: Delete LLM API Key"
+        "command": "deepsec.setLlmApiKey",
+        "title": "DeepSec: Set LLM API Key"
       },
       {
-        "command": "vibeguard.showLlmStatus",
-        "title": "VibeGuard: Show LLM Status"
+        "command": "deepsec.deleteLlmApiKey",
+        "title": "DeepSec: Delete LLM API Key"
       },
       {
-        "command": "vibeguard.showSubscriptionStatus",
-        "title": "VibeGuard: Show Pro Subscription Status"
+        "command": "deepsec.showLlmStatus",
+        "title": "DeepSec: Show LLM Status"
       },
       {
-        "command": "vibeguard.ignoreFinding",
-        "title": "VibeGuard: Ignore This Finding"
+        "command": "deepsec.showSubscriptionStatus",
+        "title": "DeepSec: Show Pro Subscription Status"
       },
       {
-        "command": "vibeguard.ignoreRuleInFile",
-        "title": "VibeGuard: Ignore Rule in This File"
+        "command": "deepsec.ignoreFinding",
+        "title": "DeepSec: Ignore This Finding"
       },
       {
-        "command": "vibeguard.ignoreRuleGlobally",
-        "title": "VibeGuard: Ignore Rule Globally"
+        "command": "deepsec.ignoreRuleInFile",
+        "title": "DeepSec: Ignore Rule in This File"
       },
       {
-        "command": "vibeguard.ignorePackage",
-        "title": "VibeGuard: Ignore Package"
+        "command": "deepsec.ignoreRuleGlobally",
+        "title": "DeepSec: Ignore Rule Globally"
       },
       {
-        "command": "vibeguard.applyFix",
-        "title": "VibeGuard: Apply Fix"
+        "command": "deepsec.ignorePackage",
+        "title": "DeepSec: Ignore Package"
       },
       {
-        "command": "vibeguard.applyFindingFix",
-        "title": "VibeGuard: Apply Finding Fix"
+        "command": "deepsec.applyFix",
+        "title": "DeepSec: Apply Fix"
       },
       {
-        "command": "vibeguard.applyAllSafeFixes",
-        "title": "VibeGuard: Apply All Safe Fixes in Current File"
+        "command": "deepsec.applyFindingFix",
+        "title": "DeepSec: Apply Finding Fix"
       },
       {
-        "command": "vibeguard.applyAllProFixes",
-        "title": "VibeGuard: Review and Apply All Pro Fixes in Current File"
+        "command": "deepsec.applyAllSafeFixes",
+        "title": "DeepSec: Apply All Safe Fixes in Current File"
+      },
+      {
+        "command": "deepsec.applyAllProFixes",
+        "title": "DeepSec: Review and Apply All Pro Fixes in Current File"
       }
     ],
     "menus": {
       "view/item/context": [
         {
-          "command": "vibeguard.applyFindingFix",
-          "when": "view == vibeguardFindings && viewItem == vibeguardFindingFixable",
+          "command": "deepsec.applyFindingFix",
+          "when": "view == deepsecFindings && viewItem == vibeguardFindingFixable",
           "group": "inline@1"
         },
         {
-          "command": "vibeguard.ignoreFinding",
-          "when": "view == vibeguardFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "command": "deepsec.ignoreFinding",
+          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
           "group": "inline"
         },
         {
-          "command": "vibeguard.ignoreRuleInFile",
-          "when": "view == vibeguardFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "command": "deepsec.ignoreRuleInFile",
+          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
           "group": "navigation"
         },
         {
-          "command": "vibeguard.ignoreRuleGlobally",
-          "when": "view == vibeguardFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "command": "deepsec.ignoreRuleGlobally",
+          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
           "group": "navigation"
         },
         {
-          "command": "vibeguard.ignorePackage",
-          "when": "view == vibeguardFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "command": "deepsec.ignorePackage",
+          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
           "group": "navigation"
         }
       ]
     },
     "configuration": {
-      "title": "VibeGuard",
+      "title": "DeepSec",
       "properties": {
-        "vibeguard.enabled": {
+        "deepsec.enabled": {
           "type": "boolean",
           "default": true,
-          "description": "Enable VibeGuard security scanning."
+          "description": "Enable DeepSec security scanning."
         },
-        "vibeguard.scanOnChange": {
+        "deepsec.scanOnChange": {
           "type": "boolean",
           "default": true,
           "description": "Scan supported documents shortly after edits."
         },
-        "vibeguard.scanOnSave": {
+        "deepsec.scanOnSave": {
           "type": "boolean",
           "default": true,
           "description": "Scan supported documents when they are saved."
         },
-        "vibeguard.packageVerification": {
+        "deepsec.packageVerification": {
           "type": "string",
           "enum": [
             "seed",
@@ -187,17 +193,22 @@
           "default": "remote",
           "description": "How VSCode verifies package names. Remote mode keeps edit-time diagnostics non-blocking by checking the local seed/index first, then verifies unknown packages against npm, PyPI, Cargo, Go modules, and Maven Central."
         },
-        "vibeguard.configPath": {
+        "deepsec.configPath": {
           "type": "string",
           "default": "",
           "description": "Path to config.json. Defaults to ~/.vibeguard/config.json."
         },
-        "vibeguard.autoSyncPackageCache": {
+        "deepsec.deepsecPythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional Python interpreter for DeepSec Shield scanning. When empty, the bundled DeepSec TypeScript engine remains active."
+        },
+        "deepsec.autoSyncPackageCache": {
           "type": "boolean",
           "default": true,
           "description": "Automatically sync the local package-name cache in the background when VSCode starts."
         },
-        "vibeguard.packageCacheLanguages": {
+        "deepsec.packageCacheLanguages": {
           "type": "array",
           "items": {
             "type": "string",
@@ -215,7 +226,7 @@
           ],
           "description": "Package registries to keep in the local package-name cache. Explicit VSCode settings override config.json package_cache.languages."
         },
-        "vibeguard.packageCacheUpdateInterval": {
+        "deepsec.packageCacheUpdateInterval": {
           "type": "string",
           "enum": [
             "daily",
@@ -224,39 +235,203 @@
           "default": "daily",
           "description": "How often VSCode background sync refreshes package-name indexes."
         },
-        "vibeguard.packageCacheLightweightMode": {
+        "deepsec.packageCacheLightweightMode": {
           "type": "boolean",
           "default": true,
           "description": "Use lightweight partial package-name indexes for faster cold starts."
         },
-        "vibeguard.packageCacheBackgroundFullSync": {
+        "deepsec.packageCacheBackgroundFullSync": {
           "type": "boolean",
           "default": true,
           "description": "After the quick package-name index is ready, continue refreshing a full index in the background. Disable to keep lightweight partial indexes only."
         },
-        "vibeguard.enableL2": {
+        "deepsec.enableL2": {
           "type": "boolean",
           "default": true,
           "description": "Enable lightweight asynchronous SAST rules for SQL injection, XSS, SSRF, path traversal, unsafe deserialization, and command injection."
         },
-        "vibeguard.l2DebounceMs": {
+        "deepsec.l2DebounceMs": {
           "type": "number",
           "default": 500,
           "minimum": 0,
           "maximum": 30000,
           "description": "Delay in milliseconds before VSCode runs L2 SAST analysis after edits. L1 diagnostics still run immediately."
         },
+        "deepsec.enableL3": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable L3 semantic security checks. When an LLM provider and credential are available, DeepSec uses them; otherwise it falls back to local endpoint heuristics."
+        },
+        "deepsec.l3DebounceMs": {
+          "type": "number",
+          "default": 2000,
+          "minimum": 0,
+          "maximum": 30000,
+          "description": "Delay in milliseconds before VSCode runs L3 semantic analysis after edits. Saves and manual scans run L3 immediately."
+        },
+        "deepsec.llmProvider": {
+          "type": "string",
+          "enum": [
+            "deepseek",
+            "claude",
+            "openai",
+            "local",
+            "vibeguard"
+          ],
+          "default": "deepseek",
+          "description": "LLM provider for DeepSec L3 semantic analysis. API keys are stored with VSCode SecretStorage or read from environment variables."
+        },
+        "deepsec.llmModel": {
+          "type": "string",
+          "default": "",
+          "description": "Optional model override for L3 semantic analysis."
+        },
+        "deepsec.llmBaseUrl": {
+          "type": "string",
+          "default": "",
+          "description": "Optional provider base URL override for L3 semantic analysis. Remote endpoints must use HTTPS; HTTP is allowed only for loopback local development hosts."
+        },
+        "deepsec.dedupWithExistingTools": {
+          "type": "boolean",
+          "default": true,
+          "description": "Dismiss duplicate L2 findings when nearby SonarQube, Snyk, Semgrep, or CodeQL annotations already cover the same issue."
+        },
+        "deepsec.storeFindings": {
+          "type": "boolean",
+          "default": true,
+          "description": "Store scan runs and findings in a local SQLite database."
+        },
+        "deepsec.findingsDbPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to findings.db. Defaults to ~/.vibeguard/findings.db."
+        },
+        "deepsec.ignoredFindings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Exact finding IDs to dismiss in addition to config.json ignored_findings."
+        },
+        "deepsec.customRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Paths to custom DeepSec YAML rule files. Relative paths resolve from the workspace folder."
+        },
+        "deepsec.showCriticalPopups": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show warning popups for newly detected critical findings."
+        },
+        "deepsec.ignoreRulesPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to ignore-rules.yml. Defaults to ~/.vibeguard/ignore-rules.yml."
+        },
+        "vibeguard.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.enabled] Enable DeepSec security scanning."
+        },
+        "vibeguard.scanOnChange": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.scanOnChange] Scan supported documents shortly after edits."
+        },
+        "vibeguard.scanOnSave": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.scanOnSave] Scan supported documents when they are saved."
+        },
+        "vibeguard.packageVerification": {
+          "type": "string",
+          "enum": [
+            "seed",
+            "remote",
+            "off"
+          ],
+          "default": "remote",
+          "description": "[Deprecated; use deepsec.packageVerification] How VSCode verifies package names. Remote mode keeps edit-time diagnostics non-blocking by checking the local seed/index first, then verifies unknown packages against npm, PyPI, Cargo, Go modules, and Maven Central."
+        },
+        "vibeguard.configPath": {
+          "type": "string",
+          "default": "",
+          "description": "[Deprecated; use deepsec.configPath] Path to config.json. Defaults to ~/.vibeguard/config.json."
+        },
+        "vibeguard.deepsecPythonPath": {
+          "type": "string",
+          "default": "",
+          "description": "[Deprecated; use deepsec.deepsecPythonPath] Optional Python interpreter for DeepSec Shield scanning. When empty, the bundled DeepSec TypeScript engine remains active."
+        },
+        "vibeguard.autoSyncPackageCache": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.autoSyncPackageCache] Automatically sync the local package-name cache in the background when VSCode starts."
+        },
+        "vibeguard.packageCacheLanguages": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "npm",
+              "pypi",
+              "cargo",
+              "gomod",
+              "maven"
+            ]
+          },
+          "default": [
+            "npm",
+            "pypi"
+          ],
+          "description": "[Deprecated; use deepsec.packageCacheLanguages] Package registries to keep in the local package-name cache. Explicit VSCode settings override config.json package_cache.languages."
+        },
+        "vibeguard.packageCacheUpdateInterval": {
+          "type": "string",
+          "enum": [
+            "daily",
+            "weekly"
+          ],
+          "default": "daily",
+          "description": "[Deprecated; use deepsec.packageCacheUpdateInterval] How often VSCode background sync refreshes package-name indexes."
+        },
+        "vibeguard.packageCacheLightweightMode": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.packageCacheLightweightMode] Use lightweight partial package-name indexes for faster cold starts."
+        },
+        "vibeguard.packageCacheBackgroundFullSync": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.packageCacheBackgroundFullSync] After the quick package-name index is ready, continue refreshing a full index in the background. Disable to keep lightweight partial indexes only."
+        },
+        "vibeguard.enableL2": {
+          "type": "boolean",
+          "default": true,
+          "description": "[Deprecated; use deepsec.enableL2] Enable lightweight asynchronous SAST rules for SQL injection, XSS, SSRF, path traversal, unsafe deserialization, and command injection."
+        },
+        "vibeguard.l2DebounceMs": {
+          "type": "number",
+          "default": 500,
+          "minimum": 0,
+          "maximum": 30000,
+          "description": "[Deprecated; use deepsec.l2DebounceMs] Delay in milliseconds before VSCode runs L2 SAST analysis after edits. L1 diagnostics still run immediately."
+        },
         "vibeguard.enableL3": {
           "type": "boolean",
           "default": false,
-          "description": "Enable L3 semantic security checks. When an LLM provider and credential are available, VibeGuard uses them; otherwise it falls back to local endpoint heuristics."
+          "description": "[Deprecated; use deepsec.enableL3] Enable L3 semantic security checks. When an LLM provider and credential are available, DeepSec uses them; otherwise it falls back to local endpoint heuristics."
         },
         "vibeguard.l3DebounceMs": {
           "type": "number",
           "default": 2000,
           "minimum": 0,
           "maximum": 30000,
-          "description": "Delay in milliseconds before VSCode runs L3 semantic analysis after edits. Saves and manual scans run L3 immediately."
+          "description": "[Deprecated; use deepsec.l3DebounceMs] Delay in milliseconds before VSCode runs L3 semantic analysis after edits. Saves and manual scans run L3 immediately."
         },
         "vibeguard.llmProvider": {
           "type": "string",
@@ -268,32 +443,32 @@
             "vibeguard"
           ],
           "default": "deepseek",
-          "description": "LLM provider for VibeGuard L3 semantic analysis. API keys are stored with VSCode SecretStorage or read from environment variables."
+          "description": "[Deprecated; use deepsec.llmProvider] LLM provider for DeepSec L3 semantic analysis. API keys are stored with VSCode SecretStorage or read from environment variables."
         },
         "vibeguard.llmModel": {
           "type": "string",
           "default": "",
-          "description": "Optional model override for L3 semantic analysis."
+          "description": "[Deprecated; use deepsec.llmModel] Optional model override for L3 semantic analysis."
         },
         "vibeguard.llmBaseUrl": {
           "type": "string",
           "default": "",
-          "description": "Optional provider base URL override for L3 semantic analysis. Remote endpoints must use HTTPS; HTTP is allowed only for loopback local development hosts."
+          "description": "[Deprecated; use deepsec.llmBaseUrl] Optional provider base URL override for L3 semantic analysis. Remote endpoints must use HTTPS; HTTP is allowed only for loopback local development hosts."
         },
         "vibeguard.dedupWithExistingTools": {
           "type": "boolean",
           "default": true,
-          "description": "Dismiss duplicate L2 findings when nearby SonarQube, Snyk, Semgrep, or CodeQL annotations already cover the same issue."
+          "description": "[Deprecated; use deepsec.dedupWithExistingTools] Dismiss duplicate L2 findings when nearby SonarQube, Snyk, Semgrep, or CodeQL annotations already cover the same issue."
         },
         "vibeguard.storeFindings": {
           "type": "boolean",
           "default": true,
-          "description": "Store scan runs and findings in a local SQLite database."
+          "description": "[Deprecated; use deepsec.storeFindings] Store scan runs and findings in a local SQLite database."
         },
         "vibeguard.findingsDbPath": {
           "type": "string",
           "default": "",
-          "description": "Path to findings.db. Defaults to ~/.vibeguard/findings.db."
+          "description": "[Deprecated; use deepsec.findingsDbPath] Path to findings.db. Defaults to ~/.vibeguard/findings.db."
         },
         "vibeguard.ignoredFindings": {
           "type": "array",
@@ -301,7 +476,7 @@
             "type": "string"
           },
           "default": [],
-          "description": "Exact finding IDs to dismiss in addition to config.json ignored_findings."
+          "description": "[Deprecated; use deepsec.ignoredFindings] Exact finding IDs to dismiss in addition to config.json ignored_findings."
         },
         "vibeguard.customRules": {
           "type": "array",
@@ -309,37 +484,37 @@
             "type": "string"
           },
           "default": [],
-          "description": "Paths to custom VibeGuard YAML rule files. Relative paths resolve from the workspace folder."
+          "description": "[Deprecated; use deepsec.customRules] Paths to custom DeepSec YAML rule files. Relative paths resolve from the workspace folder."
         },
         "vibeguard.showCriticalPopups": {
           "type": "boolean",
           "default": true,
-          "description": "Show warning popups for newly detected critical findings."
+          "description": "[Deprecated; use deepsec.showCriticalPopups] Show warning popups for newly detected critical findings."
         },
         "vibeguard.ignoreRulesPath": {
           "type": "string",
           "default": "",
-          "description": "Path to ignore-rules.yml. Defaults to ~/.vibeguard/ignore-rules.yml."
+          "description": "[Deprecated; use deepsec.ignoreRulesPath] Path to ignore-rules.yml. Defaults to ~/.vibeguard/ignore-rules.yml."
         }
       }
     },
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "vibeguard",
-          "title": "VibeGuard",
+          "id": "deepsec",
+          "title": "DeepSec",
           "icon": "$(shield)"
         }
       ]
     },
     "views": {
-      "vibeguard": [
+      "deepsec": [
         {
-          "id": "vibeguardFindings",
+          "id": "deepsecFindings",
           "name": "Findings"
         },
         {
-          "id": "vibeguardL3Panel",
+          "id": "deepsecL3Panel",
           "name": "AI Deep Scan",
           "type": "webview"
         }
@@ -352,6 +527,7 @@
     "watch": "tsc -watch -p ./",
     "test": "node scripts/assert-node-lts.js && npm run compile && node --test \"out/tests/**/*.test.js\"",
     "lint": "tsc --noEmit -p ./",
+    "benchmark:cold-start": "npm run build && node scripts/benchmark-cold-start.js",
     "vscode:prepublish": "npm run build",
     "package:vsix": "node scripts/package-vsix.js"
   },

@@ -1,0 +1,1 @@
+"""DeepSec command-line application."""

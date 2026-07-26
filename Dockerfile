@@ -1,25 +1,23 @@
-FROM node:22-bookworm-slim AS build
+FROM rust:1-bookworm AS tui-build
 
-WORKDIR /opt/vibeguard
+WORKDIR /build/tui
+COPY tui/Cargo.toml tui/Cargo.lock ./
+COPY tui/src ./src
+RUN cargo build --release --locked
 
-COPY package.json package-lock.json ./
-RUN npm ci
+FROM python:3.12-slim
 
-COPY tsconfig.json ./
-COPY scripts ./scripts
-COPY src ./src
-RUN npm run build
+ENV HOME=/data \
+    DEEPSEC_HOME=/data \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1
 
-FROM node:22-bookworm-slim
-
-RUN apt-get update \
-  && apt-get install --yes --no-install-recommends git \
-  && rm -rf /var/lib/apt/lists/*
+WORKDIR /opt/deepsec
+COPY pyproject.toml README.md DEEPSEC.md LICENSE ./
+COPY deepsec ./deepsec
+RUN pip install --no-cache-dir .
+COPY --from=tui-build /build/tui/target/release/deepsec-tui-native /usr/local/bin/deepsec-tui-native
 
 WORKDIR /workspace
-COPY --from=build /opt/vibeguard/dist /opt/vibeguard/dist
-COPY scripts/docker-entrypoint.sh /usr/local/bin/vibeguard-entrypoint
-RUN chmod 755 /usr/local/bin/vibeguard-entrypoint
-
-ENTRYPOINT ["/usr/local/bin/vibeguard-entrypoint"]
-CMD ["scan", ".", "--package-verification", "seed", "--fail-on", "critical"]
+ENTRYPOINT ["deepsec"]
+CMD ["tui"]

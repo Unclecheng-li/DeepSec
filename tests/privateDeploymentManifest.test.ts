@@ -54,5 +54,5 @@ test("private deployment Compose files keep the dashboard local by default and r
   assert.match(envExample, /VIBEGUARD_FINDINGS_INGEST_TOKEN=/);
   assert.match(envExample, /VIBEGUARD_TELEMETRY_COLLECTION=false/);
   assert.match(envExample, /VIBEGUARD_TELEMETRY_MAX_EVENTS_PER_MINUTE=60/);
-  assert.match(ci, /docker compose -f deploy\/compose\.yaml config --quiet/);
+  assert.match(ci, /docker compose config --quiet/);
 });

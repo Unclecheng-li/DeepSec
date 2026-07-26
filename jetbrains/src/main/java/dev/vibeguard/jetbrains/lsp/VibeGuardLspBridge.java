@@ -18,10 +18,10 @@ import java.util.concurrent.CompletableFuture;
 
 /** Sends a manual L3 review request through the public IntelliJ LSP API. */
 public final class VibeGuardLspBridge {
-  public static final String MANUAL_REVIEW_COMMAND = "vibeguard.scanWithAi";
-  public static final String CANCEL_MANUAL_REVIEW_COMMAND = "vibeguard.cancelAiScan";
-  public static final String APPLY_L3_FIX_COMMAND = "vibeguard.applyL3Fix";
-  public static final String IGNORE_FINDING_COMMAND = "vibeguard.ignoreFinding";
+  public static final String MANUAL_REVIEW_COMMAND = "deepsec.scanWithAi";
+  public static final String CANCEL_MANUAL_REVIEW_COMMAND = "deepsec.cancelAiScan";
+  public static final String APPLY_L3_FIX_COMMAND = "deepsec.applyL3Fix";
+  public static final String IGNORE_FINDING_COMMAND = "deepsec.ignoreFinding";
   private static final int REQUEST_TIMEOUT_MS = 15_000;
 
   private final Project project;
@@ -85,7 +85,7 @@ public final class VibeGuardLspBridge {
     return manager.getServersForProvider(VibeGuardLspServerSupportProvider.class).stream()
         .filter(candidate -> candidate.getState() == LspServerState.Running)
         .findFirst()
-        .orElseThrow(() -> new IllegalStateException("VibeGuard language server is starting. Try the scan again in a moment."));
+        .orElseThrow(() -> new IllegalStateException("DeepSec language server is starting. Try the scan again in a moment."));
   }
 
   public record ReviewFinding(

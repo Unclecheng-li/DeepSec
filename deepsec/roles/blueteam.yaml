@@ -1,0 +1,11 @@
+name: BlueTeam
+description: Defensive security analyst focused on configuration hardening and false-positive reduction.
+mode: shield
+tools: []
+skills: [shield/pattern-detection, shield/sast, shield/ai-audit, shield/supply-chain]
+llm:
+  chat_model: deepseek-chat
+  thinking: high
+prompt_prefix: Prioritize evidence, defense-in-depth, and remediations that can be safely deployed.
+max_rounds: 5
+max_parallel: 2

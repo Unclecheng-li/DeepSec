@@ -110,7 +110,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     reviewedFile = file;
     findings.clear();
     reviewInProgress = true;
-    setScanning(true, "Starting VibeGuard language server review...");
+    setScanning(true, "Starting DeepSec language server review...");
     activeRequest = bridge.review(file, remoteApproved);
     activeRequest.whenComplete((value, error) -> ApplicationManager.getApplication().invokeLater(() -> {
       if (project.isDisposed()) {
@@ -140,9 +140,9 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     }
     int choice = Messages.showYesNoDialog(
         project,
-        "VibeGuard will send the current file to " + result.provider() + " at " + result.endpoint() + " for AI security review. "
+        "DeepSec will send the current file to " + result.provider() + " at " + result.endpoint() + " for AI security review. "
             + "Secret-like values are redacted, but the review may contain proprietary source code.",
-        "Allow VibeGuard Remote Review",
+        "Allow DeepSec Remote Review",
         "Allow",
         "Cancel",
         Messages.getWarningIcon()
@@ -189,12 +189,12 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     }
     if ("notConfigured".equals(result.status())) {
       status.setText("L3 is not configured.");
-      summary.setText("Set the selected provider credential through the VibeGuard LSP environment or OS credential store.");
+      summary.setText("Set the selected provider credential through the DeepSec LSP environment or OS credential store.");
       return;
     }
     if ("failed".equals(result.status())) {
       status.setText("AI deep scan failed.");
-      summary.setText("Check the VibeGuard language server output for details.");
+      summary.setText("Check the DeepSec language server output for details.");
       return;
     }
     if ("cancelled".equals(result.status())) {
@@ -230,7 +230,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     }
     setScanning(true, "Waiting for L3 fix confirmation...");
     activeRequest = bridge.applyL3Fix(reviewedFile, finding.id());
-    completeAction("L3 replacement was applied after review.", "VibeGuard could not apply the L3 replacement.");
+    completeAction("L3 replacement was applied after review.", "DeepSec could not apply the L3 replacement.");
   }
 
   private void ignoreSelected() {
@@ -240,7 +240,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     }
     setScanning(true, "Saving ignore rule...");
     activeRequest = bridge.ignoreFinding(reviewedFile, finding.id());
-    completeAction("Ignore rule saved for this finding.", "VibeGuard could not save the ignore rule.");
+    completeAction("Ignore rule saved for this finding.", "DeepSec could not save the ignore rule.");
   }
 
   private void completeAction(@NotNull String success, @NotNull String failure) {

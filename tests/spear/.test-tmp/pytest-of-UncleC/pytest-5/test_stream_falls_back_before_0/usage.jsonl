@@ -1,0 +1,1 @@
+{"provider": "local", "model": "qwen2.5-coder:7b", "task": "shield", "input_tokens": null, "output_tokens": null, "estimated_cost_usd": 0.0, "timestamp": "2026-07-25T03:22:43.758261+00:00"}

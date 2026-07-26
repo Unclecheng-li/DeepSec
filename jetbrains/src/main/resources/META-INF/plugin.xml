@@ -1,13 +1,13 @@
 <idea-plugin>
-  <id>dev.vibeguard.jetbrains</id>
-  <name>VibeGuard</name>
-  <vendor url="https://github.com/vibeguard/vibeguard">VibeGuard</vendor>
+  <id>dev.deepsec.jetbrains</id>
+  <name>DeepSec</name>
+  <vendor url="https://github.com/Unclecheng-li/VibeGuard">DeepSec</vendor>
   <icon>icon.png</icon>
 
   <description><![CDATA[
-    <p>VibeGuard scans AI-generated code for hallucinated dependencies, hardcoded secrets,
+    <p>DeepSec scans AI-generated code for hallucinated dependencies, hardcoded secrets,
     unsafe configuration, and high-confidence security mistakes.</p>
-    <p>The plugin uses the shared VibeGuard Language Server so diagnostics and safe quick fixes
+    <p>The plugin uses the shared DeepSec Language Server so diagnostics and safe quick fixes
     match the VS Code extension and CI scanner.</p>
   ]]></description>
 
@@ -17,7 +17,7 @@
   <extensions defaultExtensionNs="com.intellij">
     <platform.lsp.serverSupportProvider
         implementation="dev.vibeguard.jetbrains.VibeGuardLspServerSupportProvider"/>
-    <toolWindow id="VibeGuard"
+    <toolWindow id="DeepSec"
                 anchor="right"
                 icon="dev.vibeguard.jetbrains.icons.VibeGuardIcons.ToolWindow"
                 factoryClass="dev.vibeguard.jetbrains.ui.VibeGuardToolWindowFactory"/>

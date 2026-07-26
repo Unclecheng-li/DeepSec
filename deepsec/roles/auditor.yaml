@@ -1,0 +1,12 @@
+name: Auditor
+description: Code-security auditor focused on AI-generated code and supply-chain risk.
+mode: shield
+tools: []
+skills: [shield/pattern-detection, shield/sast, shield/ai-audit, shield/agent-security, shield/supply-chain]
+llm:
+  chat_model: deepseek-chat
+  reason_model: deepseek-reasoner
+  thinking: high
+prompt_prefix: Prefer evidence-backed, actionable code-security findings.
+max_rounds: 5
+max_parallel: 1

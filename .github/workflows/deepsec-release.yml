@@ -1,0 +1,108 @@
+name: DeepSec Python And TUI Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          version=$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')
+          if [ "${GITHUB_EVENT_NAME}" = "push" ] && [ "${GITHUB_REF_NAME}" != "v${version}" ]; then
+            echo "Tag must be v${version}; received ${GITHUB_REF_NAME}" >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+  python:
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python -m pip install --upgrade build
+      - run: python -m build
+      - uses: actions/upload-artifact@v5
+        with:
+          name: python-dist
+          path: dist/*
+
+  tui:
+    needs: verify
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact: deepsec-tui-linux
+            binary: deepsec-tui-native
+          - os: windows-latest
+            artifact: deepsec-tui-windows
+            binary: deepsec-tui-native.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo build --release --locked --manifest-path tui/Cargo.toml
+      - name: Stage Unix binary
+        if: runner.os != 'Windows'
+        run: |
+          mkdir release
+          cp "tui/target/release/${{ matrix.binary }}" "release/${{ matrix.artifact }}"
+      - name: Stage Windows binary
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release
+          Copy-Item "tui/target/release/${{ matrix.binary }}" "release/${{ matrix.artifact }}.exe"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ${{ matrix.artifact }}
+          path: release/*
+
+  github-release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [python, tui]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          path: release
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          generate_release_notes: true
+          files: release/*
+
+  pypi:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: python
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/deepsec
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v5
+        with:
+          name: python-dist
+          path: dist
+      - uses: pypa/gh-action-pypi-publish@release/v1

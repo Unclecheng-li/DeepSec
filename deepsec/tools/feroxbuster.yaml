@@ -1,0 +1,16 @@
+name: feroxbuster
+description: Recursive content discovery tool for authorized web targets.
+category: recon
+install:
+  check: feroxbuster --version
+  command: cargo install feroxbuster
+  method: cargo
+parameters:
+  url: "{target}"
+  depth: 4
+  timeout: 300
+output:
+  format: json
+  parse: true
+skills: [recon/content-discovery]
+min_role: [pentester, redteam, ctf_player]

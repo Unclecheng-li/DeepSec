@@ -20,6 +20,7 @@ import {
 import { TextDocument } from "vscode-languageserver-textdocument";
 import { cloneDefaultConfig, defaultConfigPath, loadConfig } from "./config";
 import { criticalAlertMessage } from "./criticalAlert";
+import { scanWithDeepSecCli } from "./deepsecBridge";
 import { loadCustomRules } from "./customRules";
 import { redactedSecretFixStillMatchesSource } from "./fixValidation";
 import { appendIgnoreRule, defaultIgnoreRulesPath, ensureIgnoreRulesFile, loadIgnoreRules, scopedIgnoreReason } from "./ignore";
@@ -50,7 +51,7 @@ import { isRequirementsManifestPath } from "./package/packageParser";
 import { PackageVerifier } from "./package/packageVerifier";
 import { createPackageStorage } from "./package/storage";
 import { scanSourceFile } from "./scanner";
-import type { CodeFix, Finding, L3ReviewOutcome, PackageRegistry, Severity, VibeGuardConfig } from "./types";
+import type { CodeFix, Finding, L3ReviewOutcome, PackageRegistry, ScanResult, Severity, VibeGuardConfig } from "./types";
 
 interface LspSettings {
   enabled: boolean;
@@ -74,6 +75,8 @@ interface LspSettings {
   packageCacheUpdateInterval?: VibeGuardConfig["package_cache"]["update_interval"];
   packageCacheLightweightMode?: boolean;
   packageCacheBackgroundFullSync?: boolean;
+  /** Explicit Python interpreter used to invoke the DeepSec core. Empty keeps the TS scanner as a fallback. */
+  deepsecPythonPath?: string;
 }
 
 const defaultSettings: LspSettings = {
@@ -989,23 +992,41 @@ async function validateDocument(document: TextDocument, revision: number, option
     l2: Boolean(options.layers.l2 && settings.enableL2),
     l3: Boolean(options.layers.l3 && settings.enableL3)
   };
-  const result = await scanSourceFile(
-    {
-      filePath: filePathFromUri(document.uri),
-      text: document.getText(),
-      languageId: document.languageId
-    },
-    {
-      packageVerification: options.packageVerification ?? settings.packageVerification,
-      detectionLayers: layers,
-      l3Analyzer: layers.l3 ? await createLspL3Analyzer() : undefined,
-      packageVerifier: verifier,
-      customRules: await loadConfiguredCustomRules(),
-      ignoreRules: await loadIgnoreRules(settings.ignoreRulesPath?.trim() || defaultIgnoreRulesPath()),
-      ignoredFindingIds: settings.ignoredFindings,
-      dedupWithExistingTools: settings.dedupWithExistingTools
-    }
-  );
+  const filePath = filePathFromUri(document.uri);
+  const deepSecFindings = await scanWithDeepSecCli({
+    filePath,
+    layers,
+    pythonPath: settings.deepsecPythonPath?.trim() || process.env.DEEPSEC_PYTHON
+  });
+  const result: ScanResult = deepSecFindings
+    ? {
+        findings: deepSecFindings,
+        elapsedMs: 0,
+        performance: {
+          file: filePath,
+          lineCount: document.lineCount,
+          timings: { totalMs: 0, l1Ms: 0, l2Ms: 0, l3Ms: 0, customRulesMs: 0, postProcessingMs: 0 },
+          budgets: [],
+          budgetExceeded: false
+        }
+      }
+    : await scanSourceFile(
+        {
+          filePath,
+          text: document.getText(),
+          languageId: document.languageId
+        },
+        {
+          packageVerification: options.packageVerification ?? settings.packageVerification,
+          detectionLayers: layers,
+          l3Analyzer: layers.l3 ? await createLspL3Analyzer() : undefined,
+          packageVerifier: verifier,
+          customRules: await loadConfiguredCustomRules(),
+          ignoreRules: await loadIgnoreRules(settings.ignoreRulesPath?.trim() || defaultIgnoreRulesPath()),
+          ignoredFindingIds: settings.ignoredFindings,
+          dedupWithExistingTools: settings.dedupWithExistingTools
+        }
+      );
   if (!isCurrentDocumentRevision(document, documentVersion, revision)) {
     return;
   }

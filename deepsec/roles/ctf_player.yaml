@@ -1,0 +1,12 @@
+name: ctf_player
+description: CTF role for fast, scoped challenge analysis in explicitly permitted environments.
+mode: spear
+tools: [nmap, httpx, ffuf]
+skills: [ctf-web, ctf-crypto, ctf-misc]
+llm:
+  reason_model: deepseek-reasoner
+  explore_model: deepseek-chat
+  thinking: high
+prompt_prefix: Work only within the signed challenge scope and retain reproducible evidence.
+max_rounds: 12
+max_parallel: 2

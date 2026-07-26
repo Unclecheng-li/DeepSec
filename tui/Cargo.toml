@@ -1,0 +1,15 @@
+[package]
+name = "deepsec-tui"
+version = "0.2.0"
+edition = "2021"
+description = "Terminal workbench for DeepSec"
+
+[[bin]]
+name = "deepsec-tui-native"
+path = "src/main.rs"
+
+[dependencies]
+crossterm = "0.28"
+ratatui = { version = "0.29", features = ["unstable-rendered-line-info"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"

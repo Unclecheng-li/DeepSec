@@ -1,0 +1,17 @@
+name: httpx
+description: HTTP probing and fingerprinting tool for authorized hosts.
+category: recon
+install:
+  check: httpx -version
+  command: go install github.com/projectdiscovery/httpx/cmd/httpx@latest
+  method: go_install
+parameters:
+  target: "{target}"
+  status_code: true
+  title: true
+  timeout: 120
+output:
+  format: json
+  parse: true
+skills: [recon/http-probing, recon/service-detection]
+min_role: [pentester, redteam, ctf_player]

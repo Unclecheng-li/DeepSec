@@ -23,7 +23,7 @@ test("VSCode routes L3 fixes through a confirmation command", async () => {
 
   assert.match(source, /finding\.detection_layer === "L3"/);
   assert.match(source, /VibeGuard received this replacement from an LLM/);
-  assert.match(source, /command: "vibeguard\.applyFix"/);
+  assert.match(source, /command: "deepsec\.applyFix"/);
 });
 
 test("VSCode offers all verified package replacement candidates as quick fixes", async () => {
@@ -48,7 +48,7 @@ test("VSCode critical package alerts let users choose a verified replacement", a
 test("VSCode findings sidebar exposes safe fixes without bypassing package or L3 review", async () => {
   const source = await fs.readFile("src/extension.ts", "utf8");
 
-  assert.match(source, /registerCommand\("vibeguard\.applyFindingFix"/);
+  assert.match(source, /registerDeepSecCommand\(context, "deepsec\.applyFindingFix"/);
   assert.match(source, /applyFindingFixFromSidebar/);
   assert.match(source, /finding\.type === "hallucinated_package"/);
   assert.match(source, /await pickPackageReplacement\(finding\)/);
@@ -68,7 +68,7 @@ test("VSCode rechecks finding evidence before a single fix edits a document", as
 test("VSCode reviews current L3 edits before applying a Pro file batch", async () => {
   const source = await fs.readFile("src/extension.ts", "utf8");
 
-  assert.match(source, /registerCommand\("vibeguard\.applyAllProFixes"/);
+  assert.match(source, /registerDeepSecCommand\(context, "deepsec\.applyAllProFixes"/);
   assert.match(source, /configuredLlmProvider\(loadedConfig\.config\) !== "vibeguard"/);
   assert.match(source, /pickReviewedL3Fixes/);
   assert.match(source, /Review VibeGuard Pro LLM Fixes/);

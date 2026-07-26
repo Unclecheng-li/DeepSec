@@ -17,14 +17,14 @@ import java.util.Set;
 
 /** Describes the default Node.js server and opt-in native Rust L1 preview. */
 final class VibeGuardLspServerDescriptor extends ProjectWideLspServerDescriptor {
-  private static final String SERVER_RESOURCE = "lsp/vibeguard-lsp.js";
+  private static final String SERVER_RESOURCE = "lsp/deepsec-lsp.js";
   private static final Set<String> SUPPORTED_EXTENSIONS = Set.of(
       "cjs", "go", "gradle", "groovy", "java", "js", "json", "jsx", "kt", "kts", "mjs",
       "py", "rs", "toml", "ts", "tsx", "xml"
   );
 
   VibeGuardLspServerDescriptor(@NotNull Project project) {
-    super(project, "VibeGuard");
+    super(project, "DeepSec");
   }
 
   static boolean isSupported(@NotNull VirtualFile file) {
@@ -50,37 +50,43 @@ final class VibeGuardLspServerDescriptor extends ProjectWideLspServerDescriptor 
   }
 
   private static String nativeServerPath() {
-    return configuredValue("VIBEGUARD_NATIVE_LSP_PATH", "vibeguard.native.lsp.path", "");
+    return configuredValue("DEEPSEC_NATIVE_LSP_PATH", "deepsec.native.lsp.path", "VIBEGUARD_NATIVE_LSP_PATH", "vibeguard.native.lsp.path", "");
   }
 
   private static String nodeExecutable() {
-    return configuredValue("VIBEGUARD_NODE_PATH", "vibeguard.node.path", "node");
+    return configuredValue("DEEPSEC_NODE_PATH", "deepsec.node.path", "VIBEGUARD_NODE_PATH", "vibeguard.node.path", "node");
   }
 
   private static String serverPath() {
-    String configuredPath = configuredValue("VIBEGUARD_LSP_PATH", "vibeguard.lsp.path", "");
+    String configuredPath = configuredValue("DEEPSEC_LSP_PATH", "deepsec.lsp.path", "VIBEGUARD_LSP_PATH", "vibeguard.lsp.path", "");
     return configuredPath.isBlank() ? extractBundledServer().toString() : configuredPath;
   }
 
-  private static String configuredValue(String environmentVariable, String systemProperty, String fallback) {
+  private static String configuredValue(String environmentVariable, String systemProperty, String legacyEnvironmentVariable, String legacySystemProperty, String fallback) {
     String configured = System.getProperty(systemProperty);
     if (configured == null || configured.isBlank()) {
       configured = System.getenv(environmentVariable);
+    }
+    if (configured == null || configured.isBlank()) {
+      configured = System.getProperty(legacySystemProperty);
+    }
+    if (configured == null || configured.isBlank()) {
+      configured = System.getenv(legacyEnvironmentVariable);
     }
     return configured == null || configured.isBlank() ? fallback : configured.trim();
   }
 
   private static Path extractBundledServer() {
-    Path target = Path.of(PathManager.getSystemPath(), "vibeguard", "lsp", "vibeguard-lsp.js");
+    Path target = Path.of(PathManager.getSystemPath(), "deepsec", "lsp", "deepsec-lsp.js");
     try (InputStream source = VibeGuardLspServerDescriptor.class.getClassLoader().getResourceAsStream(SERVER_RESOURCE)) {
       if (source == null) {
-        throw new IllegalStateException("VibeGuard LSP bundle is missing from the plugin distribution.");
+        throw new IllegalStateException("DeepSec LSP bundle is missing from the plugin distribution.");
       }
       Files.createDirectories(target.getParent());
       Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
       return target;
     } catch (IOException error) {
-      throw new IllegalStateException("Unable to prepare the VibeGuard LSP server.", error);
+      throw new IllegalStateException("Unable to prepare the DeepSec LSP server.", error);
     }
   }
 }

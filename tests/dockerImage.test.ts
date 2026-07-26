@@ -5,25 +5,19 @@ import test from "node:test";
 
 const repositoryRoot = path.resolve(__dirname, "../..");
 
-test("Docker image builds the bundled CLI and keeps git available for AI scans", async () => {
-  const [dockerfile, dockerignore, entrypoint] = await Promise.all([
+test("Docker image builds the DeepSec Python core and native TUI", async () => {
+  const [dockerfile, dockerignore] = await Promise.all([
     fs.readFile(path.join(repositoryRoot, "Dockerfile"), "utf8"),
-    fs.readFile(path.join(repositoryRoot, ".dockerignore"), "utf8"),
-    fs.readFile(path.join(repositoryRoot, "scripts", "docker-entrypoint.sh"), "utf8")
+    fs.readFile(path.join(repositoryRoot, ".dockerignore"), "utf8")
   ]);
 
-  assert.match(dockerfile, /^FROM node:22-bookworm-slim AS build/m);
-  assert.match(dockerfile, /RUN npm ci/);
-  assert.match(dockerfile, /RUN npm run build/);
-  assert.match(dockerfile, /apt-get install --yes --no-install-recommends git/);
-  assert.match(dockerfile, /COPY --from=build \/opt\/vibeguard\/dist \/opt\/vibeguard\/dist/);
-  assert.match(dockerfile, /COPY scripts\/docker-entrypoint\.sh \/usr\/local\/bin\/vibeguard-entrypoint/);
-  assert.match(dockerfile, /RUN chmod 755 \/usr\/local\/bin\/vibeguard-entrypoint/);
-  assert.match(dockerfile, /ENTRYPOINT \["\/usr\/local\/bin\/vibeguard-entrypoint"\]/);
-  assert.match(entrypoint, /\[ "\$\{1:-\}" = "findings" \] && \[ "\$\{2:-\}" = "serve" \]/);
-  assert.match(entrypoint, /VIBEGUARD_TELEMETRY_COLLECTION/);
-  assert.match(entrypoint, /--telemetry-collection/);
-  assert.match(entrypoint, /VIBEGUARD_TELEMETRY_MAX_EVENTS_PER_MINUTE/);
+  assert.match(dockerfile, /^FROM rust:1-bookworm AS tui-build/m);
+  assert.match(dockerfile, /^FROM python:3\.12-slim/m);
+  assert.match(dockerfile, /cargo build --release --locked/);
+  assert.match(dockerfile, /pip install --no-cache-dir \./);
+  assert.match(dockerfile, /deepsec-tui-native/);
+  assert.match(dockerfile, /ENTRYPOINT \["deepsec"\]/);
+  assert.match(dockerfile, /CMD \["tui"\]/);
   assert.match(dockerignore, /^node_modules\/$/m);
   assert.match(dockerignore, /^dist\/$/m);
 });
@@ -45,7 +39,7 @@ test("development and release workflows pin Node.js 22 LTS", async () => {
   assert.match(packageJson.scripts?.test ?? "", /assert-node-lts/);
 });
 
-test("CI uses Node 24-compatible actions and leaves actionable diagnostics on failure", async () => {
+test("CI uses current actions and validates DeepSec delivery targets", async () => {
   const [ci, release] = await Promise.all([
     fs.readFile(path.join(repositoryRoot, ".github", "workflows", "ci.yml"), "utf8"),
     fs.readFile(path.join(repositoryRoot, ".github", "workflows", "release.yml"), "utf8")
@@ -60,8 +54,8 @@ test("CI uses Node 24-compatible actions and leaves actionable diagnostics on fa
   assert.match(release, /actions\/setup-java@v5/);
   assert.match(ci, /chmod \+x \.\/gradlew/);
   assert.match(release, /chmod \+x \.\/gradlew/);
-  assert.match(ci, /vibeguard-node-test-log/);
-  assert.match(ci, /request_dashboard \/healthz/);
-  assert.match(ci, /--retry-all-errors/);
-  assert.match(ci, /docker logs vibeguard-dashboard/);
+  assert.match(ci, /python -m pytest tests\/deepsec/);
+  assert.match(ci, /cargo check --locked --manifest-path tui\/Cargo\.toml/);
+  assert.match(ci, /docker compose config --quiet/);
+  assert.match(ci, /deepsec:ci shield scan/);
 });

@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "deepsec"
+version = "0.2.0"
+description = "DeepSec unified code-security auditing and authorized penetration-testing toolkit"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "UncleC" }]
+keywords = ["security", "sast", "ai-security", "pentest", "deepseek"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Security",
+]
+dependencies = [
+  "typer>=0.12.0",
+  "rich>=13.0.0",
+  "prompt_toolkit>=3.0.0",
+  "httpx>=0.27.0",
+  "openai>=1.30.0",
+  "pydantic>=2.0.0",
+  "pydantic-settings>=2.0.0",
+  "pyyaml>=6.0",
+  "toml>=0.10.0",
+  "jinja2>=3.1.0",
+  "textual>=0.40.0",
+  "tomli>=2.0; python_version < '3.11'",
+  "beautifulsoup4>=4.12.0",
+  "lxml>=4.9.0",
+  "pycryptodome>=3.19.0",
+  "tree-sitter>=0.23.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+pdf = ["reportlab>=4.0"]
+traffic = ["mitmproxy>=10.0", "playwright>=1.40"]
+
+[project.scripts]
+deepsec = "deepsec.cli.app:app"
+deepsec-tui = "deepsec.cli.tui:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["deepsec"]
+
+[tool.hatch.build]
+include = [
+  "deepsec/**/*.py",
+  "deepsec/**/*.yaml",
+  "deepsec/**/*.json",
+  "deepsec/**/*.md",
+  "README.md",
+  "DEEPSEC.md",
+  "LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests/deepsec"]
+addopts = "-q"

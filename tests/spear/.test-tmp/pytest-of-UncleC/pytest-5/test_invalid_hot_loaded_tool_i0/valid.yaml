@@ -1,0 +1,8 @@
+name: valid
+description: Valid catalog entry
+category: recon
+install:
+  check: valid --version
+  command: pip install valid
+  method: pip
+min_role: [pentester]

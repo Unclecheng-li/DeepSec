@@ -22,9 +22,14 @@ npm-debug.log*
 
 # Rust
 rust-lsp/target/
+tui/target/
 
 # VibeGuard local data
 .vibeguard/
+
+# Generated scan output
+deepsec.sarif
+deepsec-report.*
 
 # JetBrains
 jetbrains/.gradle/
@@ -38,6 +43,11 @@ jetbrains/.intellijPlatform/
 
 # Docs (internal)
 doc/
+
+# Python cache
+__pycache__/
+*.pyc
+.pytest_cache/
 
 # Environment files
 *.env

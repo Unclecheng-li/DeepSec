@@ -19,27 +19,28 @@ test("VSCode manifest exposes dashboard, batch-fix, and Pro subscription command
       };
     };
   };
-  const command = manifest.contributes.commands.find((item) => item.command === "vibeguard.exportDashboard");
-  const batchFixCommand = manifest.contributes.commands.find((item) => item.command === "vibeguard.applyAllSafeFixes");
-  const proBatchFixCommand = manifest.contributes.commands.find((item) => item.command === "vibeguard.applyAllProFixes");
-  const findingFixCommand = manifest.contributes.commands.find((item) => item.command === "vibeguard.applyFindingFix");
-  const subscriptionCommand = manifest.contributes.commands.find((item) => item.command === "vibeguard.showSubscriptionStatus");
+  const command = manifest.contributes.commands.find((item) => item.command === "deepsec.exportDashboard");
+  const batchFixCommand = manifest.contributes.commands.find((item) => item.command === "deepsec.applyAllSafeFixes");
+  const proBatchFixCommand = manifest.contributes.commands.find((item) => item.command === "deepsec.applyAllProFixes");
+  const findingFixCommand = manifest.contributes.commands.find((item) => item.command === "deepsec.applyFindingFix");
+  const subscriptionCommand = manifest.contributes.commands.find((item) => item.command === "deepsec.showSubscriptionStatus");
   const findingFixMenu = manifest.contributes.menus["view/item/context"].find(
-    (item) => item.command === "vibeguard.applyFindingFix"
+    (item) => item.command === "deepsec.applyFindingFix"
   );
 
-  assert.ok(manifest.activationEvents.includes("onCommand:vibeguard.exportDashboard"));
-  assert.ok(manifest.activationEvents.includes("onCommand:vibeguard.applyAllSafeFixes"));
-  assert.ok(manifest.activationEvents.includes("onCommand:vibeguard.applyAllProFixes"));
-  assert.ok(manifest.activationEvents.includes("onCommand:vibeguard.applyFindingFix"));
-  assert.ok(manifest.activationEvents.includes("onCommand:vibeguard.showSubscriptionStatus"));
+  assert.ok(manifest.activationEvents.includes("onCommand:deepsec.exportDashboard"));
+  assert.ok(manifest.activationEvents.includes("onCommand:deepsec.applyAllSafeFixes"));
+  assert.ok(manifest.activationEvents.includes("onCommand:deepsec.applyAllProFixes"));
+  assert.ok(manifest.activationEvents.includes("onCommand:deepsec.applyFindingFix"));
+  assert.ok(manifest.activationEvents.includes("onCommand:deepsec.showSubscriptionStatus"));
   assert.ok(command);
-  assert.equal(command.title, "VibeGuard: Export Findings Dashboard");
-  assert.equal(batchFixCommand?.title, "VibeGuard: Apply All Safe Fixes in Current File");
-  assert.equal(proBatchFixCommand?.title, "VibeGuard: Review and Apply All Pro Fixes in Current File");
-  assert.equal(findingFixCommand?.title, "VibeGuard: Apply Finding Fix");
-  assert.equal(findingFixMenu?.when, "view == vibeguardFindings && viewItem == vibeguardFindingFixable");
-  assert.equal(subscriptionCommand?.title, "VibeGuard: Show Pro Subscription Status");
+  assert.equal(command.title, "DeepSec: Export Findings Dashboard");
+  assert.equal(batchFixCommand?.title, "DeepSec: Apply All Safe Fixes in Current File");
+  assert.equal(proBatchFixCommand?.title, "DeepSec: Review and Apply All Pro Fixes in Current File");
+  assert.equal(findingFixCommand?.title, "DeepSec: Apply Finding Fix");
+  assert.equal(findingFixMenu?.when, "view == deepsecFindings && viewItem == vibeguardFindingFixable");
+  assert.equal(subscriptionCommand?.title, "DeepSec: Show Pro Subscription Status");
+  assert.equal(manifest.contributes.configuration.properties["deepsec.packageVerification"]?.default, "remote");
   assert.equal(manifest.contributes.configuration.properties["vibeguard.packageVerification"]?.default, "remote");
   assert.match(vscodeIgnore, /^deploy\/\*\*$/m);
 });

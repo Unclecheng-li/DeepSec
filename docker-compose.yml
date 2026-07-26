@@ -1,0 +1,17 @@
+services:
+  deepsec:
+    build:
+      context: .
+    image: deepsec:local
+    stdin_open: true
+    tty: true
+    environment:
+      HOME: /data
+      DEEPSEC_HOME: /data
+    volumes:
+      - .:/workspace
+      - deepsec-data:/data
+    command: ["tui"]
+
+volumes:
+  deepsec-data:

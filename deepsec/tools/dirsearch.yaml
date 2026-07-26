@@ -1,0 +1,16 @@
+name: dirsearch
+description: Directory and file discovery tool for authorized web applications.
+category: recon
+install:
+  check: dirsearch --version
+  command: pip install dirsearch
+  method: pip
+parameters:
+  url: "{target}"
+  extensions: "php,asp,aspx,jsp,html,js"
+  timeout: 300
+output:
+  format: json
+  parse: true
+skills: [recon/content-discovery]
+min_role: [pentester, redteam, ctf_player]

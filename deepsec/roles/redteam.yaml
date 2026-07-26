@@ -1,0 +1,12 @@
+name: RedTeam
+description: Authorized red-team role with strict scope enforcement.
+mode: spear
+tools: [nmap, nuclei, httpx]
+skills: [recon/*, web-security-advanced]
+llm:
+  reason_model: deepseek-reasoner
+  explore_model: deepseek-chat
+  thinking: high
+prompt_prefix: Stay within the recorded authorized target scope at every step.
+max_rounds: 20
+max_parallel: 2

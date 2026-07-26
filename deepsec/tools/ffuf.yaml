@@ -1,0 +1,16 @@
+name: ffuf
+description: Endpoint and parameter fuzzing tool for authorized targets.
+category: recon
+install:
+  check: ffuf -V
+  command: go install github.com/ffuf/ffuf/v2@latest
+  method: go_install
+parameters:
+  url: "{target}/FUZZ"
+  wordlist: "{wordlist}"
+  timeout: 300
+output:
+  format: json
+  parse: true
+skills: [recon/content-discovery, recon/parameter-discovery]
+min_role: [pentester, redteam, ctf_player]

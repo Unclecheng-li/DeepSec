@@ -44,17 +44,17 @@ test("VSCode registers the AI Deep Scan panel and preserves L1/L2 while replacin
     };
   };
 
-  assert.match(extension, /registerWebviewViewProvider\("vibeguardL3Panel", l3Panel\)/);
+  assert.match(extension, /registerWebviewViewProvider\("deepsecL3Panel", l3Panel\)/);
   assert.match(extension, /runManualL3Review/);
   assert.match(extension, /mergeFindingsForExecutedLayers\(existing, outcome\.findings, \{ l3: true \}\)/);
   assert.match(extension, /l3Panel\.cancelDocument\(document\)/);
   assert.match(extension, /async function scanWorkspace\(\)[\s\S]{0,1000}includeL3: false/);
   assert.match(provider, /private preparingScan = false/);
   assert.match(provider, /cancelDocument\(document: vscode\.TextDocument\)/);
-  assert.equal(packageJson.activationEvents.includes("onView:vibeguardL3Panel"), true);
-  assert.equal(packageJson.contributes.commands.some((command) => command.command === "vibeguard.scanWithAi"), true);
-  assert.equal(packageJson.contributes.views.vibeguard.some((view) => view.id === "vibeguardL3Panel" && view.type === "webview"), true);
-  const activityBar = packageJson.contributes.viewsContainers.activitybar.find((container) => container.id === "vibeguard");
+  assert.equal(packageJson.activationEvents.includes("onView:deepsecL3Panel"), true);
+  assert.equal(packageJson.contributes.commands.some((command) => command.command === "deepsec.scanWithAi"), true);
+  assert.equal(packageJson.contributes.views.deepsec.some((view) => view.id === "deepsecL3Panel" && view.type === "webview"), true);
+  const activityBar = packageJson.contributes.viewsContainers.activitybar.find((container) => container.id === "deepsec");
   assert.equal(activityBar?.icon, "$(shield)");
   assert.match(packageScript, /vibeguard-\$\{version\}\.vsix/);
   assert.match(packageScript, /process\.platform === "win32" \? "npm\.cmd" : "npm"/);

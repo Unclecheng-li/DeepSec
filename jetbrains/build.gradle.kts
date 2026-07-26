@@ -7,8 +7,8 @@ plugins {
   id("org.jetbrains.intellij.platform") version "2.18.0"
 }
 
-group = "dev.vibeguard"
-version = "0.1.5"
+group = "dev.deepsec"
+version = "0.2.0"
 
 repositories {
   mavenCentral()
@@ -57,7 +57,7 @@ tasks.named<Copy>("processResources") {
   dependsOn(buildVibeGuardLsp)
   from(lspBundle) {
     into("lsp")
-    rename { "vibeguard-lsp.js" }
+    rename { "deepsec-lsp.js" }
   }
   from(rootProjectDir.resolve("dist/tree-sitter")) {
     into("lsp/tree-sitter")

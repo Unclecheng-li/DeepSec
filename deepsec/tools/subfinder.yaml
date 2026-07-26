@@ -1,0 +1,15 @@
+name: subfinder
+description: Passive subdomain enumeration tool for an authorized domain.
+category: recon
+install:
+  check: subfinder -version
+  command: go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest
+  method: go_install
+parameters:
+  domain: "{target}"
+  timeout: 180
+output:
+  format: json
+  parse: true
+skills: [recon/subdomain-enumeration]
+min_role: [pentester, redteam]
