@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/VibeGuardIcon.png" width="120" height="120" alt="DeepSec">
+<img width="1920" height="1920" alt="deepsec-icon" src="https://github.com/user-attachments/assets/44859857-7122-40f7-812f-2c7f81515182" />
 
 <h1>DeepSec</h1>
 
@@ -25,18 +25,15 @@
 
 </div>
 
+---
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/deepsec-tui.gif" alt="DeepSec TUI Demo" width="640">
-
-**DeepSec TUI terminal workbench** — Shield scan, Spear penetration, live animations
-
-[Watch full MP4 video](https://github.com/Unclecheng-li/DeepSec/releases/download/v0.1.5/deepsec-tui.mp4)
+**DeepSec TUI terminal workbench**
+https://github.com/user-attachments/assets/94571a46-69ec-449a-a7ad-3c7b68ef9f51
+— Shield scan, Spear penetration, live animations
 
 </div>
-
 ---
-
 ## What is DeepSec?
 
 DeepSec is an AI security platform evolved from VibeGuard. It unifies **Shield** (AI code security audit) and **Spear** (authorized penetration testing engine) into a single CLI, a TUI terminal workbench, and a set of IDE plugins.
