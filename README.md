@@ -232,6 +232,16 @@ deepsec restore <snapshot-id>
 ## Screenshots
 
 <div align="center">
+
+<video src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/deepsec-tui.mp4" width="100%" controls muted>
+  Your browser does not support the video tag.
+</video>
+
+<sub>DeepSec TUI terminal workbench — Shield scan, Spear penetration, live animations</sub>
+
+</div>
+
+<div align="center">
 <table>
 <tr>
 <td align="center"><b>Real-time diagnostics</b></td>
