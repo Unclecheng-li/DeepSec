@@ -25,6 +25,16 @@
 
 </div>
 
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/deepsec-tui.gif" alt="DeepSec TUI Demo" width="640">
+
+**DeepSec TUI terminal workbench** — Shield scan, Spear penetration, live animations
+
+[Watch full MP4 video](https://github.com/Unclecheng-li/DeepSec/releases/download/v0.1.5/deepsec-tui.mp4)
+
+</div>
+
 ---
 
 ## What is DeepSec?
@@ -230,16 +240,6 @@ deepsec restore <snapshot-id>
 ---
 
 ## Screenshots
-
-<div align="center">
-
-<img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/deepsec-tui.gif" alt="DeepSec TUI Demo" width="640">
-
-**DeepSec TUI terminal workbench** — Shield scan, Spear penetration, live animations
-
-[Watch full MP4 video](https://github.com/Unclecheng-li/DeepSec/releases/download/v0.1.5/deepsec-tui.mp4)
-
-</div>
 
 <div align="center">
 <table>
