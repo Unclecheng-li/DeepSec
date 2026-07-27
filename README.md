@@ -1,6 +1,6 @@
 <div align="center">
 
-<img width="1920" height="1920" alt="deepsec-icon" src="https://github.com/user-attachments/assets/44859857-7122-40f7-812f-2c7f81515182" />
+<img src="https://github.com/user-attachments/assets/44859857-7122-40f7-812f-2c7f81515182" width="120" height="120" alt="DeepSec">
 
 <h1>DeepSec</h1>
 
@@ -29,7 +29,11 @@
 <div align="center">
 
 **DeepSec TUI terminal workbench**
-https://github.com/user-attachments/assets/94571a46-69ec-449a-a7ad-3c7b68ef9f51
+
+
+https://github.com/user-attachments/assets/2b041a72-4566-48f1-aca8-2c685c0a52cc
+
+
 — Shield scan, Spear penetration, live animations
 
 </div>
