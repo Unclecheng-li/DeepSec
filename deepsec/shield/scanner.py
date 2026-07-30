@@ -21,7 +21,25 @@ from .rules.sast import scan_sast
 
 
 SUPPORTED_SUFFIXES = {".py": "python", ".js": "javascript", ".mjs": "javascript", ".cjs": "javascript", ".ts": "typescript", ".tsx": "tsx", ".jsx": "jsx", ".java": "java", ".go": "go", ".rb": "ruby", ".php": "php", ".cs": "csharp", ".rs": "rust", ".yaml": "yaml", ".yml": "yaml", ".json": "json"}
-IGNORED_DIRECTORIES = {".git", ".deepsec", "node_modules", "dist", "out", "build", "coverage", ".venv", "venv", "__pycache__"}
+
+# Code you did not write and cannot fix. Always skipped: a finding here is noise
+# no matter how the scan is configured.
+IGNORED_DIRECTORIES = {".git", ".deepsec", "node_modules", "bower_components", "dist", "out", "build", "coverage", ".venv", "venv", ".venv64", "__pycache__", "vendor", "third_party", "site-packages", ".next", ".nuxt", ".svelte-kit", "Pods", ".tox", ".mypy_cache", ".pytest_cache", ".gradle"}
+
+# Code you did write, but where a hardcoded credential or an eval() is the point.
+# Skipped by default, restored with ScanOptions(include_tests=True).
+TEST_DIRECTORIES = {"test", "tests", "__tests__", "spec", "specs", "fixtures", "fixture", "testdata", "test_data", "examples", "example", "demo", "demos", "mocks", "__mocks__", "testvectors", "wycheproof", "benchmarks"}
+
+# Build products and lockfiles: generated, minified, or vendored blobs where line
+# numbers point at nothing a human can act on.
+GENERATED_SUFFIXES = (".min.js", ".min.css", ".bundle.js", ".bundle.css", "-lock.json", ".lock.json", ".map", ".pb.go", "_pb2.py", ".g.dart", ".generated.ts")
+TEST_FILE_MARKERS = (".test.", ".spec.", "_test.", "_spec.")
+
+# Shield's own output. Reports embed the evidence strings they describe, so
+# scanning a directory twice made the first run's report look like vulnerable
+# source and produced findings at line numbers past the end of the real file.
+REPORT_FILENAMES = {"deepsec-report.json", "deepsec-report.sarif", "deepsec.sarif", "deepsec-findings.json"}
+
 
 
 @dataclass(slots=True)
@@ -32,6 +50,7 @@ class ScanOptions:
     remote_l3: bool = False
     agent_audit: bool = False
     dedup: bool = True
+    include_tests: bool = False
     ignore_rules: IgnoreRules = field(default_factory=IgnoreRules)
 
 
@@ -82,7 +101,7 @@ def scan_path(
 ) -> ScanResult:
     options = options or ScanOptions()
     started = perf_counter()
-    files = _source_files(path)
+    files = _source_files(path, options.include_tests)
     all_findings: list[DeepSecFinding] = []
     layers: set[str] = set()
     for source in files:
@@ -101,10 +120,28 @@ def scan_path(
     return ScanResult(findings=all_findings, elapsed_ms=(perf_counter() - started) * 1000, files_scanned=len(files), layers=tuple(sorted(layers)))
 
 
-def _source_files(path: Path) -> list[Path]:
+def _source_files(path: Path, include_tests: bool = False) -> list[Path]:
     path = path.expanduser().resolve()
     if path.is_file():
         return [path] if path.suffix.lower() in SUPPORTED_SUFFIXES else []
     if not path.is_dir():
         raise ValueError(f"Path does not exist: {path}")
-    return [candidate for candidate in path.rglob("*") if candidate.is_file() and candidate.suffix.lower() in SUPPORTED_SUFFIXES and not any(part in IGNORED_DIRECTORIES for part in candidate.relative_to(path).parts)]
+    return [candidate for candidate in path.rglob("*") if candidate.is_file() and _is_scannable(candidate, candidate.relative_to(path), include_tests)]
+
+
+def _is_scannable(candidate: Path, relative: Path, include_tests: bool) -> bool:
+    if candidate.suffix.lower() not in SUPPORTED_SUFFIXES:
+        return False
+    name = candidate.name
+    if name in REPORT_FILENAMES or name.lower().endswith(GENERATED_SUFFIXES):
+        return False
+    directories = relative.parts[:-1]
+    # Virtualenvs are named .venv, .venv64, .venv311, venv, env... match by shape
+    # rather than trying to enumerate every convention.
+    if any(part in IGNORED_DIRECTORIES or part.startswith((".venv", "venv-", "venv3")) for part in directories):
+        return False
+    if include_tests:
+        return True
+    if any(part.lower() in TEST_DIRECTORIES for part in directories):
+        return False
+    return not any(marker in name.lower() for marker in TEST_FILE_MARKERS)

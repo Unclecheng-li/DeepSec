@@ -59,6 +59,7 @@ def shield_scan(
     output: Annotated[Path | None, typer.Option("--output", "-o")] = None,
     remote_l3: Annotated[bool, typer.Option(help="Send source to the configured LLM for opt-in L3 review")] = False,
     ignore_file: Annotated[Path | None, typer.Option("--ignore-file", help="YAML ignore rule file")] = None,
+    include_tests: Annotated[bool, typer.Option("--include-tests", help="Also scan test, fixture, and example directories")] = False,
     stream: Annotated[bool, typer.Option("--stream", help="Emit newline-delimited JSON events for the DeepSec TUI")]=False,
 ) -> None:
     selected = _layers(layer)
@@ -70,6 +71,7 @@ def shield_scan(
         l3="L3" in selected,
         remote_l3=use_remote_l3,
         dedup=config.shield.dedup,
+        include_tests=include_tests,
         ignore_rules=load_ignore_rules(ignore_file),
     )
     if stream:
