@@ -61,7 +61,13 @@ class AgentCore:
     def __init__(self, config: VulnClawConfig, mcp_manager: Any = None) -> None:
         self.config = config
         self.mcp_manager = mcp_manager
-        self.context = ContextManager()
+        vault_dir = None
+        session_cfg = getattr(config, "session", None)
+        if session_cfg is not None:
+            out_dir = getattr(session_cfg, "output_dir", None)
+            if out_dir is not None:
+                vault_dir = out_dir / "context-vault"
+        self.context = ContextManager(vault_output_dir=vault_dir)
         self.active_role: str | None = None
         self._client = None
         # Failover key pool: prefer llm.api_keys, else the single llm.api_key.

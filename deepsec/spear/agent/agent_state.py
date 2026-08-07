@@ -832,3 +832,39 @@ class AgentState(BaseModel):
             "pending_questions": len(self.pending_questions),
             "complete_reason": self.complete_reason,
         }
+
+    # ── context compaction bookkeeping ─────────────────────────────────────
+    def update_context_digest(self, digest: str, evidence_ids: list[str] | None = None) -> None:
+        """Remember the latest deterministic digest for audit/telemetry."""
+        self._last_context_digest = digest
+        self._last_digest_evidence_ids = list(evidence_ids or [])
+
+    def record_context_compaction(
+        self,
+        *,
+        purpose: str = "agent",
+        reason: str = "threshold",
+        before_tokens: int = 0,
+        after_tokens: int = 0,
+        tool_tokens: int = 0,
+        removed_message_groups: int = 0,
+        retained_message_groups: int = 0,
+        evidence_ids: list[str] | None = None,
+    ) -> None:
+        """Append one compaction audit record (bounded ring buffer)."""
+        if not hasattr(self, "_context_compactions"):
+            self._context_compactions: list[dict[str, object]] = []
+        self._context_compactions.append(
+            {
+                "purpose": purpose,
+                "reason": reason,
+                "before_tokens": int(before_tokens),
+                "after_tokens": int(after_tokens),
+                "tool_tokens": int(tool_tokens),
+                "removed_message_groups": int(removed_message_groups),
+                "retained_message_groups": int(retained_message_groups),
+                "evidence_ids": list(evidence_ids or []),
+            }
+        )
+        # Bounded ring: keep the most recent 32 records only.
+        del self._context_compactions[:-32]

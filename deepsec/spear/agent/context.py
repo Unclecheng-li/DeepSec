@@ -15,6 +15,7 @@ from pydantic import AliasChoices, BaseModel, Field, PrivateAttr
 
 from deepsec.spear.agent.agent_state import AgentState
 from deepsec.spear.agent.reasoning_state import ReasoningState
+from deepsec.spear.agent.context_vault import VaultManager
 
 # ──────────────────────────────────────────────────────────────
 # 叶子类型已提取到 config/domain_models.py，此处重新导出以保持兼容。
@@ -1129,10 +1130,11 @@ class SessionState(BaseModel):
 class ContextManager:
     """Manages conversation context and session state."""
 
-    def __init__(self, max_history: int = 200) -> None:
+    def __init__(self, max_history: int = 200, vault_output_dir: Path | None = None) -> None:
         self.max_history = max_history
         self.messages: list[dict[str, Any]] = []
         self.state = SessionState()
+        self.vault = VaultManager(output_dir=vault_output_dir)
 
     def add_user_message(self, content: str) -> None:
         """Add a user message to context."""
@@ -1173,6 +1175,8 @@ class ContextManager:
         """Reset context and session state."""
         self.messages = []
         self.state = SessionState()
+        output_dir = getattr(self.vault, "_output_dir", None)
+        self.vault = VaultManager(output_dir=output_dir)
 
     def _trim(self) -> None:
         """Trim old messages to stay within limit.
@@ -1208,6 +1212,19 @@ class ContextManager:
                 else summary
             ).strip()
         return summary
+
+    def replace_history_with_digest(
+        self, digest_message: dict[str, Any], recent: list[dict[str, Any]] | None = None
+    ) -> None:
+        """Replace the whole history with a digest plus the retained recent tail.
+
+        Used by the deterministic compactor after a threshold compaction: the
+        old history is folded into one structured digest message, and only the
+        newest ``recent`` messages survive alongside it.
+        """
+        if recent is None:
+            recent = []
+        self.messages = [copy.deepcopy(digest_message), *(copy.deepcopy(m) for m in recent)]
 
     @staticmethod
     def _compress_messages(messages: list[dict[str, Any]]) -> str:

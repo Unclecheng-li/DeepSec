@@ -25,7 +25,35 @@ _DEFAULT_AUTO_TOOL_ROUNDS = 6
 
 
 def _fit_context_window(agent: AgentContext, messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Truncate messages to fit the configured context window (90% usable budget)."""
+    """Shape messages to fit the configured context window.
+
+    Delegates to :func:`deepsec.spear.agent.context_budget.prepare_context` so
+    long spear sessions get deterministic digest compaction (and vault-aware
+    shaping) instead of a blind truncation.  Falls back to the previous
+    sliding-window truncation when no model window is configured.
+    """
+    try:
+        from deepsec.spear.agent.context_budget import prepare_context
+
+        tools = None
+        build_tools = getattr(agent, "_build_openai_tools", None)
+        if callable(build_tools):
+            try:
+                tools = build_tools()
+            except Exception:
+                tools = None
+        result = prepare_context(agent, messages, tools, purpose="agent")
+        if result.compacted:
+            logger.info(
+                "context compaction: %d -> %d tokens (%s)",
+                result.before_tokens,
+                result.after_tokens,
+                result.reason,
+            )
+        return result.messages
+    except Exception:
+        logger.exception("prepare_context failed; falling back to truncation")
+
     llm = getattr(agent, "config", None)
     llm = getattr(llm, "llm", None) if llm is not None else None
     max_context = getattr(llm, "max_context_tokens", None)
@@ -50,7 +78,6 @@ def _fit_context_window(agent: AgentContext, messages: list[dict[str, Any]]) -> 
     except Exception:
         logger.warning("上下文截断: %d → %d tokens (预算 %d)", current, estimate_tokens(trimmed), budget)
     return trimmed
-
 
 def _resolve_auto_tool_rounds(agent: AgentContext, max_tool_rounds: int | None = None) -> int:
     """Resolve the internal follow-up cap for one model-led turn."""

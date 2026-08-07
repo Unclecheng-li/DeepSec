@@ -681,6 +681,100 @@ def build_openai_tools(mcp_manager: Any) -> list[dict[str, Any]]:
         }
     )
 
+    tools.append(
+        {
+            "type": "function",
+            "function": {
+                "name": "vault_status",
+                "description": (
+                    "Show the conversation vault status: active archive blocks, restored blocks, "
+                    "messages archived and approximate chars saved. Use before archiving so you "
+                    "know which ranges are already covered."
+                ),
+                "parameters": {"type": "object", "properties": {}},
+            },
+        }
+    )
+
+    tools.append(
+        {
+            "type": "function",
+            "function": {
+                "name": "vault_archive",
+                "description": (
+                    "Archive an older message range (by vault refs like <v#00042>..<v#00057>) into a "
+                    "compact pointer (tier 1), a distilled summary (tier 2, default), or the global "
+                    "digest (tier 3). The full original text is persisted to disk and can be restored "
+                    "with vault_restore or searched with vault_search. The recent tail and the last "
+                    "user message are protected and require force=true to override."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "start": {"type": "string", "description": "Start vault ref, e.g. <v#00042>"},
+                        "end": {"type": "string", "description": "End vault ref, e.g. <v#00057>"},
+                        "tier": {
+                            "type": "integer",
+                            "description": "1 = pointer, 2 = distilled summary (default), 3 = digest",
+                        },
+                        "topic": {"type": "string", "description": "Short label for the range"},
+                        "summary": {
+                            "type": "string",
+                            "description": "Optional distilled summary text (tier 2)",
+                        },
+                        "force": {
+                            "type": "boolean",
+                            "description": "Override protected-tail / phantom-range guards",
+                        },
+                    },
+                    "required": ["start", "end"],
+                },
+            },
+        }
+    )
+
+    tools.append(
+        {
+            "type": "function",
+            "function": {
+                "name": "vault_restore",
+                "description": (
+                    "Mark an archived range as restored so its messages become archivable again "
+                    "(the original text lives on disk / in the hot ring)."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "start": {"type": "string", "description": "Start vault ref"},
+                        "end": {"type": "string", "description": "End vault ref"},
+                    },
+                    "required": ["start", "end"],
+                },
+            },
+        }
+    )
+
+    tools.append(
+        {
+            "type": "function",
+            "function": {
+                "name": "vault_search",
+                "description": (
+                    "Search archived vault blocks by keyword. Returns bounded snippets from block "
+                    "topics/summaries without decompressing anything into the model window."
+                ),
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Keyword to search"},
+                        "limit": {"type": "integer", "description": "Max hits (default 8)"},
+                    },
+                    "required": ["query"],
+                },
+            },
+        }
+    )
+
     tools.extend(intel_tool_schemas())
 
     if mcp_manager:

@@ -320,6 +320,36 @@ class SessionConfig(BaseModel):
         default=0.9,
         description="Context-window ratio that may trigger auto compact when solve_auto_compact is enabled",
     )
+    # Deterministic context budget (the context_budget module reads these; the
+    # older solve_* knobs above remain as legacy aliases).
+    context_auto_compact: bool = Field(
+        default=True,
+        description="Auto-compact outbound messages when the request exceeds the trigger ratio",
+    )
+    context_compact_trigger_ratio: float = Field(
+        default=0.70,
+        description="Context-window ratio that triggers deterministic compaction",
+    )
+    context_compact_target_ratio: float = Field(
+        default=0.55,
+        description="Context-window ratio to compact down to",
+    )
+    context_recent_message_groups: int = Field(
+        default=12,
+        description="Minimum recent message groups retained across compaction",
+    )
+    context_summary_max_tokens: int = Field(
+        default=3500,
+        description="Maximum tokens for the deterministic digest summary",
+    )
+    context_output_reserve_tokens: int = Field(
+        default=0,
+        description="Tokens reserved for model output; 0 = auto (min(max_tokens, 8192))",
+    )
+    context_compaction_audit_enabled: bool = Field(
+        default=True,
+        description="Record deterministic compaction events in agent state",
+    )
     solve_auto_report: bool = Field(
         default=True,
         description="Automatically generate a markdown replay report when model-led solve completes",

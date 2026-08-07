@@ -271,6 +271,99 @@ def _agent_state_for_tool(agent: AgentContext) -> Any:
     return getattr(state, "agent_state", None)
 
 
+def _vault_for_tool(agent: AgentContext) -> Any:
+    """Resolve the session VaultManager attached to ContextManager."""
+    return getattr(getattr(agent, "context", None), "vault", None)
+
+
+def execute_vault_tool(agent: AgentContext, tool_name: str, args: dict[str, Any]) -> str:
+    """Dispatch the vault_* selective-archiving tools.
+
+    The vault lets the model archive older message ranges to a compact
+    pointer/summary (persisted to disk) and restore or search them later,
+    without ever re-entering the raw text into the model window.
+    """
+    vault = _vault_for_tool(agent)
+    if vault is None:
+        return "[!] Context vault is not available in this session"
+
+    try:
+        messages = getattr(agent.context, "get_messages", lambda: [])()
+    except Exception:
+        messages = []
+
+    if tool_name == "vault_status":
+        stats = vault.stats(messages)
+        active = [block for block in vault.blocks if not block.restored]
+        lines = [
+            f"Vault status: {stats['active_blocks']} active block(s), "
+            f"{stats['restored_blocks']} restored, "
+            f"{stats['archived_messages']} messages archived, "
+            f"~{stats['chars_saved']:,} chars saved",
+            f"Next ref: {stats['next_ref']}",
+        ]
+        if active:
+            lines.append("Blocks:")
+            for block in active[-12:]:
+                lines.append(
+                    f"  V{block.block_id:04d} tier{block.tier} "
+                    f"{block.start_ref}-{block.end_ref} "
+                    f"{block.message_count} msg ~{block.chars_saved}c {block.topic}"
+                )
+        else:
+            lines.append("No active blocks. Use vault_archive to archive a range.")
+        return "\n".join(lines)
+
+    if tool_name == "vault_archive":
+        start = str(args.get("start", "") or "")
+        end = str(args.get("end", "") or "")
+        tier = int(args.get("tier", 2) or 2)
+        topic = str(args.get("topic", "") or "")
+        summary = str(args.get("summary", "") or "")
+        force = bool(args.get("force", False))
+        if not start or not end:
+            return "[!] vault_archive requires start and end (vault refs like <v#00042>)"
+        ok, message, block = vault.archive_range(
+            messages,
+            start=start,
+            end=end,
+            tier=tier,
+            topic=topic,
+            summary=summary,
+            force=force,
+        )
+        if not ok:
+            return f"[!] {message}"
+        pointer = vault.render_pointer(block) if block.tier == 1 else vault.render_distill(block, summary)
+        return f"{message}\n\nReplacement in context:\n{pointer['content']}"
+
+    if tool_name == "vault_restore":
+        start = str(args.get("start", "") or "")
+        end = str(args.get("end", "") or "")
+        if not start or not end:
+            return "[!] vault_restore requires start and end refs"
+        ok, message, _ = vault.restore_range(messages, start=start, end=end)
+        return message if ok else f"[!] {message}"
+
+    if tool_name == "vault_search":
+        query = str(args.get("query", "") or "")
+        limit = int(args.get("limit", 8) or 8)
+        if not query:
+            return "[!] vault_search requires a query"
+        hits = vault.search(query, limit=limit)
+        if not hits:
+            return f"[!] No vault blocks match {query!r}"
+        lines = [f"Vault hits for {query!r}:"]
+        for hit in hits:
+            lines.append(
+                f"- {hit['block']} tier{hit['tier']} {hit['refs']} "
+                f"({hit['messages']} msg) {hit['topic']}: {hit['snippet'][:200]}"
+            )
+        return "\n".join(lines)
+
+    return f"[!] Unknown vault tool: {tool_name}"
+
+
 def execute_evidence_tool(agent: AgentContext, tool_name: str, args: dict[str, Any]) -> str:
     agent_state = _agent_state_for_tool(agent)
     if agent_state is None:
@@ -871,6 +964,9 @@ async def execute_mcp_tool(agent: AgentContext, tool_name: str, args: dict[str, 
 
     if tool_name in {"evidence_list", "evidence_view", "evidence_search"}:
         return execute_evidence_tool(agent, tool_name, args)
+
+    if tool_name in {"vault_archive", "vault_restore", "vault_search", "vault_status"}:
+        return execute_vault_tool(agent, tool_name, args)
 
     if tool_name == "source_extract":
         return await execute_source_extract(agent, args)
