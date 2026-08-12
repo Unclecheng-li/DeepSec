@@ -10,8 +10,8 @@
 |---|---|---|
 | Just want to try it, no coding | **Download TUI (Windows/Linux)** | 1 min |
 | VS Code user | **Install VS Code extension** | 2 min |
-| CLI user | **pip install** | 2 min |
-| Scan your own project | **pip install** (recommended) | 2 min |
+| CLI user | **pip install Release whl** | 2 min |
+| Scan your own project | **pip install Release whl** (recommended) | 2 min |
 
 > **Fastest path**: **download the TUI → run it → type `/shield scan <your-project>`** — results in 2 seconds.
 
@@ -30,15 +30,11 @@
 ### Option B: pip install CLI (recommended for devs)
 
 ```bash
-# Requires Python 3.10+
-pip install deepsec
+# Requires Python 3.10+; first download deepsec-0.2.0-py3-none-any.whl from Releases
+pip install deepsec-0.2.0-py3-none-any.whl
 ```
 
-> If PyPI hasn't synced yet, download `deepsec-0.2.0-py3-none-any.whl` from Releases and install directly:
->
-> ```bash
-> pip install deepsec-0.2.0-py3-none-any.whl
-> ```
+> Note: the `deepsec` package is not on PyPI yet (only the legacy `vibeguard` 0.1.1 is there). Use the GitHub Release whl.
 
 ### Option C: VS Code extension
 
@@ -71,7 +67,7 @@ Expected output (real run):
 | high     | ...\unsafe-ai-sample.ts:11 | sast_xss_inner_html | HTML is assigned     |
 |          |                     |                     | directly to the DOM. |
 +-----------------------------------------------------------------------------+
-Scanned 1 file(s) in 10.8 ms; 2 finding(s).
+Scanned 1 file(s) in ~10 ms; 2 finding(s).
 ```
 One `critical` (hardcoded OpenAI API key) + one `high` (XSS via `.innerHTML`) — the two most common AI mistakes.
 

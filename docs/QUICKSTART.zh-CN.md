@@ -11,8 +11,8 @@
 |---|---|---|
 | 不写代码，只想体验效果 | **下载 Windows/Linux 版 TUI** | 1 分钟 |
 | 开发者，用 VS Code | **安装 VS Code 插件** | 2 分钟 |
-| 开发者，用命令行 | **pip 安装 CLI** | 2 分钟 |
-| 想扫自己的项目 | **pip 安装 CLI**（推荐） | 2 分钟 |
+| 开发者，用命令行 | **pip 安装 Release 的 whl** | 2 分钟 |
+| 想扫自己的项目 | **pip 安装 Release 的 whl**（推荐） | 2 分钟 |
 
 > **最快体验路径**：**下载 TUI 版 → 双击 → 输入 `/shield scan 你的项目文件夹`**，2 秒出结果。
 
@@ -31,15 +31,11 @@
 ### 方式 B：pip 安装 CLI（开发者推荐）
 
 ```bash
-# 要求 Python 3.10+
-pip install deepsec
+# 要求 Python 3.10+；先下载 Release 里的 deepsec-0.2.0-py3-none-any.whl
+pip install deepsec-0.2.0-py3-none-any.whl
 ```
 
-> 如果 PyPI 还没同步，可以下载 Release 里的 `deepsec-0.2.0-py3-none-any.whl` 直接安装：
->
-> ```bash
-> pip install deepsec-0.2.0-py3-none-any.whl
-> ```
+> 说明：PyPI 上的 `deepsec` 包尚未同步（目前只有旧版 `vibeguard`），请以 GitHub Release 的 whl 为准。
 
 ### 方式 C：VS Code 插件（IDE 实时提示）
 
@@ -72,7 +68,7 @@ deepsec shield scan demo
 | high     | ...\unsafe-ai-sample.ts:11 | sast_xss_inner_html | HTML is assigned     |
 |          |                     |                     | directly to the DOM. |
 +-----------------------------------------------------------------------------+
-Scanned 1 file(s) in 10.8 ms; 2 finding(s).
+Scanned 1 file(s) in ~10 ms; 2 finding(s).
 ```
 一个 `critical`（硬编码 OpenAI API Key）+ 一个 `high`（XSS，`.innerHTML` 直接渲染用户输入）——这正是 AI 最爱犯的两种错。
 
