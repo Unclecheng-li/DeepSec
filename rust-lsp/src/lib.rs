@@ -1075,7 +1075,7 @@ impl NativeSqlitePackageIndex {
             // until the next publish rather than treating an unavailable read as absence.
             Err(error) => {
                 eprintln!(
-                    "VibeGuard Native L1 could not query the SQLite package cache for {}: {error}",
+                    "DeepSec Native L1 could not query the SQLite package cache for {}: {error}",
                     registry.config_identifier()
                 );
                 Some(false)
@@ -1116,7 +1116,7 @@ impl NativeSqlitePackageIndex {
             Ok(candidates) => Some(package_suggestions(package, candidates, limit)),
             Err(error) => {
                 eprintln!(
-                    "VibeGuard Native L1 could not search the SQLite package cache for {}: {error}",
+                    "DeepSec Native L1 could not search the SQLite package cache for {}: {error}",
                     registry.config_identifier()
                 );
                 Some(Vec::new())
@@ -1344,7 +1344,7 @@ fn load_shared_package_index() -> io::Result<NativePackageIndex> {
     let mut index = match load_package_index(&json_path) {
         Ok(index) => index,
         Err(error) if !explicit_json || explicit_sqlite => {
-            eprintln!("VibeGuard Native L1 could not load the JSON package index: {error}");
+            eprintln!("DeepSec Native L1 could not load the JSON package index: {error}");
             NativePackageIndex::default()
         }
         Err(error) => return Err(error),
@@ -1361,7 +1361,7 @@ fn load_shared_package_index() -> io::Result<NativePackageIndex> {
         Ok(Some(sqlite)) => index.sqlite = Some(Arc::new(sqlite)),
         Ok(None) => {}
         Err(error) if !index.is_empty() => {
-            eprintln!("VibeGuard Native L1 could not load the SQLite package cache: {error}");
+            eprintln!("DeepSec Native L1 could not load the SQLite package cache: {error}");
         }
         Err(error) => return Err(io::Error::other(error)),
     }
@@ -2920,7 +2920,7 @@ impl Backend {
     pub fn new(client: Client) -> Self {
         let ignore_rules_path = default_ignore_rules_path();
         let ignore_rules = load_ignore_rules(&ignore_rules_path).unwrap_or_else(|error| {
-            eprintln!("VibeGuard Native L1 could not load ignore rules: {error}");
+            eprintln!("DeepSec Native L1 could not load ignore rules: {error}");
             NativeIgnoreRules::default()
         });
         let documents = Arc::new(RwLock::new(HashMap::<Url, String>::new()));
@@ -2940,7 +2940,7 @@ impl Backend {
                         task_client
                             .log_message(
                                 MessageType::WARNING,
-                                format!("VibeGuard Native L1 could not load the shared package index: {error}"),
+                                format!("DeepSec Native L1 could not load the shared package index: {error}"),
                             )
                             .await;
                         return;
@@ -2949,7 +2949,7 @@ impl Backend {
                         task_client
                             .log_message(
                                 MessageType::WARNING,
-                                format!("VibeGuard Native L1 package-index loader stopped unexpectedly: {error}"),
+                                format!("DeepSec Native L1 package-index loader stopped unexpectedly: {error}"),
                             )
                             .await;
                         return;
@@ -2992,7 +2992,7 @@ impl Backend {
                 task_client
                     .log_message(
                         MessageType::INFO,
-                        format!("VibeGuard Native L1 loaded the {source_label}."),
+                        format!("DeepSec Native L1 loaded the {source_label}."),
                     )
                     .await;
             });
@@ -3040,7 +3040,7 @@ impl LanguageServer for Backend {
                 ..ServerCapabilities::default()
             },
             server_info: Some(ServerInfo {
-                name: "VibeGuard Native L1".to_owned(),
+                name: "DeepSec Native L1".to_owned(),
                 version: Some(env!("CARGO_PKG_VERSION").to_owned()),
             }),
             ..InitializeResult::default()
@@ -3051,7 +3051,7 @@ impl LanguageServer for Backend {
         self.client
             .log_message(
                 MessageType::INFO,
-                "VibeGuard Native L1 is ready. The Node LSP remains the default until feature parity is complete.",
+                "DeepSec Native L1 is ready. The Node LSP remains the default until feature parity is complete.",
             )
             .await;
     }

@@ -11,7 +11,7 @@ use tower_lsp::{
     LspService,
     jsonrpc::{Request, Response},
 };
-use vibeguard_lsp::Backend;
+use deepsec_lsp::Backend;
 
 #[tokio::main]
 async fn main() {
