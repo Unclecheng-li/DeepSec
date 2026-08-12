@@ -23,13 +23,13 @@
   <img src="https://img.shields.io/badge/JetBrains-2025.2+-000000?logo=jetbrains&logoColor=white" alt="JetBrains">
 </p>
 
-**🌐 中文版**: [`README.md`](README.md) （简体中文）
+**[Global]  中文版**: [`README.md`](README.md) （简体中文）
 
 </div>
 
 ---
 
-> ## 🚀 3-Minute Quick Start
+> ## [Quick Start]  3-Minute Quick Start
 >
 > Don't want to read the long docs? **Click here → [`docs/QUICKSTART.md`](docs/QUICKSTART.md)** (English)
 >

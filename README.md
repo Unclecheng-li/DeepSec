@@ -23,13 +23,13 @@
   <img src="https://img.shields.io/badge/JetBrains-2025.2+-000000?logo=jetbrains&logoColor=white" alt="JetBrains">
 </p>
 
-**🌐 English version**: [`README_EN.md`](README_EN.md)
+**English version**: [`README_EN.md`](README_EN.md)
 
 </div>
 
 ---
 
-> ## 🚀 3 分钟快速上手
+> ## 3 分钟快速上手
 >
 > 不想看长文档？**点这里 → [`docs/QUICKSTART.zh-CN.md`](docs/QUICKSTART.zh-CN.md)**（中文版）
 >
@@ -116,7 +116,7 @@ DeepSec 是由 VibeGuard 进化而来的 AI 安全平台，将 **Shield**（AI �
 
 ## 快速开始
 
-> ⚡ **想 3 分钟跑起来？直接看 [`docs/QUICKSTART.zh-CN.md`](docs/QUICKSTART.zh-CN.md)（中文）** 或 [`docs/QUICKSTART.md`](docs/QUICKSTART.md)（English）——含"下载即用"的最快路径。
+> **想 3 分钟跑起来？直接看 [`docs/QUICKSTART.zh-CN.md`](docs/QUICKSTART.zh-CN.md)（中文）** 或 [`docs/QUICKSTART.md`](docs/QUICKSTART.md)（English）——含"下载即用"的最快路径。
 
 ### 安装
 
@@ -132,7 +132,7 @@ cargo build --manifest-path tui/Cargo.toml
 # JetBrains: cd jetbrains && ./gradlew buildPlugin
 ```
 
-> 💡 **新手免编译路径**：直接去 [Releases](https://github.com/Unclecheng-li/DeepSec/releases) 下载 `deepsec-tui-windows.exe` / `deepsec-tui-linux` / `deepsec-0.2.0-py3-none-any.whl`，不用装任何编译环境。
+> **新手免编译路径**：直接去 [Releases](https://github.com/Unclecheng-li/DeepSec/releases) 下载 `deepsec-tui-windows.exe` / `deepsec-tui-linux` / `deepsec-0.2.0-py3-none-any.whl`，不用装任何编译环境。
 
 ### Shield 扫描
 

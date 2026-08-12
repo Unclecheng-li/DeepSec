@@ -1,4 +1,4 @@
-# DeepSec 3 分钟快速上手 🚀
+# DeepSec 3 分钟快速上手
 
 > 给 AI 写的代码做安全体检，30 秒看到第一个漏洞。
 > 本指南全程中文，跟着做就能跑起来。
@@ -9,18 +9,18 @@
 
 | 你是什么情况 | 推荐方式 | 耗时 |
 |---|---|---|
-| 不写代码，只想体验效果 | 🖥️ **下载 Windows/Linux 版 TUI** | 1 分钟 |
-| 开发者，用 VS Code | 🔌 **安装 VS Code 插件** | 2 分钟 |
-| 开发者，用命令行 | 🐍 **pip 安装 CLI** | 2 分钟 |
-| 想扫自己的项目 | 🐍 **pip 安装 CLI**（推荐） | 2 分钟 |
+| 不写代码，只想体验效果 | **下载 Windows/Linux 版 TUI** | 1 分钟 |
+| 开发者，用 VS Code | **安装 VS Code 插件** | 2 分钟 |
+| 开发者，用命令行 | **pip 安装 CLI** | 2 分钟 |
+| 想扫自己的项目 | **pip 安装 CLI**（推荐） | 2 分钟 |
 
-> 💡 最快体验路径：**下载 TUI 版 → 双击 → 输入 `/shield scan 你的项目文件夹`**，2 秒出结果。
+> **最快体验路径**：**下载 TUI 版 → 双击 → 输入 `/shield scan 你的项目文件夹`**，2 秒出结果。
 
 ---
 
 ## 1. 安装（三选一）
 
-### 方式 A：下载即用（最快，推荐新手）🖥️
+### 方式 A：下载即用（最快，推荐新手）
 
 1. 打开 [Releases 页面](https://github.com/Unclecheng-li/DeepSec/releases)
 2. 下载最新版里的：
@@ -28,7 +28,7 @@
    - **Linux** → `deepsec-tui-linux`
 3. 双击运行（Windows 可能需要允许未知发布者）
 
-### 方式 B：pip 安装 CLI（开发者推荐）🐍
+### 方式 B：pip 安装 CLI（开发者推荐）
 
 ```bash
 # 要求 Python 3.10+
@@ -41,7 +41,7 @@ pip install deepsec
 > pip install deepsec-0.2.0-py3-none-any.whl
 > ```
 
-### 方式 C：VS Code 插件（IDE 实时提示）🔌
+### 方式 C：VS Code 插件（IDE 实时提示）
 
 1. 下载 Release 里的 `deepsec-0.2.0.vsix`
 2. VS Code 扩展面板 → 右上角 `...` → **Install from VSIX** → 选中该文件
@@ -74,8 +74,7 @@ deepsec shield scan demo
 +-----------------------------------------------------------------------------+
 Scanned 1 file(s) in 10.8 ms; 2 finding(s).
 ```
-
-✅ 一个 `critical`（硬编码 OpenAI API Key）+ 一个 `high`（XSS，`.innerHTML` 直接渲染用户输入）——这正是 AI 最爱犯的两种错。
+一个 `critical`（硬编码 OpenAI API Key）+ 一个 `high`（XSS，`.innerHTML` 直接渲染用户输入）——这正是 AI 最爱犯的两种错。
 
 ### 用 TUI（终端工作台）
 
@@ -140,7 +139,7 @@ deepsec shield scan ./src --layer l3
 
 ## 5.（进阶）Spear 授权渗透测试
 
-> ⚠️ 只能测**你拥有或已书面授权**的目标，白名单外的一律拒绝。
+> 注意：只能测**你拥有或已书面授权**的目标，白名单外的一律拒绝。
 
 ```bash
 # 1. 把目标加进白名单（TUI 里直接 /scope add）
@@ -173,9 +172,9 @@ deepsec spear recon https://your-authorized-domain.com --authorized ~/.deepsec/t
 
 ## 下一步
 
-- 📖 完整文档：[Architecture](architecture.md) · [Shield Guide](shield-guide.md) · [Spear Guide](spear-guide.md)
-- 🐛 报 Bug / 提需求：[Issues](https://github.com/Unclecheng-li/DeepSec/issues)
-- ⭐ 觉得有用？给仓库点个 Star，安全圈的朋友欢迎一起贡献检测规则
+- 完整文档：[Architecture](architecture.md) · [Shield Guide](shield-guide.md) · [Spear Guide](spear-guide.md)
+- 报 Bug / 提需求：[Issues](https://github.com/Unclecheng-li/DeepSec/issues)
+- 觉得有用？给仓库点个 Star，安全圈的朋友欢迎一起贡献检测规则
 
 ---
 

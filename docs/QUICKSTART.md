@@ -1,4 +1,4 @@
-# DeepSec 3-Minute Quick Start 🚀
+# DeepSec 3-Minute Quick Start
 
 > Security checkup for AI-generated code — see your first vulnerability in 30 seconds.
 
@@ -8,18 +8,18 @@
 
 | Your situation | Recommended path | Time |
 |---|---|---|
-| Just want to try it, no coding | 🖥️ **Download TUI (Windows/Linux)** | 1 min |
-| VS Code user | 🔌 **Install VS Code extension** | 2 min |
-| CLI user | 🐍 **pip install** | 2 min |
-| Scan your own project | 🐍 **pip install** (recommended) | 2 min |
+| Just want to try it, no coding | **Download TUI (Windows/Linux)** | 1 min |
+| VS Code user | **Install VS Code extension** | 2 min |
+| CLI user | **pip install** | 2 min |
+| Scan your own project | **pip install** (recommended) | 2 min |
 
-> 💡 Fastest path: **download the TUI → run it → type `/shield scan <your-project>`** — results in 2 seconds.
+> **Fastest path**: **download the TUI → run it → type `/shield scan <your-project>`** — results in 2 seconds.
 
 ---
 
 ## 1. Install (pick one)
 
-### Option A: Download & run (fastest) 🖥️
+### Option A: Download & run (fastest)
 
 1. Open the [Releases page](https://github.com/Unclecheng-li/DeepSec/releases)
 2. Download from the latest release:
@@ -27,7 +27,7 @@
    - **Linux** → `deepsec-tui-linux`
 3. Double-click to run
 
-### Option B: pip install CLI (recommended for devs) 🐍
+### Option B: pip install CLI (recommended for devs)
 
 ```bash
 # Requires Python 3.10+
@@ -40,7 +40,7 @@ pip install deepsec
 > pip install deepsec-0.2.0-py3-none-any.whl
 > ```
 
-### Option C: VS Code extension 🔌
+### Option C: VS Code extension
 
 1. Download `deepsec-0.2.0.vsix` from Releases
 2. VS Code Extensions panel → `...` → **Install from VSIX** → select the file
@@ -73,8 +73,7 @@ Expected output (real run):
 +-----------------------------------------------------------------------------+
 Scanned 1 file(s) in 10.8 ms; 2 finding(s).
 ```
-
-✅ One `critical` (hardcoded OpenAI API key) + one `high` (XSS via `.innerHTML`) — the two most common AI mistakes.
+One `critical` (hardcoded OpenAI API key) + one `high` (XSS via `.innerHTML`) — the two most common AI mistakes.
 
 ### TUI (terminal workbench)
 
@@ -139,7 +138,7 @@ deepsec shield scan ./src --layer l3
 
 ## 5. (Advanced) Spear authorized penetration testing
 
-> ⚠️ Only targets you **own or have written authorization** for. Everything else is rejected.
+> Note: Only targets you **own or have written authorization** for. Everything else is rejected.
 
 ```bash
 # 1. Add target to allow-list (in TUI: /scope add)
@@ -172,9 +171,9 @@ Scan a single directory first (`deepsec shield scan ./src`), use `--format json`
 
 ## Next steps
 
-- 📖 Docs: [Architecture](architecture.md) · [Shield Guide](shield-guide.md) · [Spear Guide](spear-guide.md)
-- 🐛 Bugs / feature requests: [Issues](https://github.com/Unclecheng-li/DeepSec/issues)
-- ⭐ Found it useful? Star the repo. Security folks welcome to contribute detection rules.
+- Docs: [Architecture](architecture.md) · [Shield Guide](shield-guide.md) · [Spear Guide](spear-guide.md)
+- Bugs / feature requests: [Issues](https://github.com/Unclecheng-li/DeepSec/issues)
+- Found it useful? Star the repo. Security folks welcome to contribute detection rules.
 
 ---
 
