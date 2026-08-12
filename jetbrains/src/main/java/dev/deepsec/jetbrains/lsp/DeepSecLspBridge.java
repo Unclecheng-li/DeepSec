@@ -1,4 +1,4 @@
-package dev.vibeguard.jetbrains.lsp;
+package dev.deepsec.jetbrains.lsp;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -6,7 +6,7 @@ import com.intellij.platform.lsp.api.LspServer;
 import com.intellij.platform.lsp.api.LspServerManager;
 import com.intellij.platform.lsp.api.LspServerState;
 import com.intellij.util.concurrency.AppExecutorUtil;
-import dev.vibeguard.jetbrains.VibeGuardLspServerSupportProvider;
+import dev.deepsec.jetbrains.DeepSecLspServerSupportProvider;
 import org.eclipse.lsp4j.ExecuteCommandParams;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 /** Sends a manual L3 review request through the public IntelliJ LSP API. */
-public final class VibeGuardLspBridge {
+public final class DeepSecLspBridge {
   public static final String MANUAL_REVIEW_COMMAND = "deepsec.scanWithAi";
   public static final String CANCEL_MANUAL_REVIEW_COMMAND = "deepsec.cancelAiScan";
   public static final String APPLY_L3_FIX_COMMAND = "deepsec.applyL3Fix";
@@ -26,7 +26,7 @@ public final class VibeGuardLspBridge {
 
   private final Project project;
 
-  public VibeGuardLspBridge(@NotNull Project project) {
+  public DeepSecLspBridge(@NotNull Project project) {
     this.project = project;
   }
 
@@ -81,8 +81,8 @@ public final class VibeGuardLspBridge {
 
   private @NotNull LspServer runningServer() {
     LspServerManager manager = LspServerManager.getInstance(project);
-    manager.startServersIfNeeded(VibeGuardLspServerSupportProvider.class);
-    return manager.getServersForProvider(VibeGuardLspServerSupportProvider.class).stream()
+    manager.startServersIfNeeded(DeepSecLspServerSupportProvider.class);
+    return manager.getServersForProvider(DeepSecLspServerSupportProvider.class).stream()
         .filter(candidate -> candidate.getState() == LspServerState.Running)
         .findFirst()
         .orElseThrow(() -> new IllegalStateException("DeepSec language server is starting. Try the scan again in a moment."));

@@ -1,4 +1,4 @@
-package dev.vibeguard.jetbrains.ui;
+package dev.deepsec.jetbrains.ui;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
@@ -12,7 +12,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBList;
 import com.intellij.util.ui.JBUI;
-import dev.vibeguard.jetbrains.lsp.VibeGuardLspBridge;
+import dev.deepsec.jetbrains.lsp.DeepSecLspBridge;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.BorderFactory;
@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 /** ToolWindow UI for user-initiated L3 reviews of the current file. */
-public final class VibeGuardPanel extends JPanel implements Disposable {
+public final class DeepSecPanel extends JPanel implements Disposable {
   private final Project project;
-  private final VibeGuardLspBridge bridge;
+  private final DeepSecLspBridge bridge;
   private final JButton scanButton = new JButton("Scan with AI");
   private final JButton cancelButton = new JButton("Cancel");
   private final JButton openButton = new JButton("Open");
@@ -42,16 +42,16 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
   private final JButton ignoreButton = new JButton("Ignore");
   private final JBLabel status = new JBLabel("Ready");
   private final JBLabel summary = new JBLabel("Open a supported file to run an AI deep scan.");
-  private final DefaultListModel<VibeGuardLspBridge.ReviewFinding> findings = new DefaultListModel<>();
-  private final JBList<VibeGuardLspBridge.ReviewFinding> findingList = new JBList<>(findings);
+  private final DefaultListModel<DeepSecLspBridge.ReviewFinding> findings = new DefaultListModel<>();
+  private final JBList<DeepSecLspBridge.ReviewFinding> findingList = new JBList<>(findings);
   private CompletableFuture<?> activeRequest;
   private VirtualFile reviewedFile;
   private boolean reviewInProgress;
 
-  public VibeGuardPanel(@NotNull Project project) {
+  public DeepSecPanel(@NotNull Project project) {
     super(new BorderLayout(0, JBUI.scale(8)));
     this.project = project;
-    this.bridge = new VibeGuardLspBridge(project);
+    this.bridge = new DeepSecLspBridge(project);
     setBorder(JBUI.Borders.empty(8));
 
     JPanel controls = new JPanel(new FlowLayout(FlowLayout.LEFT, JBUI.scale(6), 0));
@@ -124,7 +124,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
         summary.setText(error.getCause() == null ? error.getMessage() : error.getCause().getMessage());
         return;
       }
-      VibeGuardLspBridge.ReviewResult result = (VibeGuardLspBridge.ReviewResult) value;
+      DeepSecLspBridge.ReviewResult result = (DeepSecLspBridge.ReviewResult) value;
       if ("consentRequired".equals(result.status())) {
         requestRemoteConsent(file, result);
         return;
@@ -133,7 +133,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     }));
   }
 
-  private void requestRemoteConsent(@NotNull VirtualFile file, @NotNull VibeGuardLspBridge.ReviewResult result) {
+  private void requestRemoteConsent(@NotNull VirtualFile file, @NotNull DeepSecLspBridge.ReviewResult result) {
     if (remoteReviewApproved(result)) {
       scan(true);
       return;
@@ -173,15 +173,15 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
     }));
   }
 
-  private boolean remoteReviewApproved(@NotNull VibeGuardLspBridge.ReviewResult result) {
+  private boolean remoteReviewApproved(@NotNull DeepSecLspBridge.ReviewResult result) {
     return PropertiesComponent.getInstance(project).getBoolean(remoteApprovalKey(result), false);
   }
 
-  private static @NotNull String remoteApprovalKey(@NotNull VibeGuardLspBridge.ReviewResult result) {
+  private static @NotNull String remoteApprovalKey(@NotNull DeepSecLspBridge.ReviewResult result) {
     return "vibeguard.l3.remoteReviewApproved." + result.provider() + "." + Integer.toUnsignedString(result.endpoint().hashCode());
   }
 
-  private void renderResult(@NotNull VibeGuardLspBridge.ReviewResult result) {
+  private void renderResult(@NotNull DeepSecLspBridge.ReviewResult result) {
     if (result.stale()) {
       status.setText("The file changed while the review was running.");
       summary.setText("Result discarded. Run the scan again for the current document version.");
@@ -203,7 +203,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
       return;
     }
     findings.clear();
-    for (VibeGuardLspBridge.ReviewFinding finding : result.findings()) {
+    for (DeepSecLspBridge.ReviewFinding finding : result.findings()) {
       findings.addElement(finding);
     }
     status.setText("Complete - " + result.status());
@@ -213,7 +213,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
   }
 
   private void openSelected() {
-    VibeGuardLspBridge.ReviewFinding finding = findingList.getSelectedValue();
+    DeepSecLspBridge.ReviewFinding finding = findingList.getSelectedValue();
     if (finding == null) {
       return;
     }
@@ -224,7 +224,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
   }
 
   private void applySelectedFix() {
-    VibeGuardLspBridge.ReviewFinding finding = findingList.getSelectedValue();
+    DeepSecLspBridge.ReviewFinding finding = findingList.getSelectedValue();
     if (finding == null || !finding.hasFix() || reviewedFile == null) {
       return;
     }
@@ -234,7 +234,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
   }
 
   private void ignoreSelected() {
-    VibeGuardLspBridge.ReviewFinding finding = findingList.getSelectedValue();
+    DeepSecLspBridge.ReviewFinding finding = findingList.getSelectedValue();
     if (finding == null || reviewedFile == null) {
       return;
     }
@@ -285,7 +285,7 @@ public final class VibeGuardPanel extends JPanel implements Disposable {
   private static final class FindingRenderer extends DefaultListCellRenderer {
     @Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean selected, boolean focus) {
-      VibeGuardLspBridge.ReviewFinding finding = (VibeGuardLspBridge.ReviewFinding) value;
+      DeepSecLspBridge.ReviewFinding finding = (DeepSecLspBridge.ReviewFinding) value;
       String text = "<html><b>" + escape(finding.severity().toUpperCase()) + " · " + escape(finding.ruleId()) + "</b><br>"
           + escape(finding.message()) + "<br><span style='color:gray'>" + escape(finding.file()) + ":" + finding.line() + "</span></html>";
       return super.getListCellRendererComponent(list, text, index, selected, focus);

@@ -1,7 +1,7 @@
 <idea-plugin>
   <id>dev.deepsec.jetbrains</id>
   <name>DeepSec</name>
-  <vendor url="https://github.com/Unclecheng-li/VibeGuard">DeepSec</vendor>
+  <vendor url="https://github.com/Unclecheng-li/DeepSec">DeepSec</vendor>
   <icon>icon.png</icon>
 
   <description><![CDATA[
@@ -16,10 +16,10 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <platform.lsp.serverSupportProvider
-        implementation="dev.vibeguard.jetbrains.VibeGuardLspServerSupportProvider"/>
+        implementation="dev.deepsec.jetbrains.DeepSecLspServerSupportProvider"/>
     <toolWindow id="DeepSec"
                 anchor="right"
-                icon="dev.vibeguard.jetbrains.icons.VibeGuardIcons.ToolWindow"
-                factoryClass="dev.vibeguard.jetbrains.ui.VibeGuardToolWindowFactory"/>
+                icon="dev.deepsec.jetbrains.icons.DeepSecIcons.ToolWindow"
+                factoryClass="dev.deepsec.jetbrains.ui.DeepSecToolWindowFactory"/>
   </extensions>
 </idea-plugin>

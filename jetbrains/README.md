@@ -1,6 +1,6 @@
-# VibeGuard JetBrains Plugin
+# DeepSec JetBrains Plugin
 
-This IntelliJ Platform plugin is the JetBrains distribution described in the VibeGuard PRD. It starts the same bundled
+This IntelliJ Platform plugin is the JetBrains distribution described in the DeepSec PRD. It starts the same bundled
 `deepsec-lsp --stdio` implementation used by the VS Code extension, CLI, and other LSP clients, so diagnostics and
 safe quick fixes and local ignore actions stay consistent across editors. It publishes L1 immediately while typing,
 debounces L2 and L3, and runs all enabled layers immediately on save. Unknown package imports use the local seed/index
@@ -57,7 +57,7 @@ progress receive native cache-sync stages and percentages in their language-serv
 enables the quick partial index, then proceeds to the full index in Tier 2 unless `background_full_sync` is disabled.
 
 Open a supported JavaScript, TypeScript, Python, Rust, Go, Java, Kotlin, JSON, TOML, XML, or Gradle file to start the
-project-wide language server. The JetBrains Language Services widget shows its status and surfaces the same VibeGuard
+project-wide language server. The JetBrains Language Services widget shows its status and surfaces the same DeepSec
 diagnostics and quick fixes as other clients.
 
 ## Marketplace Publishing

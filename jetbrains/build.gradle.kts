@@ -36,9 +36,9 @@ val rootProjectDir = layout.projectDirectory.dir("..").asFile
 val lspBundle = rootProjectDir.resolve("dist/lspServer.js")
 val npmExecutable = if (System.getProperty("os.name").startsWith("Windows", ignoreCase = true)) "npm.cmd" else "npm"
 
-val buildVibeGuardLsp by tasks.registering(Exec::class) {
+val buildDeepSecLsp by tasks.registering(Exec::class) {
   group = "build"
-  description = "Bundles the shared VibeGuard LSP server for the JetBrains plugin."
+  description = "Bundles the shared DeepSec LSP server for the JetBrains plugin."
   workingDir = rootProjectDir
   commandLine(npmExecutable, "run", "build")
   inputs.files(
@@ -54,7 +54,7 @@ val buildVibeGuardLsp by tasks.registering(Exec::class) {
 }
 
 tasks.named<Copy>("processResources") {
-  dependsOn(buildVibeGuardLsp)
+  dependsOn(buildDeepSecLsp)
   from(lspBundle) {
     into("lsp")
     rename { "deepsec-lsp.js" }

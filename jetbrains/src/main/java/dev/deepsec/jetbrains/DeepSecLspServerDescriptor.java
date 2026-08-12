@@ -1,4 +1,4 @@
-package dev.vibeguard.jetbrains;
+package dev.deepsec.jetbrains;
 
 import com.intellij.execution.configurations.GeneralCommandLine;
 import com.intellij.openapi.application.PathManager;
@@ -16,14 +16,14 @@ import java.util.Locale;
 import java.util.Set;
 
 /** Describes the default Node.js server and opt-in native Rust L1 preview. */
-final class VibeGuardLspServerDescriptor extends ProjectWideLspServerDescriptor {
+final class DeepSecLspServerDescriptor extends ProjectWideLspServerDescriptor {
   private static final String SERVER_RESOURCE = "lsp/deepsec-lsp.js";
   private static final Set<String> SUPPORTED_EXTENSIONS = Set.of(
       "cjs", "go", "gradle", "groovy", "java", "js", "json", "jsx", "kt", "kts", "mjs",
       "py", "rs", "toml", "ts", "tsx", "xml"
   );
 
-  VibeGuardLspServerDescriptor(@NotNull Project project) {
+  DeepSecLspServerDescriptor(@NotNull Project project) {
     super(project, "DeepSec");
   }
 
@@ -78,7 +78,7 @@ final class VibeGuardLspServerDescriptor extends ProjectWideLspServerDescriptor 
 
   private static Path extractBundledServer() {
     Path target = Path.of(PathManager.getSystemPath(), "deepsec", "lsp", "deepsec-lsp.js");
-    try (InputStream source = VibeGuardLspServerDescriptor.class.getClassLoader().getResourceAsStream(SERVER_RESOURCE)) {
+    try (InputStream source = DeepSecLspServerDescriptor.class.getClassLoader().getResourceAsStream(SERVER_RESOURCE)) {
       if (source == null) {
         throw new IllegalStateException("DeepSec LSP bundle is missing from the plugin distribution.");
       }

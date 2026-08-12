@@ -1,1 +1,1 @@
-rootProject.name = "vibeguard-jetbrains"
+rootProject.name = "deepsec-jetbrains"
