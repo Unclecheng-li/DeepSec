@@ -56,7 +56,7 @@ test("VSCode registers the AI Deep Scan panel and preserves L1/L2 while replacin
   assert.equal(packageJson.contributes.views.deepsec.some((view) => view.id === "deepsecL3Panel" && view.type === "webview"), true);
   const activityBar = packageJson.contributes.viewsContainers.activitybar.find((container) => container.id === "deepsec");
   assert.equal(activityBar?.icon, "$(shield)");
-  assert.match(packageScript, /vibeguard-\$\{version\}\.vsix/);
+  assert.match(packageScript, /deepsec-\$\{version\}\.vsix/);
   assert.match(packageScript, /process\.platform === "win32" \? "npm\.cmd" : "npm"/);
   assert.match(packageScript, /shell: process\.platform === "win32"/);
 });
