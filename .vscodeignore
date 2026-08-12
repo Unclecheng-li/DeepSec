@@ -24,3 +24,4 @@ Upgrade documentation.md
 package-lock.json
 action.yml
 *.vsix
+tui/**

@@ -2,7 +2,7 @@ const { spawnSync } = require("child_process");
 const { version } = require("../package.json");
 
 const npm = process.platform === "win32" ? "npm.cmd" : "npm";
-const result = spawnSync(npm, ["exec", "--", "vsce", "package", "--out", `vibeguard-${version}.vsix`], {
+const result = spawnSync(npm, ["exec", "--", "vsce", "package", "--out", `deepsec-${version}.vsix`], {
   stdio: "inherit",
   shell: process.platform === "win32"
 });
