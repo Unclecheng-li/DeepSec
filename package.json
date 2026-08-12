@@ -7,11 +7,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Unclecheng-li/VibeGuard.git"
+    "url": "https://github.com/Unclecheng-li/DeepSec.git"
   },
   "private": true,
   "type": "commonjs",
-  "icon": "media/VibeGuardIcon.png",
+  "icon": "media/deepsec-icon.png",
   "main": "./dist/extension.js",
   "bin": {
     "deepsec-vscode": "./dist/cli.js",
@@ -140,27 +140,27 @@
       "view/item/context": [
         {
           "command": "deepsec.applyFindingFix",
-          "when": "view == deepsecFindings && viewItem == vibeguardFindingFixable",
+          "when": "view == deepsecFindings && viewItem == deepsecFindingFixable",
           "group": "inline@1"
         },
         {
           "command": "deepsec.ignoreFinding",
-          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "when": "view == deepsecFindings && (viewItem == deepsecFinding || viewItem == deepsecFindingFixable)",
           "group": "inline"
         },
         {
           "command": "deepsec.ignoreRuleInFile",
-          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "when": "view == deepsecFindings && (viewItem == deepsecFinding || viewItem == deepsecFindingFixable)",
           "group": "navigation"
         },
         {
           "command": "deepsec.ignoreRuleGlobally",
-          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "when": "view == deepsecFindings && (viewItem == deepsecFinding || viewItem == deepsecFindingFixable)",
           "group": "navigation"
         },
         {
           "command": "deepsec.ignorePackage",
-          "when": "view == deepsecFindings && (viewItem == vibeguardFinding || viewItem == vibeguardFindingFixable)",
+          "when": "view == deepsecFindings && (viewItem == deepsecFinding || viewItem == deepsecFindingFixable)",
           "group": "navigation"
         }
       ]

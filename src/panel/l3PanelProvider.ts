@@ -57,7 +57,7 @@ export class L3PanelProvider implements vscode.WebviewViewProvider, vscode.Dispo
   async triggerScan(): Promise<void> {
     if (!this.view) {
       this.scanRequested = true;
-      await vscode.commands.executeCommand("workbench.view.extension.vibeguard");
+      await vscode.commands.executeCommand("workbench.view.extension.deepsec");
       return;
     }
     await this.startScan();

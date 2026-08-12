@@ -2027,7 +2027,7 @@ class FindingsProvider implements vscode.TreeDataProvider<TreeNode> {
       title: "Open Finding",
       arguments: [element.finding]
     };
-    item.contextValue = element.finding.fix && !element.finding.dismissed ? "vibeguardFindingFixable" : "vibeguardFinding";
+    item.contextValue = element.finding.fix && !element.finding.dismissed ? "deepsecFindingFixable" : "deepsecFinding";
     item.iconPath = element.finding.dismissed ? new vscode.ThemeIcon("pass") : severityIcon(element.finding.severity);
     return item;
   }

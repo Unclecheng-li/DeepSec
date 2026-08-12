@@ -38,7 +38,7 @@ test("VSCode manifest exposes dashboard, batch-fix, and Pro subscription command
   assert.equal(batchFixCommand?.title, "DeepSec: Apply All Safe Fixes in Current File");
   assert.equal(proBatchFixCommand?.title, "DeepSec: Review and Apply All Pro Fixes in Current File");
   assert.equal(findingFixCommand?.title, "DeepSec: Apply Finding Fix");
-  assert.equal(findingFixMenu?.when, "view == deepsecFindings && viewItem == vibeguardFindingFixable");
+  assert.equal(findingFixMenu?.when, "view == deepsecFindings && viewItem == deepsecFindingFixable");
   assert.equal(subscriptionCommand?.title, "DeepSec: Show Pro Subscription Status");
   assert.equal(manifest.contributes.configuration.properties["deepsec.packageVerification"]?.default, "remote");
   assert.equal(manifest.contributes.configuration.properties["vibeguard.packageVerification"]?.default, "remote");

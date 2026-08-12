@@ -52,7 +52,7 @@ test("VSCode findings sidebar exposes safe fixes without bypassing package or L3
   assert.match(source, /applyFindingFixFromSidebar/);
   assert.match(source, /finding\.type === "hallucinated_package"/);
   assert.match(source, /await pickPackageReplacement\(finding\)/);
-  assert.match(source, /vibeguardFindingFixable/);
+  assert.match(source, /deepsecFindingFixable/);
 });
 
 test("VSCode rechecks finding evidence before a single fix edits a document", async () => {

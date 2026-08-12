@@ -2384,8 +2384,8 @@ Examples:
   vibeguard rules export-semgrep --output vibeguard-semgrep.yml
   vibeguard packages import npm ./npm-packages.txt --partial
   vibeguard packages sync npm --limit 100000 --partial
-  vibeguard packages sync-config --config ~/.vibeguard/config.json
-  vibeguard scan src --package-index ~/.vibeguard/package-index.json.gz
+  deepsec packages sync-config --config ~/.vibeguard/config.json
+  deepsec scan src --package-index ~/.vibeguard/package-index.json.gz
 `);
 }
 
@@ -2396,7 +2396,7 @@ Usage:
   vibeguard packages import <registry> <file> [--full|--partial] [--index path] [--json]
   vibeguard packages sync <npm|pypi|cargo|gomod|maven> [--limit n] [--full|--partial] [--url URL]
                           [--storage auto|json|sqlite] [--index path] [--sqlite-db path] [--json]
-  vibeguard packages sync-config [--config path] [--force] [--limit n] [--url registry=URL]
+  deepsec packages sync-config [--config path] [--force] [--limit n] [--url registry=URL]
                                  [--storage auto|json|sqlite] [--index path] [--sqlite-db path] [--json]
   vibeguard packages status [--storage auto|json|sqlite] [--index path] [--sqlite-db path] [--json]
   vibeguard packages check <registry> <package> [--storage auto|json|sqlite] [--index path] [--sqlite-db path] [--json]
@@ -2441,7 +2441,7 @@ Usage:
   vibeguard config unignore-finding <finding-id> [--path path]
 
 Scan defaults:
-  vibeguard scan . --config ~/.vibeguard/config.json
+  deepsec scan . --config ~/.vibeguard/config.json
   vibeguard scan . --no-config
 `);
 }
@@ -2467,7 +2467,7 @@ Usage:
   vibeguard findings prune [--db path] [--days n] [--json]
 
 Scan storage:
-  vibeguard scan . --findings-db ~/.vibeguard/findings.db
+  deepsec scan . --findings-db ~/.vibeguard/findings.db
   vibeguard scan . --no-store-findings
   VIBEGUARD_FINDINGS_INGEST_TOKEN=... vibeguard scan . --findings-project acme/payments-api --findings-endpoint https://dashboard.example.com/api/ingest
 `);
