@@ -408,7 +408,7 @@ test("LSP ignore code actions persist a local rule and clear the matching diagno
       ]
     }
   })) as Array<{ title?: string; command?: { command?: string; arguments?: unknown[] } }>;
-  const fix = actions.find((action) => action.title === "Apply fix: Replace with react-virtualized");
+  const fix = actions.find((action) => action.title === "Apply DeepSec fix: Replace with react-virtualized");
   const ignore = actions.find((action) => action.title === "Ignore this DeepSec finding");
   assert.equal(fix?.command?.command, "deepsec.applyFix");
   assert.equal(ignore?.command?.command, "deepsec.ignoreFinding");

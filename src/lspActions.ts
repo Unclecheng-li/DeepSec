@@ -77,9 +77,9 @@ function findMatchingFinding(findings: Finding[], diagnostic: Diagnostic): Findi
 
 function ignoreActionsForFinding(finding: Finding, diagnostic: Diagnostic): CodeAction[] {
   const scopes: Array<[LspIgnoreScope, string]> = [
-    ["line", "Ignore this VibeGuard finding"],
-    ["file", "Ignore this VibeGuard rule in this file"],
-    ["global", "Ignore this VibeGuard rule globally"]
+    ["line", "Ignore this DeepSec finding"],
+    ["file", "Ignore this DeepSec rule in this file"],
+    ["global", "Ignore this DeepSec rule globally"]
   ];
   if (finding.type === "hallucinated_package") {
     scopes.push(["package", `Ignore package ${finding.evidence}`]);
