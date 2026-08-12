@@ -1,5 +1,7 @@
+import asyncio
 from pathlib import Path
 
+from deepsec.shield.rules.ai_audit import audit_with_llm
 from deepsec.shield.scanner import ScanOptions, scan_path, scan_text
 
 
@@ -26,6 +28,36 @@ def users():
     result = scan_text(source, "app.py", "python", ScanOptions(l1=False, l2=False, l3=True))
 
     assert "l3_missing_authentication" in {item.detection_rule for item in result.findings}
+
+
+def test_l3_llm_tolerates_non_numeric_fields() -> None:
+    """Issue #5: local OpenAI-compatible LLMs (llama.cpp) return non-numeric
+    confidence/line/severity values; the L3 scan must not crash."""
+
+    async def fake_review(_text: str, _target: str):
+        return {
+            "findings": [
+                {"severity": "High", "title": "SQLi", "description": "d", "line": "high", "confidence": 0.9},
+                {"severity": "high", "title": "XSS", "description": "d", "line": 12, "confidence": "high"},
+                {"severity": "CRITICAL", "title": "RCE", "description": "d", "line": "3", "confidence": "1.0"},
+                {"severity": "unknown-level", "title": "Weird", "description": "d", "confidence": None},
+                "not-a-dict",
+            ]
+        }, None
+
+    findings = asyncio.run(audit_with_llm("code", "app.py", fake_review))
+
+    assert len(findings) == 4
+    # "High"/"CRITICAL" normalize to lowercase enum values.
+    assert {item.severity.value for item in findings} == {"high", "critical", "medium"}
+    # Non-numeric line falls back to None; numeric strings coerce.
+    assert findings[0].line is None
+    assert findings[1].line == 12
+    assert findings[2].line == 3
+    # Non-numeric confidence falls back to the default; qualitative words map
+    # to sensible values ("high" -> 0.85 per the word map).
+    assert findings[1].confidence == 0.85
+    assert findings[2].confidence == 1.0
 
 
 def test_project_scan_skips_node_modules(tmp_path: Path) -> None:

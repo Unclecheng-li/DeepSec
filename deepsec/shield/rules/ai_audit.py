@@ -23,16 +23,31 @@ def audit_semantics(text: str, target: str, language: str | None = None) -> list
     return findings
 
 
+def _coerce_line(value: object) -> int | None:
+    """Coerce an LLM-supplied line to a non-negative int, else None."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return max(1, value)
+    if isinstance(value, float) and value.is_integer():
+        return max(1, int(value))
+    if isinstance(value, str):
+        try:
+            return max(1, int(float(value.strip())))
+        except (TypeError, ValueError):
+            return None
+    return None
+
+
 async def audit_with_llm(text: str, target: str, review: Callable[[str, str], Awaitable[tuple[dict, object]]]) -> list[DeepSecFinding]:
     response, _usage = await review(text, target)
     result: list[DeepSecFinding] = []
     for raw in response.get("findings", []):
         if not isinstance(raw, dict):
             continue
-        severity_text = str(raw.get("severity", "medium")).lower()
+        severity_text = str(raw.get("severity", "medium")).strip().lower()
         severity = Severity(severity_text) if severity_text in Severity._value2member_map_ else Severity.MEDIUM
-        line = raw.get("line") if isinstance(raw.get("line"), int) else None
-        result.append(DeepSecFinding.create(mode=DeepSecMode.SHIELD, type=FindingType.MISSING_SECURITY_MEASURE, severity=severity, target=target, description=str(raw.get("description") or raw.get("title") or "AI security concern"), title=str(raw.get("title") or "AI security concern"), rule="l3_llm_semantic_review", layer="L3", evidence=str(raw.get("evidence") or ""), suggestion=str(raw.get("suggestion") or ""), line=line, confidence=_coerce_confidence(raw.get("confidence"))))
+        result.append(DeepSecFinding.create(mode=DeepSecMode.SHIELD, type=FindingType.MISSING_SECURITY_MEASURE, severity=severity, target=target, description=str(raw.get("description") or raw.get("title") or "AI security concern"), title=str(raw.get("title") or "AI security concern"), rule="l3_llm_semantic_review", layer="L3", evidence=str(raw.get("evidence") or ""), suggestion=str(raw.get("suggestion") or ""), line=_coerce_line(raw.get("line")), confidence=_coerce_confidence(raw.get("confidence", 0.6))))
     return result
 
 
