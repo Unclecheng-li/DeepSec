@@ -32,8 +32,38 @@ async def audit_with_llm(text: str, target: str, review: Callable[[str, str], Aw
         severity_text = str(raw.get("severity", "medium")).lower()
         severity = Severity(severity_text) if severity_text in Severity._value2member_map_ else Severity.MEDIUM
         line = raw.get("line") if isinstance(raw.get("line"), int) else None
-        result.append(DeepSecFinding.create(mode=DeepSecMode.SHIELD, type=FindingType.MISSING_SECURITY_MEASURE, severity=severity, target=target, description=str(raw.get("description") or raw.get("title") or "AI security concern"), title=str(raw.get("title") or "AI security concern"), rule="l3_llm_semantic_review", layer="L3", evidence=str(raw.get("evidence") or ""), suggestion=str(raw.get("suggestion") or ""), line=line, confidence=float(raw.get("confidence", 0.6))))
+        result.append(DeepSecFinding.create(mode=DeepSecMode.SHIELD, type=FindingType.MISSING_SECURITY_MEASURE, severity=severity, target=target, description=str(raw.get("description") or raw.get("title") or "AI security concern"), title=str(raw.get("title") or "AI security concern"), rule="l3_llm_semantic_review", layer="L3", evidence=str(raw.get("evidence") or ""), suggestion=str(raw.get("suggestion") or ""), line=line, confidence=_coerce_confidence(raw.get("confidence"))))
     return result
+
+
+def _coerce_confidence(value: object) -> float:
+    """Normalize an LLM-provided confidence to a 0-1 float.
+
+    Models may return a number (0.8), a numeric string ("0.8"/"80"/"80%"), or a
+    qualitative word ("high"/"medium"/"low"). float("high") would crash, so map
+    everything to a float and fall back to 0.6 when unparseable.
+    """
+    if isinstance(value, bool) or value is None:
+        return 0.6
+    if isinstance(value, (int, float)):
+        return max(0.0, min(1.0, float(value)))
+    if isinstance(value, str):
+        text = value.strip().lower()
+        words = {
+            "critical": 0.95, "very high": 0.9, "high": 0.85, "medium": 0.6,
+            "moderate": 0.6, "low": 0.35, "very low": 0.2, "info": 0.2,
+            "informational": 0.2, "unknown": 0.6,
+        }
+        if text in words:
+            return words[text]
+        try:
+            parsed = float(text.rstrip("%"))
+        except ValueError:
+            return 0.6
+        if parsed > 1.0:  # "80" or "80%" -> 0.8
+            parsed /= 100.0
+        return max(0.0, min(1.0, parsed))
+    return 0.6
 
 
 def _endpoints(text: str, language: str | None) -> list[tuple[str, str, int, str]]:

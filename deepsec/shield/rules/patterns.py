@@ -41,19 +41,23 @@ SECRET_RULES = (
 )
 
 CONFIG_RULES = (
-    _rule("insecure_config_debug_true", FindingType.INSECURE_CONFIG, Severity.HIGH, "Django or Flask debug mode is enabled.", "Disable debug mode in production.", r"\bDEBUG\s*=\s*True\b"),
+    _rule("insecure_config_debug_true", FindingType.INSECURE_CONFIG, Severity.HIGH, "Django or Flask debug mode is enabled.", "Disable debug mode in production.", r"\bDEBUG\s*=\s*True\b", 0, ("python",)),
     _rule("insecure_config_app_debug_true", FindingType.INSECURE_CONFIG, Severity.HIGH, "Application debug mode is enabled.", "Disable debug mode outside local development.", r"\bapp\.debug\s*=\s*(?:True|true)\b"),
-    _rule("insecure_config_allowed_hosts_wildcard", FindingType.INSECURE_CONFIG, Severity.HIGH, "Django ALLOWED_HOSTS allows every host.", "Use the exact production host names.", r"\bALLOWED_HOSTS\s*=\s*\[\s*['\"]\*['\"]\s*\]"),
-    _rule("insecure_config_cors_allow_all", FindingType.INSECURE_CONFIG, Severity.HIGH, "CORS is configured to allow every origin.", "Restrict CORS to trusted origins.", r"\b(?:CORS_ALLOW_ALL|CORS_ALLOW_ALL_ORIGINS)\s*=\s*True\b"),
+    _rule("insecure_config_allowed_hosts_wildcard", FindingType.INSECURE_CONFIG, Severity.HIGH, "Django ALLOWED_HOSTS allows every host.", "Use the exact production host names.", r"\bALLOWED_HOSTS\s*=\s*\[\s*['\"]\*['\"]\s*\]", 0, ("python",)),
+    _rule("insecure_config_cors_allow_all", FindingType.INSECURE_CONFIG, Severity.HIGH, "CORS is configured to allow every origin.", "Restrict CORS to trusted origins.", r"\b(?:CORS_ALLOW_ALL|CORS_ALLOW_ALL_ORIGINS)\s*=\s*True\b", 0, ("python",)),
     _rule("insecure_config_acao_wildcard", FindingType.INSECURE_CONFIG, Severity.MEDIUM, "Access-Control-Allow-Origin is set to a wildcard.", "Return a specific allowlisted origin.", r"Access-Control-Allow-Origin['\"]?\s*[:,]\s*['\"]\*['\"]", re.I),
     _rule("insecure_config_disable_host_check", FindingType.INSECURE_CONFIG, Severity.HIGH, "Host header checks are disabled.", "Configure explicit trusted hosts.", r"\bDANGEROUSLY_DISABLE_HOST_CHECK\s*=\s*(?:true|1)\b", re.I),
-    _rule("insecure_config_csrf_exempt", FindingType.INSECURE_CONFIG, Severity.HIGH, "CSRF protection is disabled for this endpoint.", "Keep CSRF protection enabled or add a narrowly reviewed control.", r"@csrf_exempt\b|\bcsrf_exempt\s*\("),
-    _rule("insecure_config_spring_permit_all", FindingType.INSECURE_CONFIG, Severity.MEDIUM, "Spring Security permitAll() may expose an endpoint.", "Verify the endpoint is intentionally public.", r"\.permitAll\s*\("),
-    _rule("insecure_config_cross_origin_wildcard", FindingType.INSECURE_CONFIG, Severity.HIGH, "Spring @CrossOrigin allows every origin.", "Restrict origins to trusted domains.", r"@CrossOrigin\s*\([^)]*(?:origins\s*=\s*)?['\"]\*['\"][^)]*\)"),
-    _rule("insecure_config_eval", FindingType.INSECURE_CONFIG, Severity.HIGH, "eval() executes arbitrary code.", "Use a structured parser or explicit dispatch table.", r"\beval\s*\("),
-    _rule("insecure_config_python_exec", FindingType.INSECURE_CONFIG, Severity.HIGH, "exec() executes arbitrary Python code.", "Avoid exec() and use explicit functions.", r"\bexec\s*\("),
-    _rule("insecure_config_pickle_loads", FindingType.INSECURE_CONFIG, Severity.HIGH, "pickle deserialization can execute arbitrary code.", "Use JSON or a safe serialization format.", r"\bpickle\.loads?\s*\("),
-    _rule("insecure_config_yaml_load_without_loader", FindingType.INSECURE_CONFIG, Severity.HIGH, "yaml.load() is used without a safe loader.", "Use yaml.safe_load() or SafeLoader explicitly.", r"\byaml\.load\s*\(\s*[^,\n)]+?\s*\)"),
+    _rule("insecure_config_csrf_exempt", FindingType.INSECURE_CONFIG, Severity.HIGH, "CSRF protection is disabled for this endpoint.", "Keep CSRF protection enabled or add a narrowly reviewed control.", r"@csrf_exempt\b|\bcsrf_exempt\s*\(", 0, ("python",)),
+    _rule("insecure_config_spring_permit_all", FindingType.INSECURE_CONFIG, Severity.MEDIUM, "Spring Security permitAll() may expose an endpoint.", "Verify the endpoint is intentionally public.", r"\.permitAll\s*\(", 0, ("java",)),
+    _rule("insecure_config_cross_origin_wildcard", FindingType.INSECURE_CONFIG, Severity.HIGH, "Spring @CrossOrigin allows every origin.", "Restrict origins to trusted domains.", r"@CrossOrigin\s*\([^)]*(?:origins\s*=\s*)?['\"]\*['\"][^)]*\)", 0, ("java",)),
+    _rule("insecure_config_eval", FindingType.INSECURE_CONFIG, Severity.HIGH, "eval() executes arbitrary code.", "Use a structured parser or explicit dispatch table.", r"(?<![.\w])eval\s*\("),
+    # exec( is Python's arbitrary-code sink. In JavaScript the same spelling is
+    # RegExp.prototype.exec / String.prototype.match -- an extremely common and
+    # entirely benign call -- so running this rule language-blind produced the
+    # single largest source of false positives in the whole ruleset.
+    _rule("insecure_config_python_exec", FindingType.INSECURE_CONFIG, Severity.HIGH, "exec() executes arbitrary Python code.", "Avoid exec() and use explicit functions.", r"(?<![.\w])exec\s*\(", 0, ("python",)),
+    _rule("insecure_config_pickle_loads", FindingType.INSECURE_CONFIG, Severity.HIGH, "pickle deserialization can execute arbitrary code.", "Use JSON or a safe serialization format.", r"\bpickle\.loads?\s*\(", 0, ("python",)),
+    _rule("insecure_config_yaml_load_without_loader", FindingType.INSECURE_CONFIG, Severity.HIGH, "yaml.load() is used without a safe loader.", "Use yaml.safe_load() or SafeLoader explicitly.", r"\byaml\.load\s*\(\s*[^,\n)]+?\s*\)", 0, ("python",)),
 )
 
 AI_PATTERN_RULES = (
