@@ -8,7 +8,7 @@ import { PinProtectedLlmCredentialStore } from "./encryptedCredentials";
 export type LlmCredentialProvider = "deepseek" | "claude" | "openai" | "local" | "vibeguard";
 
 const supportedProviders = new Set<LlmCredentialProvider>(["deepseek", "claude", "openai", "local", "vibeguard"]);
-const keychainService = "VibeGuard";
+const keychainService = "DeepSec";
 const windowsCredentialFileVersion = 1;
 export const llmCredentialPinEnvironment = "VIBEGUARD_LLM_CREDENTIAL_PIN";
 
@@ -109,7 +109,7 @@ export class NativeLlmCredentialStore {
     if (this.platform === "linux") {
       await this.runner.run(
         "secret-tool",
-        ["store", "--label=VibeGuard LLM API key", "service", keychainService, "account", credentialAccount(provider)],
+        ["store", "--label=DeepSec LLM API key", "service", keychainService, "account", credentialAccount(provider)],
         secret
       );
       return;
@@ -412,7 +412,7 @@ const windowsProtectScript = [
   "Add-Type -AssemblyName System.Security",
   "$plain = [Console]::In.ReadToEnd()",
   "$bytes = [System.Text.Encoding]::UTF8.GetBytes($plain)",
-  "$entropy = [System.Text.Encoding]::UTF8.GetBytes('VibeGuard:llm-api-key:v1')",
+  "$entropy = [System.Text.Encoding]::UTF8.GetBytes('DeepSec:llm-api-key:v1')",
   "$cipher = [System.Security.Cryptography.ProtectedData]::Protect($bytes, $entropy, [System.Security.Cryptography.DataProtectionScope]::CurrentUser)",
   "[Console]::Out.Write([Convert]::ToBase64String($cipher))"
 ].join("; ");
@@ -422,7 +422,7 @@ const windowsUnprotectScript = [
   "Add-Type -AssemblyName System.Security",
   "$encoded = [Console]::In.ReadToEnd()",
   "$cipher = [Convert]::FromBase64String($encoded)",
-  "$entropy = [System.Text.Encoding]::UTF8.GetBytes('VibeGuard:llm-api-key:v1')",
+  "$entropy = [System.Text.Encoding]::UTF8.GetBytes('DeepSec:llm-api-key:v1')",
   "$plain = [System.Security.Cryptography.ProtectedData]::Unprotect($cipher, $entropy, [System.Security.Cryptography.DataProtectionScope]::CurrentUser)",
   "[Console]::Out.Write([System.Text.Encoding]::UTF8.GetString($plain))"
 ].join("; ");

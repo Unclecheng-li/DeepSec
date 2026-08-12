@@ -10,7 +10,7 @@ test("VSCode extension exposes first-run cold-start onboarding", async () => {
   assert.match(source, /globalState\.update\(firstRunOnboardingKey, true\)/);
   assert.match(source, /Package-name cache sync runs in the background/);
   assert.match(source, /Sync Now/);
-  assert.match(source, /VibeGuard: package sync \$\{percent\}%/);
+  assert.match(source, /DeepSec: package sync \$\{percent\}%/);
   assert.match(source, /packageSyncProgress/);
   assert.match(source, /packageSyncTier/);
   assert.match(source, /Tier 2 full index/);
@@ -22,7 +22,7 @@ test("VSCode routes L3 fixes through a confirmation command", async () => {
   const source = await fs.readFile("src/extension.ts", "utf8");
 
   assert.match(source, /finding\.detection_layer === "L3"/);
-  assert.match(source, /VibeGuard received this replacement from an LLM/);
+  assert.match(source, /DeepSec received this replacement from an LLM/);
   assert.match(source, /command: "deepsec\.applyFix"/);
 });
 
@@ -41,7 +41,7 @@ test("VSCode critical package alerts let users choose a verified replacement", a
   assert.match(source, /critical\.type === "hallucinated_package"/);
   assert.match(source, /Choose replacement/);
   assert.match(source, /pickPackageReplacement\(critical\)/);
-  assert.match(source, /Choose VibeGuard package replacement/);
+  assert.match(source, /Choose DeepSec package replacement/);
   assert.match(source, /applyFindingCodeFix\(finding, selected\.fix\)/);
 });
 
@@ -71,7 +71,7 @@ test("VSCode reviews current L3 edits before applying a Pro file batch", async (
   assert.match(source, /registerDeepSecCommand\(context, "deepsec\.applyAllProFixes"/);
   assert.match(source, /configuredLlmProvider\(loadedConfig\.config\) !== "vibeguard"/);
   assert.match(source, /pickReviewedL3Fixes/);
-  assert.match(source, /Review VibeGuard Pro LLM Fixes/);
+  assert.match(source, /Review DeepSec Pro LLM Fixes/);
   assert.match(source, /l3FixStillMatchesDocument/);
   assert.match(source, /Apply reviewed fixes/);
 });

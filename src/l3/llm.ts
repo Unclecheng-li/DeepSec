@@ -35,7 +35,7 @@ interface LlmFindingPayload {
 }
 
 const systemPrompt = [
-  "You are VibeGuard's L3 semantic security reviewer.",
+  "You are DeepSec's L3 semantic security reviewer.",
   "Find missing security measures in AI-generated code.",
   "Return only JSON. Do not include markdown.",
   "Use this schema: {\"findings\":[{\"ruleId\":\"l3_llm_missing_authentication\",\"severity\":\"high\",\"message\":\"...\",\"evidence\":\"exact code snippet\",\"suggestion\":\"...\",\"replacement\":\"optional replacement for exactly the evidence snippet\",\"line\":1,\"column\":1}]}",
@@ -282,7 +282,7 @@ function clipReviewTarget(text: string, maxLength: number): string {
   if (text.length <= maxLength) {
     return text;
   }
-  const marker = "\n/* VibeGuard truncated this route handler for LLM review. */";
+  const marker = "\n/* DeepSec truncated this route handler for LLM review. */";
   if (maxLength <= marker.length) {
     return text.slice(0, maxLength);
   }
@@ -718,5 +718,5 @@ function clipSource(text: string, maxLength: number): string {
   if (text.length <= maxLength) {
     return text;
   }
-  return `${text.slice(0, maxLength)}\n/* VibeGuard truncated the remaining ${text.length - maxLength} characters for LLM review. */`;
+  return `${text.slice(0, maxLength)}\n/* DeepSec truncated the remaining ${text.length - maxLength} characters for LLM review. */`;
 }

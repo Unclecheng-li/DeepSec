@@ -137,7 +137,7 @@ connection.onInitialize((params: InitializeParams): InitializeResult => {
       }
     },
     serverInfo: {
-      name: "VibeGuard LSP",
+      name: "DeepSec LSP",
       version: "0.1.0"
     }
   };
@@ -230,7 +230,7 @@ async function executeLspManualL3Review(value: unknown): Promise<LspManualL3Revi
     return unavailableManualL3Review(provider, model, endpoint, "Open the file in the editor before starting an AI deep scan.");
   }
   if (!settings.enabled) {
-    return unavailableManualL3Review(provider, model, endpoint, "VibeGuard scanning is disabled for this workspace.");
+    return unavailableManualL3Review(provider, model, endpoint, "DeepSec scanning is disabled for this workspace.");
   }
   if (provider !== "local" && argument.remoteApproved !== true) {
     return {
@@ -327,7 +327,7 @@ function parseLspCancelManualL3ReviewArgument(value: unknown): LspCancelManualL3
 }
 
 function unavailableManualL3Review(provider: LlmProvider, model: string, endpoint: string, message: string): LspManualL3ReviewResult {
-  connection.console.warn(`VibeGuard AI deep scan unavailable: ${message}`);
+  connection.console.warn(`DeepSec AI deep scan unavailable: ${message}`);
   return {
     outcome: {
       status: "failed",
@@ -346,16 +346,16 @@ function unavailableManualL3Review(provider: LlmProvider, model: string, endpoin
 async function executeLspIgnoreFinding(value: unknown): Promise<void> {
   const argument = parseLspIgnoreCommandArgument(value);
   if (!argument) {
-    connection.console.warn("VibeGuard ignore command was missing a valid finding ID and scope.");
+    connection.console.warn("DeepSec ignore command was missing a valid finding ID and scope.");
     return;
   }
   const finding = findCurrentFinding(argument.findingId);
   if (!finding) {
-    connection.console.warn("VibeGuard ignore command referred to a finding that is no longer active.");
+    connection.console.warn("DeepSec ignore command referred to a finding that is no longer active.");
     return;
   }
   if (argument.scope === "package" && finding.type !== "hallucinated_package") {
-    connection.console.warn("VibeGuard package ignore command can only be applied to package findings.");
+    connection.console.warn("DeepSec package ignore command can only be applied to package findings.");
     return;
   }
 
@@ -363,28 +363,28 @@ async function executeLspIgnoreFinding(value: unknown): Promise<void> {
   if (!saved) {
     return;
   }
-  connection.console.info(`VibeGuard saved ${argument.scope} ignore rule for ${finding.detection_rule}.`);
+  connection.console.info(`DeepSec saved ${argument.scope} ignore rule for ${finding.detection_rule}.`);
   refreshOpenDocuments();
 }
 
 async function executeLspL3Fix(value: unknown): Promise<void> {
   const argument = parseLspApplyL3FixCommandArgument(value);
   if (!argument) {
-    connection.console.warn("VibeGuard L3 fix command was missing a valid finding ID and document URI.");
+    connection.console.warn("DeepSec L3 fix command was missing a valid finding ID and document URI.");
     return;
   }
   const finding = findCurrentFindingInDocument(argument.uri, argument.findingId);
   const document = documents.get(argument.uri);
   if (!finding || !document || finding.detection_layer !== "L3" || !finding.fix) {
-    connection.console.warn("VibeGuard L3 fix command referred to a finding that is no longer active.");
+    connection.console.warn("DeepSec L3 fix command referred to a finding that is no longer active.");
     return;
   }
   if (!lspFixStillMatchesDocument(document, finding, finding.fix)) {
-    connection.console.warn("VibeGuard did not apply the L3 fix because the document changed after it was scanned.");
+    connection.console.warn("DeepSec did not apply the L3 fix because the document changed after it was scanned.");
     return;
   }
   const choice = await connection.window.showWarningMessage(
-    "VibeGuard received this replacement from an LLM. Review the change before applying it.",
+    "DeepSec received this replacement from an LLM. Review the change before applying it.",
     { title: "Apply replacement" }
   );
   if (choice?.title !== "Apply replacement") {
@@ -401,17 +401,17 @@ async function executeLspL3Fix(value: unknown): Promise<void> {
 async function executeLspFix(value: unknown): Promise<void> {
   const argument = parseLspApplyFixCommandArgument(value);
   if (!argument) {
-    connection.console.warn("VibeGuard fix command was missing a valid finding ID, document URI, or fix index.");
+    connection.console.warn("DeepSec fix command was missing a valid finding ID, document URI, or fix index.");
     return;
   }
   const finding = findCurrentFindingInDocument(argument.uri, argument.findingId);
   if (!finding || finding.detection_layer === "L3") {
-    connection.console.warn("VibeGuard fix command referred to a finding that is no longer safe to apply.");
+    connection.console.warn("DeepSec fix command referred to a finding that is no longer safe to apply.");
     return;
   }
   const fix = lspFixesForFinding(finding)[argument.fixIndex];
   if (!fix) {
-    connection.console.warn("VibeGuard fix command referred to an unavailable replacement.");
+    connection.console.warn("DeepSec fix command referred to an unavailable replacement.");
     return;
   }
   await applyLspFindingFix(argument.uri, finding, fix);
@@ -579,7 +579,7 @@ async function syncPackageCacheInBackground(): Promise<void> {
     const willUpgradeFullIndex = shouldUpgradePackageCacheInBackground(syncConfig);
     workDoneProgress = await createPackageCacheProgress(selectedRegistries);
     connection.console.info(
-      `VibeGuard package cache sync started: ${selectedRegistries.length > 0 ? selectedRegistries.join(", ") : "no registries"}.`
+      `DeepSec package cache sync started: ${selectedRegistries.length > 0 ? selectedRegistries.join(", ") : "no registries"}.`
     );
     const staged = await syncConfiguredPackageIndexesInBackground({
       config: syncConfig,
@@ -588,14 +588,14 @@ async function syncPackageCacheInBackground(): Promise<void> {
       continueOnError: true,
       onTierStart: (tier) => {
         const percentage = tier === "full" && willUpgradeFullIndex ? 50 : 0;
-        connection.console.info(`VibeGuard package cache ${packageCacheTierLabel(tier)} started.`);
+        connection.console.info(`DeepSec package cache ${packageCacheTierLabel(tier)} started.`);
         workDoneProgress?.report(percentage, `${packageCacheTierLabel(tier)} started`);
       },
       onProgress: (tier, progress) => {
         const percentage = packageSyncTierPercentage(tier, progress.completed, progress.total, willUpgradeFullIndex);
         if (progress.phase === "starting") {
           connection.console.info(
-            `VibeGuard package cache ${packageCacheTierLabel(tier)}: ${progress.registry} (${progress.completed + 1}/${progress.total}).`
+            `DeepSec package cache ${packageCacheTierLabel(tier)}: ${progress.registry} (${progress.completed + 1}/${progress.total}).`
           );
           workDoneProgress?.report(
             percentage,
@@ -610,7 +610,7 @@ async function syncPackageCacheInBackground(): Promise<void> {
       },
       onTierComplete: (tier, result) => {
         const synced = result.results.filter((entry) => entry.status === "synced").length;
-        connection.console.info(`VibeGuard package cache ${packageCacheTierLabel(tier)} finished: ${synced} synced.`);
+        connection.console.info(`DeepSec package cache ${packageCacheTierLabel(tier)} finished: ${synced} synced.`);
         if (synced > 0) {
           refreshOpenDocumentsAfterPackageSync();
         }
@@ -620,7 +620,7 @@ async function syncPackageCacheInBackground(): Promise<void> {
     const syncedCount = outcomes.filter((entry) => entry.status === "synced").length;
     const failedCount = outcomes.filter((entry) => entry.status === "failed").length;
     connection.console.info(
-      `VibeGuard package cache sync finished: ${syncedCount} synced, ${outcomes.length - syncedCount - failedCount} skipped, ${failedCount} failed.`
+      `DeepSec package cache sync finished: ${syncedCount} synced, ${outcomes.length - syncedCount - failedCount} skipped, ${failedCount} failed.`
     );
     workDoneProgress?.report(
       100,
@@ -628,12 +628,12 @@ async function syncPackageCacheInBackground(): Promise<void> {
     );
     if (failedCount > 0 && syncedCount === 0) {
       connection.console.warn(
-        "VibeGuard package cache sync did not complete; package checks will keep using the existing local cache and seed catalog."
+        "DeepSec package cache sync did not complete; package checks will keep using the existing local cache and seed catalog."
       );
     }
   } catch (error) {
     workDoneProgress?.report(100, "Package cache sync failed");
-    connection.console.warn(`VibeGuard package cache sync error: ${error instanceof Error ? error.message : String(error)}`);
+    connection.console.warn(`DeepSec package cache sync error: ${error instanceof Error ? error.message : String(error)}`);
   } finally {
     workDoneProgress?.done();
     packageSyncInFlight = false;
@@ -652,7 +652,7 @@ async function createPackageCacheProgress(registries: PackageRegistry[]): Promis
   try {
     const progress = await connection.window.createWorkDoneProgress();
     progress.begin(
-      "VibeGuard package cache",
+      "DeepSec package cache",
       0,
       registries.length > 0 ? `Preparing ${registries.length} package registry${registries.length === 1 ? "" : "ies"}` : "Preparing",
       false
@@ -660,7 +660,7 @@ async function createPackageCacheProgress(registries: PackageRegistry[]): Promis
     return progress;
   } catch (error) {
     connection.console.warn(
-      `VibeGuard package cache progress is unavailable: ${error instanceof Error ? error.message : String(error)}`
+      `DeepSec package cache progress is unavailable: ${error instanceof Error ? error.message : String(error)}`
     );
     return undefined;
   }
@@ -689,11 +689,11 @@ async function loadLspConfig(): Promise<{ config: VibeGuardConfig; path: string;
   try {
     const loaded = await loadConfig(configPath);
     if (configuredPath && !loaded.exists) {
-      connection.console.warn(`VibeGuard config file not found: ${loaded.path}`);
+      connection.console.warn(`DeepSec config file not found: ${loaded.path}`);
     }
     return loaded;
   } catch (error) {
-    connection.console.warn(`VibeGuard config error: ${error instanceof Error ? error.message : String(error)}`);
+    connection.console.warn(`DeepSec config error: ${error instanceof Error ? error.message : String(error)}`);
     return {
       config: cloneDefaultConfig(),
       path: configPath ?? defaultConfigPath(),
@@ -929,7 +929,7 @@ async function saveLspIgnoreRule(finding: Finding, scope: LspIgnoreScope, reason
     if (scope === "package") {
       const registry = finding.detection_rule.replace(/^hallucinated_package_/, "");
       if (!isPackageRegistry(registry)) {
-        connection.console.warn("VibeGuard package ignore command used an unsupported package registry.");
+        connection.console.warn("DeepSec package ignore command used an unsupported package registry.");
         return false;
       }
       await appendIgnoreRule(
@@ -955,7 +955,7 @@ async function saveLspIgnoreRule(finding: Finding, scope: LspIgnoreScope, reason
     return true;
   } catch (error) {
     connection.console.warn(
-      `VibeGuard could not save ${scope} ignore rule: ${error instanceof Error ? error.message : String(error)}`
+      `DeepSec could not save ${scope} ignore rule: ${error instanceof Error ? error.message : String(error)}`
     );
     return false;
   }
@@ -1034,7 +1034,7 @@ async function validateDocument(document: TextDocument, revision: number, option
     const warning = result.performance.budgets.find((check) => check.exceeded);
     if (warning) {
       connection.console.warn(
-        `VibeGuard performance budget warning: ${warning.layer} ${filePathFromUri(document.uri)} ${formatMs(
+        `DeepSec performance budget warning: ${warning.layer} ${filePathFromUri(document.uri)} ${formatMs(
           warning.elapsedMs
         )} > ${formatMs(warning.budgetMs)}`
       );
@@ -1091,11 +1091,11 @@ function maybeShowCriticalPopup(documentUri: string, findings: Finding[]): void 
       if (!action.scope || !(await saveLspIgnoreRule(current, action.scope, "Ignored from LSP critical alert"))) {
         return;
       }
-      connection.console.info(`VibeGuard saved ${action.scope} ignore rule for ${current.detection_rule}.`);
+      connection.console.info(`DeepSec saved ${action.scope} ignore rule for ${current.detection_rule}.`);
       refreshOpenDocuments();
     })
     .catch((error) => {
-      connection.console.warn(`VibeGuard critical alert is unavailable: ${error instanceof Error ? error.message : String(error)}`);
+      connection.console.warn(`DeepSec critical alert is unavailable: ${error instanceof Error ? error.message : String(error)}`);
     });
 }
 
@@ -1105,9 +1105,9 @@ function criticalPopupActions(finding: Finding): LspCriticalPopupAction[] {
     actions.push({ title: criticalFixActionTitle(fix), kind: "fix", scope: "" });
   }
   actions.push(
-    { title: "Ignore this VibeGuard finding", kind: "ignore", scope: "line" },
-    { title: "Ignore this VibeGuard rule in this file", kind: "ignore", scope: "file" },
-    { title: "Ignore this VibeGuard rule globally", kind: "ignore", scope: "global" }
+    { title: "Ignore this DeepSec finding", kind: "ignore", scope: "line" },
+    { title: "Ignore this DeepSec rule in this file", kind: "ignore", scope: "file" },
+    { title: "Ignore this DeepSec rule globally", kind: "ignore", scope: "global" }
   );
   if (finding.type === "hallucinated_package") {
     actions.push({ title: `Ignore package ${finding.evidence}`, kind: "ignore", scope: "package" });
@@ -1140,7 +1140,7 @@ async function applyLspFindingFix(
   }
   const document = documents.get(documentUri);
   if (!document || !lspFixStillMatchesDocument(document, finding, fix)) {
-    connection.console.warn("VibeGuard did not apply the fix because the document changed after it was scanned.");
+    connection.console.warn("DeepSec did not apply the fix because the document changed after it was scanned.");
     return;
   }
   const result = await connection.workspace.applyEdit({
@@ -1161,7 +1161,7 @@ async function applyLspFindingFix(
     }
   });
   if (!result.applied) {
-    connection.console.warn(`VibeGuard could not apply critical-finding fix: ${result.failureReason ?? "client rejected the edit"}`);
+    connection.console.warn(`DeepSec could not apply critical-finding fix: ${result.failureReason ?? "client rejected the edit"}`);
   }
 }
 
@@ -1215,7 +1215,7 @@ function toLspFindingRange(finding: Finding) {
 
 async function openLspIgnoreRules(): Promise<void> {
   if (!clientSupportsShowDocument) {
-    connection.console.info("VibeGuard ignore rules are at the configured ignoreRulesPath; this LSP client cannot open documents.");
+    connection.console.info("DeepSec ignore rules are at the configured ignoreRulesPath; this LSP client cannot open documents.");
     return;
   }
   const filePath = await ensureIgnoreRulesFile(settings.ignoreRulesPath?.trim() || defaultIgnoreRulesPath());
@@ -1224,7 +1224,7 @@ async function openLspIgnoreRules(): Promise<void> {
     takeFocus: true
   });
   if (!result.success) {
-    connection.console.warn(`VibeGuard could not open ignore rules: ${filePath}`);
+    connection.console.warn(`DeepSec could not open ignore rules: ${filePath}`);
   }
 }
 
@@ -1243,7 +1243,7 @@ async function loadConfiguredCustomRules() {
   try {
     return await loadCustomRules(settings.customRules ?? []);
   } catch (error) {
-    connection.console.warn(`VibeGuard custom rules error: ${error instanceof Error ? error.message : String(error)}`);
+    connection.console.warn(`DeepSec custom rules error: ${error instanceof Error ? error.message : String(error)}`);
     return [];
   }
 }
@@ -1309,7 +1309,7 @@ function toDiagnostic(finding: Finding): Diagnostic {
     },
     severity: toLspSeverity(finding.severity),
     code: finding.detection_rule,
-    source: "VibeGuard",
+    source: "DeepSec",
     message: finding.suggestion ? `${finding.message} ${finding.suggestion}` : finding.message
   };
 }

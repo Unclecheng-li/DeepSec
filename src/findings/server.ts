@@ -205,7 +205,7 @@ async function handleRequest(
       return;
     }
     writeText(response, 401, "Unauthorized\n", "text/plain; charset=utf-8", {
-      "WWW-Authenticate": 'Bearer realm="VibeGuard Team Dashboard"'
+      "WWW-Authenticate": 'Bearer realm="DeepSec Team Dashboard"'
     });
     return;
   }
@@ -278,7 +278,7 @@ async function handleRequest(
   }
   if (url.pathname === "/projects") {
     const html = formatProjectIntegrationsDashboard({
-      title: options.title ? `${options.title} Project Integrations` : "VibeGuard Project Integrations"
+      title: options.title ? `${options.title} Project Integrations` : "DeepSec Project Integrations"
     });
     writeText(response, 200, html, "text/html; charset=utf-8", withCookies(undefined, authentication.cookieHeaders));
     return;
@@ -288,7 +288,7 @@ async function handleRequest(
     const html = formatFindingsDashboard(summary, {
       dbPath: options.dbPath,
       generatedAt: Date.now(),
-      title: options.title ?? "VibeGuard Team Security Dashboard",
+      title: options.title ?? "DeepSec Team Security Dashboard",
       adminUrl: authentication.identity.role === "admin" ? "/projects" : undefined,
       projectFilterBaseUrl: options.project ? undefined : "/?project=",
       allProjectsUrl: project ? "/" : undefined
@@ -313,7 +313,7 @@ async function handleIngest(
       return;
     }
     writeText(response, 401, "Unauthorized\n", "text/plain; charset=utf-8", {
-      "WWW-Authenticate": 'Bearer realm="VibeGuard Findings Ingest"'
+      "WWW-Authenticate": 'Bearer realm="DeepSec Findings Ingest"'
     });
     return;
   }
@@ -321,7 +321,7 @@ async function handleIngest(
   const scopedProject = globalTokenAccepted ? undefined : store.projectForIngestToken(bearer);
   if (!globalTokenAccepted && !scopedProject) {
     writeText(response, 401, "Unauthorized\n", "text/plain; charset=utf-8", {
-      "WWW-Authenticate": 'Bearer realm="VibeGuard Findings Ingest"'
+      "WWW-Authenticate": 'Bearer realm="DeepSec Findings Ingest"'
     });
     return;
   }
@@ -409,7 +409,7 @@ async function handleProjectManagement(
   const authentication = authenticateRequest(request, url, options);
   if (!authentication.identity) {
     writeText(response, 401, "Unauthorized\n", "text/plain; charset=utf-8", {
-      "WWW-Authenticate": 'Bearer realm="VibeGuard Team Dashboard"'
+      "WWW-Authenticate": 'Bearer realm="DeepSec Team Dashboard"'
     });
     return;
   }
@@ -478,7 +478,7 @@ async function handleProjectRulesManagement(
   const authentication = authenticateRequest(request, url, options);
   if (!authentication.identity) {
     writeText(response, 401, "Unauthorized\n", "text/plain; charset=utf-8", {
-      "WWW-Authenticate": 'Bearer realm="VibeGuard Team Dashboard"'
+      "WWW-Authenticate": 'Bearer realm="DeepSec Team Dashboard"'
     });
     return;
   }
@@ -560,7 +560,7 @@ function handleProjectRulesDownload(
   const admin = authentication.identity && roleAllows(authentication.identity.role, "admin");
   if (!admin && !globalTokenAccepted && !scopedProject) {
     writeText(response, 401, "Unauthorized\n", "text/plain; charset=utf-8", {
-      "WWW-Authenticate": 'Bearer realm="VibeGuard Project Rules"'
+      "WWW-Authenticate": 'Bearer realm="DeepSec Project Rules"'
     });
     return;
   }

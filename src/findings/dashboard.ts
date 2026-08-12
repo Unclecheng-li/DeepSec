@@ -16,7 +16,7 @@ const severityOrder: Severity[] = ["critical", "high", "medium", "low", "info"];
 
 export function formatFindingsDashboard(summary: FindingStoreSummary, options: FindingsDashboardOptions = {}): string {
   const generatedAt = options.generatedAt ?? Date.now();
-  const title = options.title ?? "VibeGuard Security Dashboard";
+  const title = options.title ?? "DeepSec Security Dashboard";
   const severityBuckets = severityOrder.map((severity) => bucketOrEmpty(summary.severityCounts, severity));
   const maxSeverityCount = Math.max(1, ...severityBuckets.map((bucket) => bucket.count));
   const maxTypeCount = Math.max(1, ...summary.typeCounts.map((bucket) => bucket.count));
@@ -285,8 +285,8 @@ export function formatFindingsDashboard(summary: FindingStoreSummary, options: F
         </section>
       </div>
     </section>
-    <script type="application/json" id="vibeguard-summary">${escapeJsonScript(summary)}</script>
-    <footer>VibeGuard dashboard export. Counts include active and dismissed findings stored in the local findings database.</footer>
+    <script type="application/json" id="deepsec-summary">${escapeJsonScript(summary)}</script>
+    <footer>DeepSec dashboard export. Counts include active and dismissed findings stored in the local findings database.</footer>
   </main>
 </body>
 </html>`;

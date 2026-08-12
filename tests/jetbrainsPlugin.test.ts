@@ -9,10 +9,10 @@ test("JetBrains plugin packages the Node LSP, exposes the DeepSec ToolWindow, an
   const [buildFile, pluginXml, provider, descriptor, bridge, panel] = await Promise.all([
     readJetBrainsFile("build.gradle.kts"),
     readJetBrainsFile("src/main/resources/META-INF/plugin.xml"),
-    readJetBrainsFile("src/main/java/dev/vibeguard/jetbrains/VibeGuardLspServerSupportProvider.java"),
-    readJetBrainsFile("src/main/java/dev/vibeguard/jetbrains/VibeGuardLspServerDescriptor.java"),
-    readJetBrainsFile("src/main/java/dev/vibeguard/jetbrains/lsp/VibeGuardLspBridge.java"),
-    readJetBrainsFile("src/main/java/dev/vibeguard/jetbrains/ui/VibeGuardPanel.java")
+    readJetBrainsFile("src/main/java/dev/deepsec/jetbrains/DeepSecLspServerSupportProvider.java"),
+    readJetBrainsFile("src/main/java/dev/deepsec/jetbrains/DeepSecLspServerDescriptor.java"),
+    readJetBrainsFile("src/main/java/dev/deepsec/jetbrains/lsp/DeepSecLspBridge.java"),
+    readJetBrainsFile("src/main/java/dev/deepsec/jetbrains/ui/DeepSecPanel.java")
   ]);
 
   assert.match(buildFile, /id\("org\.jetbrains\.intellij\.platform"\)/);
@@ -23,8 +23,8 @@ test("JetBrains plugin packages the Node LSP, exposes the DeepSec ToolWindow, an
   assert.match(pluginXml, /com\.intellij\.modules\.lsp/);
   assert.match(pluginXml, /platform\.lsp\.serverSupportProvider/);
   assert.match(pluginXml, /<toolWindow id="DeepSec"/);
-  assert.match(pluginXml, /VibeGuardToolWindowFactory/);
-  assert.match(provider, /ensureServerStarted\(new VibeGuardLspServerDescriptor\(project\)\)/);
+  assert.match(pluginXml, /DeepSecToolWindowFactory/);
+  assert.match(provider, /ensureServerStarted\(new DeepSecLspServerDescriptor\(project\)\)/);
   assert.match(descriptor, /new GeneralCommandLine\(nodeExecutable\(\), serverPath\(\), "--stdio"\)/);
   assert.match(descriptor, /new GeneralCommandLine\(nativePath, "--stdio"\)/);
   assert.match(descriptor, /DEEPSEC_NODE_PATH/);

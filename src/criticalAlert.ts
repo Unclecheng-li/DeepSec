@@ -1,7 +1,7 @@
 import type { Finding } from "./types";
 
 export function criticalAlertMessage(finding: Finding): string {
-  const message = `VibeGuard: ${finding.message}`;
+  const message = `DeepSec: ${finding.message}`;
   if (finding.type !== "hallucinated_package") {
     return message;
   }

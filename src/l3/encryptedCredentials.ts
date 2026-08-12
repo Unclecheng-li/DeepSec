@@ -11,7 +11,7 @@ const encryptedCredentialFileVersion = 1;
 const keyLength = 32;
 const ivLength = 12;
 const encryptionAlgorithm = "aes-256-gcm";
-const encryptionContext = "VibeGuard LLM credential fallback v1";
+const encryptionContext = "DeepSec LLM credential fallback v1";
 const supportedProviders = new Set<LlmCredentialProvider>(["deepseek", "claude", "openai", "local", "vibeguard"]);
 
 interface EncryptedCredential {

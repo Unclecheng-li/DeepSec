@@ -150,7 +150,7 @@ export function parseConfig(raw: string, sourceName = "config.json"): VibeGuardC
     value = JSON.parse(raw.replace(/^\uFEFF/, ""));
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
-    throw new Error(`Invalid VibeGuard config JSON in ${sourceName}: ${detail}`);
+    throw new Error(`Invalid DeepSec config JSON in ${sourceName}: ${detail}`);
   }
   return normalizeConfig(value, sourceName);
 }
@@ -234,7 +234,7 @@ function readBoolean(source: Record<string, unknown>, key: string, fallback: boo
     return fallback;
   }
   if (typeof value !== "boolean") {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must be boolean.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must be boolean.`);
   }
   return value;
 }
@@ -245,7 +245,7 @@ function readNull(source: Record<string, unknown>, key: string, fallback: null, 
     return fallback;
   }
   if (value !== null) {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must be null.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must be null.`);
   }
   return null;
 }
@@ -262,7 +262,7 @@ function readEnum<T extends string>(
     return fallback;
   }
   if (typeof value !== "string" || !allowed.includes(value as T)) {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must be one of ${allowed.join(", ")}.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must be one of ${allowed.join(", ")}.`);
   }
   return value as T;
 }
@@ -279,7 +279,7 @@ function readOptionalEnum<T extends string>(
     return fallback;
   }
   if (typeof value !== "string" || !allowed.includes(value as T)) {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must be one of ${allowed.join(", ")}.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must be one of ${allowed.join(", ")}.`);
   }
   return value as T;
 }
@@ -295,7 +295,7 @@ function readStringArray(
     return [...fallback];
   }
   if (!Array.isArray(value) || value.some((item) => typeof item !== "string")) {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must be an array of strings.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must be an array of strings.`);
   }
   return [...value];
 }
@@ -311,14 +311,14 @@ function readRegistryArray(
     return [...fallback];
   }
   if (!Array.isArray(value) || value.some((item) => typeof item !== "string" || !registries.includes(item as PackageRegistry))) {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must contain supported registries.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must contain supported registries.`);
   }
   return [...value] as PackageRegistry[];
 }
 
 function expectPlainObject(value: unknown, key: string, sourceName: string): Record<string, unknown> {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`Invalid VibeGuard config in ${sourceName}: ${key} must be an object.`);
+    throw new Error(`Invalid DeepSec config in ${sourceName}: ${key} must be an object.`);
   }
   return value as Record<string, unknown>;
 }

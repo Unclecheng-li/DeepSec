@@ -110,7 +110,7 @@ export async function filterScanFiles(files: string[], options: FilterScanFilesO
     return {
       files,
       scannedMode: "full-scan",
-      warning: `VibeGuard: ai-code-scan could not inspect git history (${detail}); falling back to full scan.`
+      warning: `DeepSec: ai-code-scan could not inspect git history (${detail}); falling back to full scan.`
     };
   }
 }

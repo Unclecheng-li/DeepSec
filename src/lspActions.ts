@@ -36,7 +36,7 @@ export function createCodeActionsForFindings(uri: string, findings: Finding[], d
 
     for (const [index, fix] of allFixesForFinding(finding).entries()) {
       const action: CodeAction = {
-        title: `Apply VibeGuard fix: ${fix.description}`,
+        title: `Apply DeepSec fix: ${fix.description}`,
         kind: CodeActionKind.QuickFix,
         diagnostics: [diagnostic],
         isPreferred: index === 0 && finding.detection_layer !== "L3"

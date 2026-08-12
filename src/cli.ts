@@ -250,7 +250,7 @@ async function main(): Promise<void> {
         await storeScanFindings(options, scanInput);
       }
     } catch (error) {
-      process.stderr.write(`VibeGuard findings storage warning: ${error instanceof Error ? error.message : String(error)}\n`);
+      process.stderr.write(`DeepSec findings storage warning: ${error instanceof Error ? error.message : String(error)}\n`);
     }
   }
   if (options.githubAnnotations) {
@@ -271,14 +271,14 @@ async function main(): Promise<void> {
   if (options.findingsEndpoint) {
     if (!scanInput) {
       uploadFailed = true;
-      process.stderr.write("VibeGuard findings upload warning: scan metadata could not be prepared.\n");
+      process.stderr.write("DeepSec findings upload warning: scan metadata could not be prepared.\n");
     } else {
       try {
         const result = await uploadScanFindings(options, scanInput);
-        process.stderr.write(`VibeGuard findings upload: stored scan ${result.scanId} (${result.activeCount} active finding(s)).\n`);
+        process.stderr.write(`DeepSec findings upload: stored scan ${result.scanId} (${result.activeCount} active finding(s)).\n`);
       } catch (error) {
         uploadFailed = true;
-        process.stderr.write(`VibeGuard findings upload warning: ${error instanceof Error ? error.message : String(error)}\n`);
+        process.stderr.write(`DeepSec findings upload warning: ${error instanceof Error ? error.message : String(error)}\n`);
       }
     }
   }
@@ -382,7 +382,7 @@ async function updateConfigIgnoredFinding(args: string[], action: "add" | "remov
 
   const findingId = positional[0];
   if (!findingId) {
-    throw new Error(`Usage: vibeguard config ${action === "add" ? "ignore-finding" : "unignore-finding"} <finding-id> [--path path]`);
+    throw new Error(`Usage: deepsec config ${action === "add" ? "ignore-finding" : "unignore-finding"} <finding-id> [--path path]`);
   }
   const result = await updateIgnoredFinding(findingId, action, filePath);
   const verb = action === "add" ? "Ignored" : "Unignored";
@@ -529,7 +529,7 @@ function printLlmKeyResult(
     return;
   }
   console.log(
-    `VibeGuard ${result.provider} API key: ${result.stored ? `stored securely (${result.source})` : "not stored"}.`
+    `DeepSec ${result.provider} API key: ${result.stored ? `stored securely (${result.source})` : "not stored"}.`
   );
   if (result.changed) {
     console.log(`Config marker updated: ${result.configPath}`);
@@ -622,7 +622,7 @@ async function printSubscriptionStatus(args: string[]): Promise<void> {
     console.log(JSON.stringify(status, null, 2));
     return;
   }
-  console.log(`VibeGuard subscription: ${status.plan} (${status.state})`);
+  console.log(`DeepSec subscription: ${status.plan} (${status.state})`);
   if (status.reason === "missing_credential") {
     console.log("No VIBEGUARD_PRO_API_KEY credential is configured.");
     return;
@@ -748,7 +748,7 @@ async function addIgnoreRuleCommand(args: string[]): Promise<void> {
 
   const rule = positional[0];
   if (!rule) {
-    throw new Error("Usage: vibeguard ignore-rules add-rule <rule-id-or-type> [--path glob] [--line n] [--reason text]");
+    throw new Error("Usage: deepsec ignore-rules add-rule <rule-id-or-type> [--path glob] [--line n] [--reason text]");
   }
   if (line !== undefined && !targetPath && !scope) {
     throw new Error("--line requires --path or --scope so the ignore does not apply to every file.");
@@ -807,7 +807,7 @@ async function addIgnorePackageCommand(args: string[]): Promise<void> {
   const registry = parseRegistry(positional[0]);
   const packageName = positional[1];
   if (!registry || !packageName) {
-    throw new Error("Usage: vibeguard ignore-rules add-package <npm|pypi|cargo|gomod|maven> <package> [--reason text]");
+    throw new Error("Usage: deepsec ignore-rules add-package <npm|pypi|cargo|gomod|maven> <package> [--reason text]");
   }
   const entry = {
     package: packageName,
@@ -865,7 +865,7 @@ async function initConfig(args: string[]): Promise<void> {
   }
 
   const result = await ensureConfigFile(filePath, { force });
-  console.log(`${result.created ? "Created" : "Existing"} VibeGuard config: ${result.path}`);
+  console.log(`${result.created ? "Created" : "Existing"} DeepSec config: ${result.path}`);
 }
 
 function parseArgs(args: string[]): CliOptions {
@@ -914,7 +914,7 @@ function parseArgs(args: string[]): CliOptions {
     } else if (arg.startsWith("--format=")) {
       options.reportFormat = parseReportFormat(arg.slice("--format=".length));
     } else if (arg === "--output") {
-      options.outputPath = path.resolve(expandHome(rest.shift() ?? "vibeguard-report.json"));
+      options.outputPath = path.resolve(expandHome(rest.shift() ?? "deepsec-report.json"));
     } else if (arg.startsWith("--output=")) {
       options.outputPath = path.resolve(expandHome(arg.slice("--output=".length)));
     } else if (arg === "--sarif") {
@@ -922,7 +922,7 @@ function parseArgs(args: string[]): CliOptions {
     } else if (arg.startsWith("--sarif=")) {
       options.sarifPath = path.resolve(expandHome(arg.slice("--sarif=".length)));
     } else if (arg === "--markdown") {
-      options.markdownPath = path.resolve(expandHome(rest.shift() ?? "vibeguard-report.md"));
+      options.markdownPath = path.resolve(expandHome(rest.shift() ?? "deepsec-report.md"));
     } else if (arg.startsWith("--markdown=")) {
       options.markdownPath = path.resolve(expandHome(arg.slice("--markdown=".length)));
     } else if (arg === "--github-annotations") {
@@ -978,7 +978,7 @@ function parseArgs(args: string[]): CliOptions {
     } else if (arg.startsWith("--ignore-rules=")) {
       options.ignoreRulesPath = path.resolve(expandHome(arg.slice("--ignore-rules=".length)));
     } else if (arg === "--custom-rules") {
-      options.customRulePaths.push(path.resolve(expandHome(rest.shift() ?? "vibeguard-rules.yml")));
+      options.customRulePaths.push(path.resolve(expandHome(rest.shift() ?? "deepsec-rules.yml")));
     } else if (arg.startsWith("--custom-rules=")) {
       options.customRulePaths.push(path.resolve(expandHome(arg.slice("--custom-rules=".length))));
     } else if (arg === "--no-ignore") {
@@ -1182,7 +1182,7 @@ async function printFindingsSummary(args: string[]): Promise<void> {
 async function writeFindingsDashboard(args: string[]): Promise<void> {
   const options = parseFindingsCommandOptions(args);
   const since = options.days === undefined ? undefined : Date.now() - options.days * 24 * 60 * 60 * 1000;
-  const outputPath = options.outputPath ?? path.resolve("vibeguard-dashboard.html");
+  const outputPath = options.outputPath ?? path.resolve("deepsec-dashboard.html");
   const store = new SqliteFindingStore(options.dbPath);
   try {
     const summary = store.summary({ since, topLimit: options.topLimit, project: options.project });
@@ -1195,7 +1195,7 @@ async function writeFindingsDashboard(args: string[]): Promise<void> {
       console.log(JSON.stringify({ outputPath, ...summary }, null, 2));
       return;
     }
-    console.log(`Wrote VibeGuard findings dashboard to ${outputPath}`);
+    console.log(`Wrote DeepSec findings dashboard to ${outputPath}`);
   } finally {
     store.close();
   }
@@ -1214,15 +1214,15 @@ async function writeComplianceReport(args: string[]): Promise<void> {
     if (options.json) {
       if (options.outputPath) {
         await writeTextFile(options.outputPath, `${JSON.stringify(report, null, 2)}\n`);
-        console.log(`Wrote VibeGuard compliance evidence JSON to ${options.outputPath}`);
+        console.log(`Wrote DeepSec compliance evidence JSON to ${options.outputPath}`);
       } else {
         console.log(JSON.stringify(report, null, 2));
       }
       return;
     }
-    const outputPath = options.outputPath ?? path.resolve("vibeguard-compliance-report.md");
+    const outputPath = options.outputPath ?? path.resolve("deepsec-compliance-report.md");
     await writeTextFile(outputPath, formatComplianceMarkdown(report));
-    console.log(`Wrote VibeGuard compliance evidence report to ${outputPath}`);
+    console.log(`Wrote DeepSec compliance evidence report to ${outputPath}`);
   } finally {
     store.close();
   }
@@ -1367,7 +1367,7 @@ async function serveFindingsDashboard(args: string[]): Promise<void> {
     project,
     oidc
   });
-  console.log(`VibeGuard team dashboard listening at ${dashboard.url}`);
+  console.log(`DeepSec team dashboard listening at ${dashboard.url}`);
   if (!token && !oidc) {
     console.log("Warning: dashboard authentication is disabled. Use --token-env or OIDC before exposing it beyond localhost.");
   } else if (oidc) {
@@ -1622,7 +1622,7 @@ function parseFindingsCommandOptions(args: string[]): {
     } else if (arg.startsWith("--top=")) {
       topLimit = parsePositiveInteger(arg.slice("--top=".length), "--top");
     } else if (arg === "--output") {
-      outputPath = path.resolve(expandHome(args[++index] ?? "vibeguard-dashboard.html"));
+      outputPath = path.resolve(expandHome(args[++index] ?? "deepsec-dashboard.html"));
     } else if (arg.startsWith("--output=")) {
       outputPath = path.resolve(expandHome(arg.slice("--output=".length)));
     } else if (arg === "--project") {
@@ -1792,7 +1792,7 @@ async function exportSemgrepRules(args: string[]): Promise<void> {
   for (let index = 0; index < args.length; index += 1) {
     const arg = args[index];
     if (arg === "--output") {
-      outputPath = path.resolve(expandHome(args[++index] ?? "vibeguard-semgrep.yml"));
+      outputPath = path.resolve(expandHome(args[++index] ?? "deepsec-semgrep.yml"));
     } else if (arg.startsWith("--output=")) {
       outputPath = path.resolve(expandHome(arg.slice("--output=".length)));
     } else if (arg === "--prefix") {
@@ -1849,7 +1849,7 @@ async function importPackageIndex(args: string[]): Promise<void> {
   const registry = parseRegistry(positional[0]);
   const filePath = positional[1] ? path.resolve(expandHome(positional[1])) : undefined;
   if (!registry || !filePath) {
-    throw new Error("Usage: vibeguard packages import <registry> <file> [--full|--partial] [--index path]");
+    throw new Error("Usage: deepsec packages import <registry> <file> [--full|--partial] [--index path]");
   }
 
   const parsed = await readPackageNameFile(filePath);
@@ -1915,7 +1915,7 @@ async function syncPackageIndex(args: string[]): Promise<void> {
 
   const registry = parseSyncableRegistry(positional[0]);
   if (!registry) {
-    throw new Error("Usage: vibeguard packages sync <npm|pypi|cargo|gomod|maven> [--limit n] [--full|--partial] [--url URL]");
+    throw new Error("Usage: deepsec packages sync <npm|pypi|cargo|gomod|maven> [--limit n] [--full|--partial] [--url URL]");
   }
 
   let npmSnapshot;
@@ -1965,7 +1965,7 @@ async function syncPackageIndex(args: string[]): Promise<void> {
     console.log(`Fetched ${payload.pagesFetched} page(s) from the remote registry.`);
   }
   if (requestedCoverage === "full" && effectiveCoverage !== "full") {
-    console.log("Requested full coverage but the remote result was truncated, so VibeGuard stored this as partial coverage.");
+    console.log("Requested full coverage but the remote result was truncated, so DeepSec stored this as partial coverage.");
   }
   console.log(`${storage.kind === "sqlite" ? "SQLite DB" : "Index"}: ${payload.path}`);
 }
@@ -2146,7 +2146,7 @@ async function checkPackageIndex(args: string[]): Promise<void> {
   const registry = parseRegistry(positional[0]);
   const packageName = positional[1];
   if (!registry || !packageName) {
-    throw new Error("Usage: vibeguard packages check <registry> <package> [--index path]");
+    throw new Error("Usage: deepsec packages check <registry> <package> [--index path]");
   }
 
   const storage = createPackageStorage({
@@ -2199,7 +2199,7 @@ function printConfiguredPackageSyncReport(
         console.log(`${entry.registry}: fetched ${entry.pagesFetched} page(s).`);
       }
       if (entry.requestedCoverage === "full" && entry.effectiveCoverage !== "full") {
-        console.log(`${entry.registry}: remote result was truncated, so VibeGuard stored partial coverage.`);
+        console.log(`${entry.registry}: remote result was truncated, so DeepSec stored partial coverage.`);
       }
     } else {
       console.log(`${entry.registry}: sync failed (${entry.reason}): ${entry.error}`);
@@ -2326,7 +2326,7 @@ function isSupportedFile(filePath: string): boolean {
 }
 
 function printHelp(): void {
-  console.log(`VibeGuard
+  console.log(`DeepSec
 
 Usage:
   vibeguard scan [paths...] [--json|--format human|json|sarif|markdown] [--output path]
@@ -2366,13 +2366,13 @@ Examples:
   VIBEGUARD_PRO_API_KEY=... vibeguard subscription status
   vibeguard scan src --json --package-verification remote --fail-on high
   vibeguard scan . --sarif vibeguard.sarif --github-annotations
-  vibeguard scan . --markdown vibeguard-report.md
+  vibeguard scan . --markdown deepsec-report.md
   vibeguard scan . --mode ai-code-scan --base-ref origin/main --head-ref HEAD
-  vibeguard scan src --custom-rules ./vibeguard-rules.yml
+  vibeguard scan src --custom-rules ./deepsec-rules.yml
   vibeguard findings list --limit 20
   vibeguard findings summary --days 30
-  vibeguard findings dashboard --days 30 --output vibeguard-dashboard.html
-  vibeguard findings compliance --framework all --days 90 --output vibeguard-compliance-report.md
+  vibeguard findings dashboard --days 30 --output deepsec-dashboard.html
+  vibeguard findings compliance --framework all --days 90 --output deepsec-compliance-report.md
   vibeguard findings audit --limit 100
   VIBEGUARD_DASHBOARD_TOKEN=... vibeguard findings serve --db ./findings.db --token-env VIBEGUARD_DASHBOARD_TOKEN
   VIBEGUARD_FINDINGS_INGEST_TOKEN=... vibeguard findings serve --ingest-token-env VIBEGUARD_FINDINGS_INGEST_TOKEN
@@ -2381,7 +2381,7 @@ Examples:
   vibeguard ignore-rules add-rule insecure_config_debug_true --path "**/test_*" --reason not_issue
   vibeguard ignore-rules add-package npm @company/private-utils
   vibeguard config init
-  vibeguard rules export-semgrep --output vibeguard-semgrep.yml
+  vibeguard rules export-semgrep --output deepsec-semgrep.yml
   vibeguard packages import npm ./npm-packages.txt --partial
   vibeguard packages sync npm --limit 100000 --partial
   deepsec packages sync-config --config ~/.vibeguard/config.json
@@ -2390,7 +2390,7 @@ Examples:
 }
 
 function printPackagesHelp(): void {
-  console.log(`VibeGuard package index
+  console.log(`DeepSec package index
 
 Usage:
   vibeguard packages import <registry> <file> [--full|--partial] [--index path] [--json]
@@ -2420,19 +2420,19 @@ Cargo and Maven sync paginate when needed. Lightweight mode uses a 100000-name p
 }
 
 function printRulesHelp(): void {
-  console.log(`VibeGuard rules
+  console.log(`DeepSec rules
 
 Usage:
   vibeguard rules export-semgrep [--output path] [--prefix id-prefix]
 
 Examples:
   vibeguard rules export-semgrep
-  vibeguard rules export-semgrep --output vibeguard-semgrep.yml
+  vibeguard rules export-semgrep --output deepsec-semgrep.yml
 `);
 }
 
 function printConfigHelp(): void {
-  console.log(`VibeGuard config
+  console.log(`DeepSec config
 
 Usage:
   vibeguard config init [--path path] [--force]
@@ -2447,7 +2447,7 @@ Scan defaults:
 }
 
 function printFindingsHelp(): void {
-  console.log(`VibeGuard findings
+  console.log(`DeepSec findings
 
 Usage:
   vibeguard findings status [--db path] [--project id] [--json]
@@ -2474,7 +2474,7 @@ Scan storage:
 }
 
 function printSubscriptionHelp(): void {
-  console.log(`VibeGuard subscription
+  console.log(`DeepSec subscription
 
 Usage:
   vibeguard subscription status [--api-key-env ENV_VAR] [--base-url URL] [--json]
@@ -2485,7 +2485,7 @@ enforces official L3 request allowances; BYOK and local LLM modes remain availab
 }
 
 function printLlmKeyHelp(): void {
-  console.log(`VibeGuard LLM credential storage
+  console.log(`DeepSec LLM credential storage
 
 Usage:
   vibeguard llm-key set [--provider deepseek|claude|openai|vibeguard] (--stdin|--from-env ENV_VAR) [--pin-env PIN_ENV] [--config path] [--json]
@@ -2507,7 +2507,7 @@ Examples:
 }
 
 function printIgnoreRulesHelp(): void {
-  console.log(`VibeGuard ignore rules
+  console.log(`DeepSec ignore rules
 
 Usage:
   vibeguard ignore-rules add-rule <rule-id-or-type> [--path glob] [--scope file:glob] [--line n]

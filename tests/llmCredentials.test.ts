@@ -73,7 +73,7 @@ test("uses macOS Keychain and Linux Secret Service command protocols", async () 
     ["security", "find-generic-password"],
     ["security", "delete-generic-password"]
   ]);
-  assert.equal(macCalls[0].args.includes("VibeGuard"), true);
+  assert.equal(macCalls[0].args.includes("DeepSec"), true);
   assert.equal(macCalls[0].args.includes("llm_api_key.claude"), true);
 
   const linuxCalls: Array<{ command: string; args: string[]; input?: string }> = [];

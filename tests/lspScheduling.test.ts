@@ -167,13 +167,13 @@ test("LSP critical alerts offer verified package replacements and scoped ignores
     "Apply fix: Replace with react-window"
   ]);
   assert.deepEqual(actionTitles.slice(-4), [
-    "Ignore this VibeGuard finding",
-    "Ignore this VibeGuard rule in this file",
-    "Ignore this VibeGuard rule globally",
+    "Ignore this DeepSec finding",
+    "Ignore this DeepSec rule in this file",
+    "Ignore this DeepSec rule globally",
     "Ignore package react-virtualized-auto-sizer"
   ]);
 
-  client.respond(alert.id, { title: "Ignore this VibeGuard rule in this file" });
+  client.respond(alert.id, { title: "Ignore this DeepSec rule in this file" });
   const afterIgnore = await client.nextDiagnostic(uri);
   assert.deepEqual(afterIgnore.diagnostics, []);
   const savedRules = await fs.readFile(path.join(temporaryHome, ".vibeguard", "ignore-rules.yml"), "utf8");
@@ -408,8 +408,8 @@ test("LSP ignore code actions persist a local rule and clear the matching diagno
       ]
     }
   })) as Array<{ title?: string; command?: { command?: string; arguments?: unknown[] } }>;
-  const fix = actions.find((action) => action.title === "Apply VibeGuard fix: Replace with react-virtualized");
-  const ignore = actions.find((action) => action.title === "Ignore this VibeGuard finding");
+  const fix = actions.find((action) => action.title === "Apply fix: Replace with react-virtualized");
+  const ignore = actions.find((action) => action.title === "Ignore this DeepSec finding");
   assert.equal(fix?.command?.command, "deepsec.applyFix");
   assert.equal(ignore?.command?.command, "deepsec.ignoreFinding");
   assert.ok(ignore?.command?.arguments);
@@ -693,7 +693,7 @@ test("LSP requires confirmation before applying an L3 generated replacement", { 
       ]
     }
   })) as Array<{ title?: string; edit?: unknown; command?: { command?: string; arguments?: unknown[] } }>;
-  const fix = actions.find((action) => action.title === "Apply VibeGuard fix: Review LLM-generated replacement");
+  const fix = actions.find((action) => action.title === "Apply DeepSec fix: Review LLM-generated replacement");
   assert.equal(fix?.edit, undefined);
   assert.equal(fix?.command?.command, "deepsec.applyL3Fix");
 
@@ -795,7 +795,7 @@ test("LSP reports package-cache progress when the client supports standard work 
   client.notify("initialized", {});
 
   const begin = await client.nextWorkDoneProgress("begin");
-  assert.equal(begin.value.title, "VibeGuard package cache");
+  assert.equal(begin.value.title, "DeepSec package cache");
   assert.equal(begin.value.percentage, 0);
 
   const tierStarted = await client.nextWorkDoneProgress("report");

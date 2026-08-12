@@ -101,9 +101,9 @@ test("formats a standalone findings dashboard with embedded summary data", () =>
     generatedAt: Date.UTC(2026, 0, 3),
     adminUrl: "/projects"
   });
-  const dataMatch = html.match(/<script type="application\/json" id="vibeguard-summary">([\s\S]*?)<\/script>/);
+  const dataMatch = html.match(/<script type="application\/json" id="deepsec-summary">([\s\S]*?)<\/script>/);
 
-  assert.match(html, /VibeGuard Security Dashboard/);
+  assert.match(html, /DeepSec Security Dashboard/);
   assert.match(html, /Daily Finding Trend/);
   assert.match(html, /Latest Scan Change/);
   assert.match(html, /Persistent/);
@@ -176,7 +176,7 @@ test("escapes dashboard text and embedded JSON safely", () => {
   };
 
   const html = formatFindingsDashboard(summary);
-  const dataMatch = html.match(/<script type="application\/json" id="vibeguard-summary">([\s\S]*?)<\/script>/);
+  const dataMatch = html.match(/<script type="application\/json" id="deepsec-summary">([\s\S]*?)<\/script>/);
 
   assert.equal(html.includes("</script><script>alert(1)</script>"), false);
   assert.match(html, /&lt;\/script&gt;&lt;script&gt;alert\(1\)&lt;\/script&gt;/);

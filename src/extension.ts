@@ -357,7 +357,7 @@ async function approveRemoteReview(config: L3PanelConfig): Promise<boolean> {
     return true;
   }
   const choice = await vscode.window.showWarningMessage(
-    `VibeGuard will send the current file to ${config.provider} at ${config.endpoint} for AI security review.`,
+    `DeepSec will send the current file to ${config.provider} at ${config.endpoint} for AI security review.`,
     { modal: true, detail: `Model: ${config.model}. Secret-like values are redacted before remote analysis, but review may still contain proprietary source code.` },
     "Allow remote review"
   );
@@ -454,7 +454,7 @@ function clearFindings(): void {
 async function openReport(): Promise<void> {
   const allFindings = allCurrentFindings();
   output.clear();
-  output.appendLine("VibeGuard Findings");
+  output.appendLine("DeepSec Findings");
   output.appendLine("==================");
   if (allFindings.length === 0) {
     output.appendLine("No findings.");
@@ -490,7 +490,7 @@ async function exportFindingsDashboard(): Promise<void> {
     return;
   }
 
-  const defaultUri = vscode.Uri.file(path.join(workspaceRootPath(), "vibeguard-dashboard.html"));
+  const defaultUri = vscode.Uri.file(path.join(workspaceRootPath(), "deepsec-dashboard.html"));
   const outputUri = await vscode.window.showSaveDialog({
     defaultUri,
     filters: {
@@ -504,7 +504,7 @@ async function exportFindingsDashboard(): Promise<void> {
 
   const dbPath = configuredFindingsDbPath();
   if (!configuration().get<boolean>("storeFindings", true)) {
-    void vscode.window.showWarningMessage("VibeGuard findings storage is disabled. The exported dashboard may be empty.");
+    void vscode.window.showWarningMessage("DeepSec findings storage is disabled. The exported dashboard may be empty.");
   }
 
   let store: SqliteFindingStore | undefined;
@@ -519,14 +519,14 @@ async function exportFindingsDashboard(): Promise<void> {
     await fs.mkdir(path.dirname(outputUri.fsPath), { recursive: true });
     await fs.writeFile(outputUri.fsPath, html, "utf8");
   } catch (error) {
-    void vscode.window.showErrorMessage(`VibeGuard dashboard export failed: ${error instanceof Error ? error.message : String(error)}`);
+    void vscode.window.showErrorMessage(`DeepSec dashboard export failed: ${error instanceof Error ? error.message : String(error)}`);
     return;
   } finally {
     store?.close();
   }
 
   const choice = await vscode.window.showInformationMessage(
-    `VibeGuard dashboard exported to ${outputUri.fsPath}`,
+    `DeepSec dashboard exported to ${outputUri.fsPath}`,
     "Open",
     "Reveal"
   );
@@ -550,12 +550,12 @@ async function setLlmApiKey(): Promise<void> {
     return;
   }
   if (provider === "local") {
-    void vscode.window.showInformationMessage("VibeGuard local LLM mode uses Ollama and does not require an API key.");
+    void vscode.window.showInformationMessage("DeepSec local LLM mode uses Ollama and does not require an API key.");
     return;
   }
 
   const apiKey = await vscode.window.showInputBox({
-    prompt: provider === "vibeguard" ? "Enter VibeGuard Pro credential" : `Enter ${provider} API key for VibeGuard L3 analysis`,
+    prompt: provider === "vibeguard" ? "Enter DeepSec Pro credential" : `Enter ${provider} API key for DeepSec L3 analysis`,
     password: true,
     ignoreFocusOut: true,
     validateInput: (value) => (value.trim() ? undefined : "API key must not be empty.")
@@ -566,7 +566,7 @@ async function setLlmApiKey(): Promise<void> {
 
   await extensionContext.secrets.store(llmSecretKey(provider), apiKey.trim());
   await updateConfiguredLlmKeyStored(true, provider);
-  void vscode.window.showInformationMessage(`VibeGuard ${provider} API key stored securely.`);
+  void vscode.window.showInformationMessage(`DeepSec ${provider} API key stored securely.`);
 }
 
 async function deleteLlmApiKey(): Promise<void> {
@@ -577,7 +577,7 @@ async function deleteLlmApiKey(): Promise<void> {
   }
   await extensionContext.secrets.delete(llmSecretKey(provider));
   await updateConfiguredLlmKeyStored(false, provider);
-  void vscode.window.showInformationMessage(`VibeGuard ${provider} API key removed.`);
+  void vscode.window.showInformationMessage(`DeepSec ${provider} API key removed.`);
 }
 
 async function showLlmStatus(): Promise<void> {
@@ -595,14 +595,14 @@ async function showLlmStatus(): Promise<void> {
   output.appendLine(`Config path: ${loadedConfig.path}`);
   output.appendLine("");
   output.show();
-  void vscode.window.showInformationMessage(`VibeGuard L3 provider: ${provider}; credential: ${source}.`);
+  void vscode.window.showInformationMessage(`DeepSec L3 provider: ${provider}; credential: ${source}.`);
 }
 
 async function showSubscriptionStatus(): Promise<void> {
   const loadedConfig = await loadConfiguredVibeGuardConfigForWorkspace();
   const provider = configuredLlmProvider(loadedConfig.config);
   if (provider !== "vibeguard") {
-    void vscode.window.showInformationMessage("Select the VibeGuard LLM provider to view Pro subscription usage.");
+    void vscode.window.showInformationMessage("Select the DeepSec LLM provider to view Pro subscription usage.");
     return;
   }
   const apiKey = (await extensionContext.secrets.get(llmSecretKey(provider))) ?? getLlmApiKeyFromEnv(provider);
@@ -628,7 +628,7 @@ async function showSubscriptionStatus(): Promise<void> {
   } catch (error) {
     output.appendLine(`Pro subscription status error: ${error instanceof Error ? error.message : String(error)}`);
     output.show();
-    void vscode.window.showErrorMessage("VibeGuard could not retrieve the Pro subscription status.");
+    void vscode.window.showErrorMessage("DeepSec could not retrieve the Pro subscription status.");
   }
 }
 
@@ -638,10 +638,10 @@ async function maybeShowFirstRunOnboarding(): Promise<void> {
   }
   await extensionContext.globalState.update(firstRunOnboardingKey, true);
   output.appendLine(
-    "VibeGuard first run: L1 secret/config/AI-pattern checks are active now. Package-name cache sync runs in the background for hallucinated-package detection."
+    "DeepSec first run: L1 secret/config/AI-pattern checks are active now. Package-name cache sync runs in the background for hallucinated-package detection."
   );
   const choice = await vscode.window.showInformationMessage(
-    "VibeGuard is active. Secret, config, and AI-pattern checks work immediately; package-name cache sync prepares hallucinated-package detection in the background.",
+    "DeepSec is active. Secret, config, and AI-pattern checks work immediately; package-name cache sync prepares hallucinated-package detection in the background.",
     "Sync Now",
     "Settings"
   );
@@ -934,7 +934,7 @@ async function scanDocument(document: vscode.TextDocument, options: DocumentScan
 function findingToDiagnostic(finding: Finding): vscode.Diagnostic {
   const diagnostic = new vscode.Diagnostic(findingRange(finding), finding.message, toDiagnosticSeverity(finding.severity));
   diagnostic.code = finding.detection_rule;
-  diagnostic.source = "VibeGuard";
+  diagnostic.source = "DeepSec";
   if (finding.suggestion) {
     diagnostic.message = `${finding.message} ${finding.suggestion}`;
   }
@@ -1050,7 +1050,7 @@ async function pickPackageReplacement(finding: Finding): Promise<void> {
       fix
     })),
     {
-      title: "Choose VibeGuard package replacement",
+      title: "Choose DeepSec package replacement",
       placeHolder: "Select a verified package replacement"
     }
   );
@@ -1063,12 +1063,12 @@ async function applyFindingCodeFix(finding: Finding, fix: CodeFix): Promise<void
   const uri = vscode.Uri.file(finding.file);
   const document = await vscode.workspace.openTextDocument(uri);
   if (!findingFixStillMatchesDocument(document, finding, fix)) {
-    void vscode.window.showWarningMessage("VibeGuard did not apply this fix because the code changed after it was scanned.");
+    void vscode.window.showWarningMessage("DeepSec did not apply this fix because the code changed after it was scanned.");
     return;
   }
   if (finding.detection_layer === "L3") {
     const choice = await vscode.window.showWarningMessage(
-      "VibeGuard received this replacement from an LLM. Review the change before applying it.",
+      "DeepSec received this replacement from an LLM. Review the change before applying it.",
       "Apply replacement"
     );
     if (choice !== "Apply replacement") {
@@ -1077,7 +1077,7 @@ async function applyFindingCodeFix(finding: Finding, fix: CodeFix): Promise<void
   }
   const applied = await vscode.workspace.applyEdit(workspaceEditForEdits(uri, fix.edits));
   if (!applied) {
-    void vscode.window.showErrorMessage("VibeGuard could not apply this fix.");
+    void vscode.window.showErrorMessage("DeepSec could not apply this fix.");
     return;
   }
   const updatedDocument = await vscode.workspace.openTextDocument(uri);
@@ -1087,12 +1087,12 @@ async function applyFindingCodeFix(finding: Finding, fix: CodeFix): Promise<void
 async function applyAllSafeFixes(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    void vscode.window.showInformationMessage("VibeGuard: no active editor to fix.");
+    void vscode.window.showInformationMessage("DeepSec: no active editor to fix.");
     return;
   }
   const plan = planSafeBatchFixes(findingsForDocument(editor.document));
   if (plan.findings.length === 0) {
-    void vscode.window.showInformationMessage("VibeGuard: no non-overlapping mechanical fixes are available in this file.");
+    void vscode.window.showInformationMessage("DeepSec: no non-overlapping mechanical fixes are available in this file.");
     return;
   }
   const detail = [
@@ -1100,13 +1100,13 @@ async function applyAllSafeFixes(): Promise<void> {
     plan.skipped.length > 0 ? `${plan.skipped.length} overlapping fix${plan.skipped.length === 1 ? "" : "es"} will be skipped.` : "",
     plan.excludedL3.length > 0 ? `${plan.excludedL3.length} LLM-generated replacement${plan.excludedL3.length === 1 ? " is" : "s are"} excluded for review.` : ""
   ].filter(Boolean).join(" ");
-  const choice = await vscode.window.showWarningMessage(`VibeGuard: ${detail}`, "Apply safe fixes");
+  const choice = await vscode.window.showWarningMessage(`DeepSec: ${detail}`, "Apply safe fixes");
   if (choice !== "Apply safe fixes") {
     return;
   }
   const applied = await vscode.workspace.applyEdit(workspaceEditForFindings(editor.document.uri, plan.findings));
   if (!applied) {
-    void vscode.window.showErrorMessage("VibeGuard could not apply all selected fixes.");
+    void vscode.window.showErrorMessage("DeepSec could not apply all selected fixes.");
     return;
   }
   const document = await vscode.workspace.openTextDocument(editor.document.uri);
@@ -1116,18 +1116,18 @@ async function applyAllSafeFixes(): Promise<void> {
 async function applyAllProFixes(): Promise<void> {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    void vscode.window.showInformationMessage("VibeGuard: no active editor to fix.");
+    void vscode.window.showInformationMessage("DeepSec: no active editor to fix.");
     return;
   }
   const loadedConfig = await loadConfiguredVibeGuardConfigForWorkspace();
   if (configuredLlmProvider(loadedConfig.config) !== "vibeguard") {
-    void vscode.window.showWarningMessage("VibeGuard Pro batch fixes require the VibeGuard LLM provider.");
+    void vscode.window.showWarningMessage("DeepSec Pro batch fixes require the DeepSec LLM provider.");
     return;
   }
   const proCredential =
     (await extensionContext.secrets.get(llmSecretKey("vibeguard"))) ?? getLlmApiKeyFromEnv("vibeguard");
   if (!proCredential) {
-    void vscode.window.showWarningMessage("Set a VibeGuard Pro credential before applying Pro batch fixes.");
+    void vscode.window.showWarningMessage("Set a DeepSec Pro credential before applying Pro batch fixes.");
     return;
   }
 
@@ -1135,7 +1135,7 @@ async function applyAllProFixes(): Promise<void> {
   const currentL3Findings = plan.reviewableL3Findings.filter((finding) => l3FixStillMatchesDocument(editor.document, finding));
   const staleL3Count = plan.reviewableL3Findings.length - currentL3Findings.length;
   if (plan.safeFindings.length === 0 && currentL3Findings.length === 0) {
-    void vscode.window.showInformationMessage("VibeGuard: no current non-overlapping fixes are available in this file.");
+    void vscode.window.showInformationMessage("DeepSec: no current non-overlapping fixes are available in this file.");
     return;
   }
 
@@ -1157,13 +1157,13 @@ async function applyAllProFixes(): Promise<void> {
   ]
     .filter(Boolean)
     .join(" ");
-  const choice = await vscode.window.showWarningMessage(`VibeGuard Pro: ${detail}`, "Apply reviewed fixes");
+  const choice = await vscode.window.showWarningMessage(`DeepSec Pro: ${detail}`, "Apply reviewed fixes");
   if (choice !== "Apply reviewed fixes") {
     return;
   }
   const applied = await vscode.workspace.applyEdit(workspaceEditForFindings(editor.document.uri, selected));
   if (!applied) {
-    void vscode.window.showErrorMessage("VibeGuard could not apply all selected Pro fixes.");
+    void vscode.window.showErrorMessage("DeepSec could not apply all selected Pro fixes.");
     return;
   }
   const document = await vscode.workspace.openTextDocument(editor.document.uri);
@@ -1181,7 +1181,7 @@ async function pickReviewedL3Fixes(findings: Finding[]): Promise<Finding[] | und
     })),
     {
       canPickMany: true,
-      title: "Review VibeGuard Pro LLM Fixes",
+      title: "Review DeepSec Pro LLM Fixes",
       placeHolder: "Select the reviewed LLM replacements to apply"
     }
   );
@@ -1197,14 +1197,14 @@ function updateStatus(): void {
   const performanceSummary = currentPerformanceSummary();
   const performanceMarker = performanceSummary.warningCount > 0 ? " $(watch)" : "";
   if (findings.length === 0) {
-    statusBar.text = `$(shield) VibeGuard: clean${performanceMarker}`;
-    statusBar.tooltip = performanceSummary.tooltip ? `No VibeGuard findings\n${performanceSummary.tooltip}` : "No VibeGuard findings";
+    statusBar.text = `$(shield) DeepSec: clean${performanceMarker}`;
+    statusBar.tooltip = performanceSummary.tooltip ? `No DeepSec findings\n${performanceSummary.tooltip}` : "No DeepSec findings";
     return;
   }
 
   const critical = findings.filter((finding) => finding.severity === "critical").length;
   const high = findings.filter((finding) => finding.severity === "high").length;
-  statusBar.text = `$(shield) VibeGuard: ${findings.length}${performanceMarker}`;
+  statusBar.text = `$(shield) DeepSec: ${findings.length}${performanceMarker}`;
   statusBar.tooltip = `${findings.length} finding(s), ${critical} critical, ${high} high${
     performanceSummary.tooltip ? `\n${performanceSummary.tooltip}` : ""
   }`;
@@ -1217,10 +1217,10 @@ function updatePackageSyncStatus(): void {
   const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
   const registry = progress?.registry ? ` (${progress.registry})` : "";
   const tier = packageSyncTier === "full" ? "Tier 2 full index" : "Tier 1 quick index";
-  statusBar.text = `$(sync~spin) VibeGuard: package sync ${percent}% (${tier})`;
+  statusBar.text = `$(sync~spin) DeepSec: package sync ${percent}% (${tier})`;
   statusBar.tooltip = total === 0
-    ? `VibeGuard package name cache is preparing ${tier}`
-    : `VibeGuard package name cache (${tier}): ${completed}/${total} registries complete${registry}`;
+    ? `DeepSec package name cache is preparing ${tier}`
+    : `DeepSec package name cache (${tier}): ${completed}/${total} registries complete${registry}`;
 }
 
 function allCurrentFindings(): Finding[] {
@@ -1408,12 +1408,12 @@ async function ignoreFinding(finding: Finding | undefined, scope: "line" | "file
   );
   void reportIgnoredFalsePositive(finding, scope, reason);
   await refreshOpenDocuments();
-  void vscode.window.showInformationMessage("VibeGuard ignore rule added.");
+  void vscode.window.showInformationMessage("DeepSec ignore rule added.");
 }
 
 async function ignorePackage(finding: Finding | undefined): Promise<void> {
   if (!finding || finding.type !== "hallucinated_package") {
-    void vscode.window.showInformationMessage("VibeGuard: this finding is not a package finding.");
+    void vscode.window.showInformationMessage("DeepSec: this finding is not a package finding.");
     return;
   }
   const reason = await pickIgnoreReason("package");
@@ -1431,7 +1431,7 @@ async function ignorePackage(finding: Finding | undefined): Promise<void> {
   );
   void reportIgnoredFalsePositive(finding, "package", reason);
   await refreshOpenDocuments();
-  void vscode.window.showInformationMessage(`VibeGuard will ignore package "${finding.evidence}".`);
+  void vscode.window.showInformationMessage(`DeepSec will ignore package "${finding.evidence}".`);
 }
 
 async function reportIgnoredFalsePositive(
@@ -1479,7 +1479,7 @@ async function pickIgnoreReason(scope: "line" | "file" | "global" | "package"): 
       }
     ],
     {
-      placeHolder: "Why should VibeGuard ignore this finding?"
+      placeHolder: "Why should DeepSec ignore this finding?"
     }
   );
   if (!picked) {
@@ -1487,7 +1487,7 @@ async function pickIgnoreReason(scope: "line" | "file" | "global" | "package"): 
   }
   if (picked.value === "__custom__") {
     const custom = await vscode.window.showInputBox({
-      prompt: "Reason for ignoring this VibeGuard finding",
+      prompt: "Reason for ignoring this DeepSec finding",
       ignoreFocusOut: true,
       validateInput: (value) => (value.trim() ? undefined : "Reason must not be empty.")
     });
@@ -1507,7 +1507,7 @@ async function refreshOpenDocuments(): Promise<void> {
 async function syncPackageCache(manual: boolean): Promise<void> {
   if (packageSyncInFlight) {
     if (manual) {
-      void vscode.window.showInformationMessage("VibeGuard package cache sync is already running.");
+      void vscode.window.showInformationMessage("DeepSec package cache sync is already running.");
     }
     return;
   }
@@ -1558,18 +1558,18 @@ async function syncPackageCache(manual: boolean): Promise<void> {
     if (manual) {
       const skippedCount = outcomes.filter((entry) => entry.status === "skipped").length;
       void vscode.window.showInformationMessage(
-        `VibeGuard package cache sync finished: ${syncedCount} synced, ${skippedCount} skipped, ${failedCount} failed.`
+        `DeepSec package cache sync finished: ${syncedCount} synced, ${skippedCount} skipped, ${failedCount} failed.`
       );
     } else if (failedCount > 0 && syncedCount === 0) {
       void vscode.window.showWarningMessage(
-        "VibeGuard package cache sync did not complete. Hallucinated package detection will keep using the existing local cache and seed catalog."
+        "DeepSec package cache sync did not complete. Hallucinated package detection will keep using the existing local cache and seed catalog."
       );
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     output.appendLine(`Package cache sync error: ${message}`);
     if (manual) {
-      void vscode.window.showWarningMessage(`VibeGuard package cache sync failed: ${message}`);
+      void vscode.window.showWarningMessage(`DeepSec package cache sync failed: ${message}`);
     }
   } finally {
     packageSyncInFlight = false;
@@ -1732,7 +1732,7 @@ async function pickLlmProvider(config: VibeGuardConfig): Promise<LlmProvider | u
       description: provider === current ? "current" : undefined
     })),
     {
-      placeHolder: "Select LLM provider for VibeGuard L3 analysis"
+      placeHolder: "Select LLM provider for DeepSec L3 analysis"
     }
   );
   return picked?.label as LlmProvider | undefined;
@@ -2087,14 +2087,14 @@ class VibeGuardCodeActionProvider implements vscode.CodeActionProvider {
     context: vscode.CodeActionContext
   ): vscode.CodeAction[] {
     const actions: vscode.CodeAction[] = [];
-    for (const diagnostic of context.diagnostics.filter((item) => item.source === "VibeGuard")) {
+    for (const diagnostic of context.diagnostics.filter((item) => item.source === "DeepSec")) {
       const finding = findMatchingFinding(document, diagnostic);
       if (!finding) {
         continue;
       }
 
       for (const [index, fix] of allEditorFixesForFinding(finding).entries()) {
-        const action = new vscode.CodeAction(`Apply VibeGuard fix: ${fix.description}`, vscode.CodeActionKind.QuickFix);
+        const action = new vscode.CodeAction(`Apply DeepSec fix: ${fix.description}`, vscode.CodeActionKind.QuickFix);
         action.diagnostics = [diagnostic];
         action.isPreferred = index === 0 && finding.detection_layer !== "L3";
         if (finding.detection_layer === "L3") {
@@ -2109,7 +2109,7 @@ class VibeGuardCodeActionProvider implements vscode.CodeActionProvider {
         actions.push(action);
       }
 
-      actions.push(commandAction("Ignore this VibeGuard finding", "deepsec.ignoreFinding", finding, diagnostic));
+      actions.push(commandAction("Ignore this DeepSec finding", "deepsec.ignoreFinding", finding, diagnostic));
       actions.push(commandAction("Ignore this rule in this file", "deepsec.ignoreRuleInFile", finding, diagnostic));
       actions.push(commandAction("Ignore this rule globally", "deepsec.ignoreRuleGlobally", finding, diagnostic));
       if (finding.type === "hallucinated_package") {

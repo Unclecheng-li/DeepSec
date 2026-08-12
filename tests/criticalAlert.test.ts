@@ -9,7 +9,7 @@ test("critical package alerts explain the slopsquatting risk", () => {
 });
 
 test("other critical alerts preserve their concise finding message", () => {
-  assert.equal(criticalAlertMessage(finding()), "VibeGuard: Sensitive value is hardcoded.");
+  assert.equal(criticalAlertMessage(finding()), "DeepSec: Sensitive value is hardcoded.");
 });
 
 function finding(overrides: Partial<Finding> = {}): Finding {

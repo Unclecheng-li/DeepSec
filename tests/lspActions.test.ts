@@ -14,7 +14,7 @@ test("creates LSP quick fixes from VibeGuard finding fixes", () => {
   const diagnostic = diagnosticFor("hardcoded_secret_assignment");
   const actions = createCodeActionsForFindings(uri, [finding()], [diagnostic]);
 
-  const fix = actions.find((action) => action.title.startsWith("Apply VibeGuard fix:"));
+  const fix = actions.find((action) => action.title.startsWith("Apply DeepSec fix:"));
   assert.equal(actions.length, 4);
   assert.equal(fix?.kind, CodeActionKind.QuickFix);
   assert.equal(fix?.isPreferred, true);
@@ -49,7 +49,7 @@ test("routes LLM-generated replacements through a review command", () => {
   const uri = "file:///repo/app.ts";
   const diagnostic = diagnosticFor("hardcoded_secret_assignment");
   const actions = createCodeActionsForFindings(uri, [finding({ detection_layer: "L3" })], [diagnostic]);
-  const fix = actions.find((action) => action.title.startsWith("Apply VibeGuard fix:"));
+  const fix = actions.find((action) => action.title.startsWith("Apply DeepSec fix:"));
 
   assert.equal(actions.length, 4);
   assert.equal(fix?.edit, undefined);

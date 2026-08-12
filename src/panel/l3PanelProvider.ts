@@ -122,7 +122,7 @@ export class L3PanelProvider implements vscode.WebviewViewProvider, vscode.Dispo
       await this.startScanInternal();
     } catch {
       this.status = "error";
-      this.detail = "The review could not be prepared. Check the VibeGuard output channel for details.";
+      this.detail = "The review could not be prepared. Check the DeepSec output channel for details.";
       this.sendState();
     } finally {
       this.preparingScan = false;
@@ -208,7 +208,7 @@ export class L3PanelProvider implements vscode.WebviewViewProvider, vscode.Dispo
       if (this.scan?.id === scan.id) {
         this.scan = undefined;
         this.status = "error";
-        this.detail = "The review could not be completed. Check the VibeGuard output channel for details.";
+        this.detail = "The review could not be completed. Check the DeepSec output channel for details.";
         this.post({ type: "scanError", scanId: scan.id, code: "remoteFailed", message: this.detail });
         this.sendState();
       }
@@ -264,5 +264,5 @@ function statusMessage(status: "notConfigured" | "consentRequired" | "failed"): 
   if (status === "consentRequired") {
     return "Remote review requires your approval before code is sent to the selected provider.";
   }
-  return "The remote review failed and no local result is available. Check the VibeGuard output channel for details.";
+  return "The remote review failed and no local result is available. Check the DeepSec output channel for details.";
 }
