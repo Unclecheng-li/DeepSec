@@ -4,9 +4,9 @@
 
 <h1>DeepSec</h1>
 
-<p><strong>AI Security Platform — Shield Code Audit + Spear Authorized Penetration Testing</strong></p>
+<p><strong>AI 安全攻防一体平台 — Shield 代码审计 + Spear 授权渗透测试</strong></p>
 
-<p>Catch what AI missed. Penetrate what others can't.</p>
+<p>抓出 AI 漏掉的。攻破别人攻不破的。</p>
 
 <p>
   <a href="https://github.com/Unclecheng-li/DeepSec/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/Unclecheng-li/DeepSec/ci.yml?branch=main&logo=github&label=CI" alt="CI"></a>
@@ -23,24 +23,38 @@
   <img src="https://img.shields.io/badge/JetBrains-2025.2+-000000?logo=jetbrains&logoColor=white" alt="JetBrains">
 </p>
 
+**🌐 English version**: [`README_EN.md`](README_EN.md)
+
 </div>
 
 ---
+
+> ## 🚀 3 分钟快速上手
+>
+> 不想看长文档？**点这里 → [`docs/QUICKSTART.zh-CN.md`](docs/QUICKSTART.zh-CN.md)**（中文版）
+>
+> 下载 Release 里的 `deepsec-tui-windows.exe` → 双击 → 输入 `/shield scan 你的项目` → 2 秒看到漏洞。
+> 不会用？仓库自带故意写满漏洞的示例文件 `demo/unsafe-ai-sample.ts`，扫它就能看到效果。
+
+---
+
 <div align="center">
 
-**DeepSec TUI terminal workbench**
+**DeepSec TUI 终端工作台**
 
 
 https://github.com/user-attachments/assets/2b041a72-4566-48f1-aca8-2c685c0a52cc
 
 
-— Shield scan, Spear penetration, live animations
+— Shield 扫描、Spear 渗透、实时动画
 
 </div>
----
-## What is DeepSec?
 
-DeepSec is an AI security platform evolved from VibeGuard. It unifies **Shield** (AI code security audit) and **Spear** (authorized penetration testing engine) into a single CLI, a TUI terminal workbench, and a set of IDE plugins.
+---
+
+## DeepSec 是什么？
+
+DeepSec 是由 VibeGuard 进化而来的 AI 安全平台，将 **Shield**（AI 代码安全审计）与 **Spear**（授权渗透测试引擎）统一到一套 CLI、一个 TUI 终端工作台和一组 IDE 插件中。
 
 ```
 ┌──────────────────────────────────────────────────────────┐
@@ -68,193 +82,197 @@ DeepSec is an AI security platform evolved from VibeGuard. It unifies **Shield**
    └───────────┘                  └────────────┘
 ```
 
-### Shield — Code Security Audit
+### Shield — 代码安全审计
 
-Three-layer detection architecture, from real-time regex to LLM semantic analysis:
+从实时正则到 LLM 语义分析的三层检测架构：
 
-| Layer | Detects | Speed | Method |
+| 层 | 检测内容 | 速度 | 原理 |
 |-------|---------|-------|--------|
-| **L1** | Hallucinated packages, hardcoded secrets, unsafe configs, AI coding patterns | < 50ms | Regex + entropy analysis + seed directory |
-| **L2** | SQL injection, XSS, SSRF, path traversal, command injection | < 2s | Tree-sitter WASM AST analysis |
-| **L3** | Missing auth/rate-limiting/validation, semantic vulnerabilities | < 5s | LLM (DeepSeek/Claude/OpenAI/Ollama) + local heuristic fallback |
+| **L1** | 幻觉包、硬编码密钥、不安全配置、AI 错误模式 | < 50ms | 正则 + 熵分析 + 种子目录 |
+| **L2** | SQL 注入、XSS、SSRF、路径穿越、命令注入 | < 2s | Tree-sitter WASM AST 分析 |
+| **L3** | 缺失认证/限流/校验等语义漏洞 | < 5s | LLM（DeepSeek/Claude/OpenAI/Ollama）+ 本地启发式兜底 |
 
-### Spear — Authorized Penetration Testing
+### Spear — 授权渗透测试
 
-End-to-end automated penetration engine migrated from VulnClaw:
+从 VulnClaw 迁移而来的端到端自动化渗透引擎：
 
-- **Recon → Explore → Fact → Reflect → Report → PoC** full pipeline automation
-- 40+ built-in skill packs (nmap, dirsearch, subfinder, nuclei, sqlmap, ffuf, httpx, feroxbuster)
-- 5 roles (pentester, redteam, auditor, blueteam, ctf_player)
-- Signed authorization scope (Signed Scope), time-limited + audit logging
-- Attack chain visualization, multi-format reports (Markdown / SARIF / JSON / HTML)
+- **Recon → Explore → Fact → Reflect → Report → PoC** 全流程自动化
+- 40+ 内置技能包（nmap、dirsearch、subfinder、nuclei、sqlmap、ffuf、httpx、feroxbuster）
+- 5 种角色（pentester、redteam、auditor、blueteam、ctf_player）
+- 签名授权范围（Signed Scope），限时 + 审计日志
+- 攻击链可视化，多格式报告（Markdown / SARIF / JSON / HTML）
 
-### TUI — Terminal Workbench
+### TUI — 终端工作台
 
-Security workbench built with Rust + ratatui, inspired by DeepSeek-TUI's interaction design:
+基于 Rust + ratatui 构建的安全工作台，交互设计借鉴 DeepSeek-TUI：
 
-- Three-panel layout: Workspace sidebar · Session Transcript · Findings Inspector
-- Plan / Agent / YOLO mode switching
-- Slash command system + command history recall
-- Side-Git snapshots (create/restore code state anytime)
-- Session persistence (Ctrl+S save / Ctrl+R restore)
+- 三面板布局：工作区侧边栏 · 会话记录 · 漏洞检查器
+- Plan / Agent / YOLO 模式切换
+- 斜杠命令系统 + 命令历史回放
+- Side-Git 快照（随时创建/恢复代码状态）
+- 会话持久化（Ctrl+S 保存 / Ctrl+R 恢复）
 
 ---
 
-## Quick Start
+## 快速开始
 
-### Installation
+> ⚡ **想 3 分钟跑起来？直接看 [`docs/QUICKSTART.zh-CN.md`](docs/QUICKSTART.zh-CN.md)（中文）** 或 [`docs/QUICKSTART.md`](docs/QUICKSTART.md)（English）——含"下载即用"的最快路径。
+
+### 安装
 
 ```bash
-# Python core + CLI
+# Python 核心 + CLI
 pip install -e .
 
-# Rust TUI (optional)
+# Rust TUI（可选）
 cargo build --manifest-path tui/Cargo.toml
 
-# IDE plugins
-# VSCode: Press F5 in project root to launch Extension Development Host
+# IDE 插件
+# VSCode: 在项目根目录按 F5 启动 Extension Development Host
 # JetBrains: cd jetbrains && ./gradlew buildPlugin
 ```
 
-### Shield Scan
+> 💡 **新手免编译路径**：直接去 [Releases](https://github.com/Unclecheng-li/DeepSec/releases) 下载 `deepsec-tui-windows.exe` / `deepsec-tui-linux` / `deepsec-0.2.0-py3-none-any.whl`，不用装任何编译环境。
+
+### Shield 扫描
 
 ```bash
-# Scan project (L1 + L2, offline)
+# 扫描项目（L1 + L2，离线）
 deepsec shield scan ./src
 
-# Enable L3 semantic analysis (requires LLM API Key)
+# 开启 L3 语义分析（需要 LLM API Key）
 DEEPSEEK_API_KEY=... deepsec shield scan ./src --layer l3
 
-# Output SARIF report
+# 输出 SARIF 报告
 deepsec shield scan . --format sarif --output deepsec.sarif
 
-# Stream output (for TUI consumption)
+# 流式输出（供 TUI 消费）
 deepsec shield scan . --stream
 
-# Agent config audit
+# Agent 配置审计
 deepsec shield agent-audit ./agent-config
 
-# Supply chain security check
+# 供应链安全检查
 deepsec shield supply-chain check .
 ```
 
-### Spear Penetration Testing
+### Spear 渗透测试
 
 ```bash
-# 1. (Optional) Maintain authorization allow-list — recommended via TUI /scope command
-#    Or manually edit ~/.deepsec/targets/scope.json targets field
-#    If strong signature verification is needed: export DEEPSEC_SCOPE_SIGNING_KEY=... && deepsec scope sign ./scope.json
+# 1. （可选）维护授权白名单 — 推荐通过 TUI /scope 命令
+#    或手动编辑 ~/.deepsec/targets/scope.json 的 targets 字段
+#    如需强签名校验：export DEEPSEC_SCOPE_SIGNING_KEY=... && deepsec scope sign ./scope.json
 
-# 2. Run penetration test (target must be in allow-list)
+# 2. 运行渗透测试（目标必须在白名单内）
 deepsec spear run https://authorized-target.example --authorized ./scope.json
 
-# 3. Reconnaissance phase only
+# 3. 仅侦察阶段
 deepsec spear recon https://authorized-target.example --authorized ./scope.json
 
-# 4. List roles and tools
+# 4. 列出角色和工具
 deepsec spear roles
 deepsec spear tools --role pentester
 ```
 
-### TUI Terminal Workbench
+### TUI 终端工作台
 
 ```bash
-# Launch terminal workbench
+# 启动终端工作台
 deepsec tui
 
-# Or run the Rust native binary directly
+# 或直接运行 Rust 原生二进制
 ./tui/target/debug/deepsec-tui-native
 ```
 
-Built-in TUI slash commands:
+内置 TUI 斜杠命令：
 
-| Command | Description |
+| 命令 | 说明 |
 |---------|-------------|
-| `/shield scan` | Run Shield scan |
-| `/spear run` | Run Spear penetration (requires allow-list authorization) |
-| `/spear recon` | Run reconnaissance phase |
-| `/scope add <target>` | Add target to authorization allow-list |
-| `/scope remove <target>` | Remove target from allow-list |
-| `/scope list` | List current allow-list |
-| `/report` | Generate report |
-| `/plan` | Switch to Plan mode |
-| `/agent` | Switch to Agent mode |
-| `/yolo` | Switch to YOLO mode (full auto) |
-| `/clear` | Clear session |
-| `/help` | Help |
+| `/shield scan` | 运行 Shield 扫描 |
+| `/spear run` | 运行 Spear 渗透（需白名单授权） |
+| `/spear recon` | 运行侦察阶段 |
+| `/scope add <target>` | 将目标加入授权白名单 |
+| `/scope remove <target>` | 从白名单移除目标 |
+| `/scope list` | 查看当前白名单 |
+| `/report` | 生成报告 |
+| `/plan` | 切换到 Plan 模式 |
+| `/agent` | 切换到 Agent 模式 |
+| `/yolo` | 切换到 YOLO 模式（全自动） |
+| `/clear` | 清空会话 |
+| `/help` | 帮助 |
 
-#### TUI Walkthrough: Add Allow-List and Launch Penetration Test
+#### TUI 实操：添加白名单并启动渗透测试
 
-DeepSec TUI has built-in authorization allow-list management — no need to manually edit `scope.json` or deal with HMAC signing keys.
+DeepSec TUI 内置授权白名单管理 — 无需手动编辑 `scope.json` 或处理 HMAC 签名密钥。
 
-**1. Launch TUI**
+**1. 启动 TUI**
 
 ```bash
 deepsec tui
 ```
 
-**2. Add target to allow-list**
+**2. 将目标加入白名单**
 
-In the TUI command line (bottom `> ` prompt), enter:
+在 TUI 命令行（底部 `> ` 提示符）输入：
 
 ```
 /scope add https://your-authorized-domain.com
 ```
 
-- Targets are normalized (scheme+host lowercased, trailing `/` stripped) and deduplicated, consistent with backend authorization matching rules.
-- When `--file` is not specified, defaults to the **most recent absolute path parsed from `/spear run --authorized <file>`**; if spear hasn't been run yet, falls back to `~/.deepsec/targets/scope.json`.
-- View current allow-list: `/scope list`
-- Remove a target: `/scope remove https://your-authorized-domain.com`
+- 目标会被规范化（scheme+host 转小写、去尾部 `/`）并去重，与后端授权匹配规则一致。
+- 未指定 `--file` 时，默认取最近一次 `/spear run --authorized <file>` 解析出的绝对路径；若尚未运行过 spear，则回退到 `~/.deepsec/targets/scope.json`。
+- 查看当前白名单：`/scope list`
+- 移除目标：`/scope remove https://your-authorized-domain.com`
 
-**3. Launch penetration test**
+**3. 启动渗透测试**
 
 ```
 /spear run https://your-authorized-domain.com --authorized ~/.deepsec/targets/scope.json
 ```
 
-Then:
+然后：
 
-- Press `Tab` to cycle between **Plan / Agent / YOLO** execution modes (YOLO is full-auto, no step-by-step confirmation needed).
-- Plan mode is read-only; cannot arm Spear directly — switch to Agent or YOLO first.
-- Press `Y` to confirm authorization verification and launch; press `Esc` to cancel.
-- Press `Ctrl+C` while running to **abort the current task** (TUI stays open); press `Ctrl+C` when idle to exit TUI.
+- 按 `Tab` 在 **Plan / Agent / YOLO** 执行模式间切换（YOLO 为全自动，无需逐步确认）。
+- Plan 模式只读，无法直接武装 Spear — 需先切到 Agent 或 YOLO。
+- 按 `Y` 确认授权校验并启动；按 `Esc` 取消。
+- 运行中按 `Ctrl+C` 可**中止当前任务**（TUI 保持打开）；空闲时按 `Ctrl+C` 退出 TUI。
 
-**4. Security Boundaries**
+**4. 安全边界**
 
-- Targets outside the allow-list are rejected (`target ... is not present in the scope manifest`).
-- Private/loopback/non-public addresses are still blocked to prevent hitting internal networks.
-- The allow-list only accepts assets you **own or have written authorization** for; any third-party production domain not in `targets` cannot be attacked.
+- 白名单之外的目标一律拒绝（`target ... is not present in the scope manifest`）。
+- 私有/回环/非公网地址仍被阻止，防止打到内网。
+- 白名单只接受你**拥有或已书面授权**的资产；任何不在 `targets` 里的第三方生产域名都无法被攻击。
 
-### Side-Git Snapshots
+### Side-Git 快照
 
 ```bash
-# Create snapshot
+# 创建快照
 deepsec snapshot create . --mode shield --description "before-refactor"
 
-# List snapshots
+# 列出快照
 deepsec snapshot list .
 
-# Restore snapshot
+# 恢复快照
 deepsec restore <snapshot-id>
 ```
 
 ---
 
-## Screenshots
+## 截图
 
 <div align="center">
 <table>
 <tr>
-<td align="center"><b>Real-time diagnostics</b></td>
-<td align="center"><b>Hover for details</b></td>
+<td align="center"><b>实时诊断</b></td>
+<td align="center"><b>悬停查看详情</b></td>
 </tr>
 <tr>
 <td><img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/demonstration/realtime-diagnostic.png" alt="Real-time diagnostics" width="400"></td>
 <td><img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/demonstration/hover-tooltip.png" alt="Hover tooltip" width="400"></td>
 </tr>
 <tr>
-<td align="center"><b>Quick Fix menu</b></td>
-<td align="center"><b>Problems panel</b></td>
+<td align="center"><b>Quick Fix 菜单</b></td>
+<td align="center"><b>Problems 面板</b></td>
 </tr>
 <tr>
 <td><img src="https://raw.githubusercontent.com/Unclecheng-li/DeepSec/main/media/demonstration/quick-fix.png" alt="Quick Fix menu" width="400"></td>
@@ -265,106 +283,106 @@ deepsec restore <snapshot-id>
 
 ---
 
-## Architecture
+## 架构
 
-DeepSec is a multi-language project:
+DeepSec 是一个多语言项目：
 
-| Component | Language | Files | LOC | Purpose |
+| 组件 | 语言 | 文件数 | 代码量 | 用途 |
 |-----------|----------|-------|-----|---------|
-| **Python Core** | Python 3.10+ | 153 | 43,500+ | Shield scanner, Spear engine, CLI, MCP Server, role/tool system |
-| **IDE Plugin** | TypeScript | 53 | 21,000+ | VSCode extension, LSP Server, Tree-sitter SAST |
-| **TUI** | Rust | 22 | 2,470+ | ratatui terminal workbench |
-| **Rust LSP** | Rust | 5 | 7,800+ | Native L1 LSP preview |
+| **Python 核心** | Python 3.10+ | 153 | 43,500+ | Shield 扫描器、Spear 引擎、CLI、MCP Server、角色/工具系统 |
+| **IDE 插件** | TypeScript | 53 | 21,000+ | VSCode 扩展、LSP Server、Tree-sitter SAST |
+| **TUI** | Rust | 22 | 2,470+ | ratatui 终端工作台 |
+| **Rust LSP** | Rust | 5 | 7,800+ | 原生 L1 LSP 预览 |
 
-### Project Structure
+### 项目结构
 
 ```
-deepsec/                 # Python core
-├── cli/                 # Typer CLI entry (shield/spear/snapshot/config/scope)
-├── config/              # Unified YAML config + Pydantic schema
-├── core/                # Config adapter, LLM client, authorization, snapshots, roles
-├── shield/              # L1/L2/L3 scanners, supply chain security, dedup, ignore rules
-├── spear/               # Penetration engine (agent/intel/skills/report/warstories)
-├── roles/               # YAML role definitions (pentester/redteam/auditor/blueteam/ctf_player)
-├── tools/               # YAML tool catalog (nmap/dirsearch/nuclei/sqlmap/...)
-├── mcp/                 # MCP Server (lifecycle/registry/router/diagnostics)
-├── report/              # Report generation + attack chain visualization
-├── kb/                  # Knowledge base
-├── plugins/             # Plugin system
-└── traffic/             # Traffic replay and normalization
+deepsec/                 # Python 核心
+├── cli/                 # Typer CLI 入口（shield/spear/snapshot/config/scope）
+├── config/              # 统一 YAML 配置 + Pydantic schema
+├── core/                # 配置适配器、LLM 客户端、授权、快照、角色
+├── shield/              # L1/L2/L3 扫描器、供应链安全、去重、忽略规则
+├── spear/               # 渗透引擎（agent/intel/skills/report/warstories）
+├── roles/               # YAML 角色定义（pentester/redteam/auditor/blueteam/ctf_player）
+├── tools/               # YAML 工具目录（nmap/dirsearch/nuclei/sqlmap/...）
+├── mcp/                 # MCP Server（lifecycle/registry/router/diagnostics）
+├── report/              # 报告生成 + 攻击链可视化
+├── kb/                  # 知识库
+├── plugins/             # 插件系统
+└── traffic/             # 流量回放与归一化
 
-src/                     # TypeScript IDE plugin
-├── extension.ts         # VSCode extension entry
-├── lspServer.ts         # LSP Server (Node)
-├── scanner.ts           # L1/L2 scanner
-├── deepsecBridge.ts     # Python core bridge
+src/                     # TypeScript IDE 插件
+├── extension.ts         # VSCode 扩展入口
+├── lspServer.ts         # LSP Server（Node）
+├── scanner.ts           # L1/L2 扫描器
+├── deepsecBridge.ts     # Python 核心桥接
 └── ...
 
-tui/                     # Rust TUI terminal workbench
+tui/                     # Rust TUI 终端工作台
 ├── src/
-│   ├── app.rs           # App state + command dispatch
-│   ├── events.rs        # Keyboard event handling
-│   ├── ui/              # Three-panel layout (transcript/findings/layout)
-│   ├── views/           # Skills Manager sidebar
-│   ├── theme.rs         # CodeWhale dark theme
-│   ├── sessions.rs      # Session persistence
-│   └── skills/          # Skill tree catalog
+│   ├── app.rs           # App 状态 + 命令分发
+│   ├── events.rs        # 键盘事件处理
+│   ├── ui/              # 三面板布局（transcript/findings/layout）
+│   ├── views/           # Skills Manager 侧边栏
+│   ├── theme.rs         # CodeWhale 深色主题
+│   ├── sessions.rs      # 会话持久化
+│   └── skills/          # Skill 树目录
 └── Cargo.toml
 
-rust-lsp/                # Rust native L1 LSP preview
-jetbrains/               # JetBrains plugin (Kotlin)
-docs/                    # Usage guides
+rust-lsp/                # Rust 原生 L1 LSP 预览
+jetbrains/               # JetBrains 插件（Kotlin）
+docs/                    # 使用指南
 ```
 
 ---
 
-## Configuration
+## 配置
 
-DeepSec uses a unified YAML config file at `~/.deepsec/config.yaml`:
+DeepSec 使用统一的 YAML 配置文件 `~/.deepsec/config.yaml`：
 
 ```bash
-deepsec config init      # Initialize config
-deepsec config show      # Show config
-deepsec config set llm.provider deepseek  # Set config option
+deepsec config init      # 初始化配置
+deepsec config show      # 查看配置
+deepsec config set llm.provider deepseek  # 设置配置项
 ```
 
-### LLM Configuration
+### LLM 配置
 
-DeepSec supports 13+ LLM providers:
+DeepSec 支持 13+ 家 LLM 提供商：
 
-| Provider | Base URL | Default Model |
+| 提供商 | Base URL | 默认模型 |
 |----------|----------|---------------|
 | DeepSeek | `api.deepseek.com/v1` | `deepseek-chat` |
 | Anthropic Claude | `api.anthropic.com/v1` | `claude-sonnet-5` |
 | OpenAI | `api.openai.com/v1` | `gpt-4o` |
-| Zhipu GLM | `open.bigmodel.cn/api/paas/v4` | `glm-4.7` |
+| 智谱 GLM | `open.bigmodel.cn/api/paas/v4` | `glm-4.7` |
 | Kimi (Moonshot) | `api.moonshot.cn/v1` | `kimi-k2.6` |
-| Tongyi Qianwen | `dashscope.aliyuncs.com/compatible-mode/v1` | `qwen3-max` |
+| 通义千问 | `dashscope.aliyuncs.com/compatible-mode/v1` | `qwen3-max` |
 | SiliconFlow | `api.siliconflow.cn/v1` | `deepseek-ai/DeepSeek-V4-Flash` |
-| Doubao (ByteDance) | `ark.cn-beijing.volces.com/api/v3` | `Doubao-Seed-2.0-Pro` |
-| Baichuan | `api.baichuan-ai.com/v1` | `Baichuan4-Turbo` |
+| 豆包 (ByteDance) | `ark.cn-beijing.volces.com/api/v3` | `Doubao-Seed-2.0-Pro` |
+| 百川 | `api.baichuan-ai.com/v1` | `Baichuan4-Turbo` |
 | MiniMax | `api.minimaxi.com/v1` | `MiniMax-M3` |
-| StepFun | `api.stepfun.com/v1` | `step-3.5-flash` |
-| SenseTime | `api.sensenova.cn/v1` | `SenseNova-6.7-Flash-Lite` |
-| Yi (01.AI) | `api.lingyiwanwu.com/v1` | `yi-lightning` |
-| Custom | Custom | Custom |
+| 阶跃星辰 | `api.stepfun.com/v1` | `step-3.5-flash` |
+| 商汤 | `api.sensenova.cn/v1` | `SenseNova-6.7-Flash-Lite` |
+| 零一万物 | `api.lingyiwanwu.com/v1` | `yi-lightning` |
+| 自定义 | 自定义 | 自定义 |
 
 ```bash
-# Set API Key
+# 设置 API Key
 deepsec config set llm.provider deepseek
 deepsec config set llm.api_key "sk-xxx"
 
-# Or via environment variable
+# 或通过环境变量
 export DEEPSEC_LLM_API_KEY="sk-xxx"
 ```
 
-### Spear Authorization
+### Spear 授权
 
-Spear uses an **authorization allow-list** as its core gate: only targets explicitly listed in `scope.json`'s `targets` array can be attacked; all others are rejected.
+Spear 以**授权白名单**为核心闸门：只有 `scope.json` 的 `targets` 数组中明确列出的目标才能被攻击，其余一律拒绝。
 
-> **Signing is now optional**: Earlier versions required HMAC-SHA256 signing of `scope.json` with `DEEPSEC_SCOPE_SIGNING_KEY`. This has been relaxed — `signature` / `signer` fields are retained but ignored; authorization only checks the `targets` allow-list (optional time windows are still validated). This means you no longer need to `export` a key, re-sign, or restart TUI — just manage the allow-list via TUI `/scope` commands (see "TUI Walkthrough" above).
+> **签名已改为可选**：早期版本要求用 `DEEPSEC_SCOPE_SIGNING_KEY` 对 `scope.json` 做 HMAC-SHA256 签名。现已放宽 — `signature` / `signer` 字段保留但忽略，授权只校验 `targets` 白名单（可选时间窗口仍会校验）。也就是说，你不再需要 `export` 密钥、重新签名或重启 TUI，直接用 TUI 的 `/scope` 命令管理白名单即可（见上文"TUI 实操"）。
 
-Scope file format (`~/.deepsec/targets/scope.json`):
+白名单文件格式（`~/.deepsec/targets/scope.json`）：
 
 ```json
 {
@@ -379,61 +397,61 @@ Scope file format (`~/.deepsec/targets/scope.json`):
 }
 ```
 
-- `targets`: List of targets allowed for penetration. Supports `https://domain`, `domain`, `*.domain` wildcards, and raw IP/CIDR. Matching auto-strips trailing `/`, lowercases, and aligns schemes.
-- `prohibited_cidrs`: Blocks private/loopback/link-local addresses by default to prevent hitting internal networks.
-- To retain strong verification, manually run `deepsec scope sign ./scope.json` (requires `DEEPSEC_SCOPE_SIGNING_KEY`); not signing doesn't affect usage.
+- `targets`：允许渗透的目标列表。支持 `https://domain`、`domain`、`*.domain` 通配符和裸 IP/CIDR。匹配时自动去尾部 `/`、转小写、对齐 scheme。
+- `prohibited_cidrs`：默认阻止私有/回环/链路本地地址，防止打到内网。
+- 如需保留强校验，可手动执行 `deepsec scope sign ./scope.json`（需要 `DEEPSEC_SCOPE_SIGNING_KEY`）；不签名不影响使用。
 
 ```bash
-# (Optional) Manual signing
+# （可选）手动签名
 export DEEPSEC_SCOPE_SIGNING_KEY="your-secret"
 deepsec scope sign ./scope.json
 
-# Verify scope structure / time window / optional signature
+# 校验 scope 结构 / 时间窗口 / 可选签名
 deepsec scope verify ./scope.json
 ```
 
 ---
 
-## IDE Integration
+## IDE 集成
 
 ### VSCode
 
-The VSCode extension provides real-time diagnostics, Quick Fix, and Findings sidebar:
+VSCode 扩展提供实时诊断、Quick Fix 和 Findings 侧边栏：
 
-| Setting | Default | Description |
+| 设置项 | 默认值 | 说明 |
 |---------|---------|-------------|
-| `deepsec.enabled` | `true` | Enable/disable scanning |
-| `deepsec.scanOnChange` | `true` | Scan on edit |
-| `deepsec.scanOnSave` | `true` | Scan on save |
-| `deepsec.enableL2` | `true` | Enable L2 SAST |
-| `deepsec.l2DebounceMs` | `500` | L2 debounce |
-| `deepsec.enableL3` | `false` | Enable L3 semantic analysis |
-| `deepsec.l3DebounceMs` | `2000` | L3 debounce |
-| `deepsec.llmProvider` | — | LLM provider |
-| `deepsec.deepsecPythonPath` | — | DeepSec Python path |
-| `deepsec.dedupWithExistingTools` | `true` | Dedup with SonarQube/Snyk/Semgrep/CodeQL |
+| `deepsec.enabled` | `true` | 启用/禁用扫描 |
+| `deepsec.scanOnChange` | `true` | 编辑时扫描 |
+| `deepsec.scanOnSave` | `true` | 保存时扫描 |
+| `deepsec.enableL2` | `true` | 启用 L2 SAST |
+| `deepsec.l2DebounceMs` | `500` | L2 防抖 |
+| `deepsec.enableL3` | `false` | 启用 L3 语义分析 |
+| `deepsec.l3DebounceMs` | `2000` | L3 防抖 |
+| `deepsec.llmProvider` | — | LLM 提供商 |
+| `deepsec.deepsecPythonPath` | — | DeepSec Python 路径 |
+| `deepsec.dedupWithExistingTools` | `true` | 与 SonarQube/Snyk/Semgrep/CodeQL 去重 |
 
-**Quick Fixes:**
-- Hallucinated package → suggest alternative package name
-- Hardcoded secret → environment variable read
+**Quick Fixes：**
+- 幻觉包 → 推荐替代包名
+- 硬编码密钥 → 改为环境变量读取
 - `yaml.load()` → `yaml.safe_load()`
-- SQL f-string → parameterized query
+- SQL f-string → 参数化查询
 - `innerHTML` → `textContent`
-- Debug/CORS/host check → mechanical fix
+- Debug/CORS/host 检查 → 机械修复
 
 ### JetBrains
 
-The JetBrains plugin reuses DeepSec diagnostics via LSP protocol, supporting JetBrains 2025.2+:
+JetBrains 插件通过 LSP 协议复用 DeepSec 诊断能力，支持 JetBrains 2025.2+：
 
 ```bash
 cd jetbrains
 ./gradlew buildPlugin
-# Output: build/distributions/deepsec-*.zip
+# 输出: build/distributions/deepsec-*.zip
 ```
 
-### Rust LSP Preview
+### Rust LSP 预览
 
-A standalone Rust native L1 LSP Server for lower-latency baseline detection:
+独立的 Rust 原生 L1 LSP Server，用于更低延迟的基础检测：
 
 ```bash
 cargo run --manifest-path rust-lsp/Cargo.toml -- --stdio
@@ -441,76 +459,76 @@ cargo run --manifest-path rust-lsp/Cargo.toml -- --stdio
 
 ---
 
-## CLI Reference
+## CLI 参考
 
 ```bash
-# Shield commands
+# Shield 命令
 deepsec shield scan <path> [--layer all|l1|l2|l3] [--format text|json|sarif|markdown|html] [--stream]
 deepsec shield agent-audit <path>
 deepsec shield watch <path> [--interval 1.0]
 deepsec shield supply-chain check <path> [--private-package pkg]
 
-# Spear commands
+# Spear 命令
 deepsec spear run <target> --authorized <scope.json> [--scope full|web|api|mobile] [--mode quick|standard|deep]
 deepsec spear recon <target> --authorized <scope.json>
 deepsec spear roles
 deepsec spear tools [--role pentester]
 
-# Snapshot commands
+# 快照命令
 deepsec snapshot create <path> [--mode shield|spear] [--description "..."]
 deepsec snapshot list <path>
 
-# Config commands
+# 配置命令
 deepsec config init
 deepsec config set <key> <value>
 deepsec config show
 
-# Scope commands
-deepsec scope sign <scope.json>      # (Optional) Sign scope, requires DEEPSEC_SCOPE_SIGNING_KEY
-deepsec scope verify <scope.json>    # Verify scope structure / time window / optional signature
+# Scope 命令
+deepsec scope sign <scope.json>      # （可选）签名 scope，需要 DEEPSEC_SCOPE_SIGNING_KEY
+deepsec scope verify <scope.json>    # 校验 scope 结构 / 时间窗口 / 可选签名
 
-# Other
-deepsec tui                          # Launch TUI
-deepsec chat                         # Interactive Spear workbench
-deepsec tools                        # List all tools
+# 其他
+deepsec tui                          # 启动 TUI
+deepsec chat                         # 交互式 Spear 工作台
+deepsec tools                        # 列出所有工具
 deepsec report <result.json> [--format markdown|json|sarif|html] [--chain]
 deepsec restore <snapshot-id>
 ```
 
 ---
 
-## Roles & Tools
+## 角色与工具
 
-### Built-in Roles
+### 内置角色
 
-| Role | Mode | Description |
+| 角色 | 模式 | 说明 |
 |------|------|-------------|
-| `pentester` | standard | Standard penetration testing |
-| `redteam` | deep | Red team deep attack |
-| `auditor` | standard | Security audit (read-only) |
-| `blueteam` | quick | Blue team quick verification |
-| `ctf_player` | quick | CTF competition mode |
+| `pentester` | standard | 标准渗透测试 |
+| `redteam` | deep | 红队深度攻击 |
+| `auditor` | standard | 安全审计（只读） |
+| `blueteam` | quick | 蓝队快速验证 |
+| `ctf_player` | quick | CTF 竞赛模式 |
 
-### Built-in Tools
+### 内置工具
 
-| Tool | Category | Install Check |
+| 工具 | 分类 | 安装检查 |
 |------|----------|---------------|
-| nmap | network | `nmap --version` |
-| dirsearch | web | `dirsearch --version` |
-| subfinder | recon | `subfinder -version` |
-| httpx | web | `httpx -version` |
-| feroxbuster | web | `feroxbuster --version` |
-| ffuf | web | `ffuf -V` |
-| nuclei | web | `nuclei -version` |
-| sqlmap | web | `sqlmap --version` |
+| nmap | 网络 | `nmap --version` |
+| dirsearch | Web | `dirsearch --version` |
+| subfinder | 侦察 | `subfinder -version` |
+| httpx | Web | `httpx -version` |
+| feroxbuster | Web | `feroxbuster --version` |
+| ffuf | Web | `ffuf -V` |
+| nuclei | Web | `nuclei -version` |
+| sqlmap | Web | `sqlmap --version` |
 
-Add custom tools via `deepsec/tools/*.yaml` and custom roles via `deepsec/roles/*.yaml`.
+可通过 `deepsec/tools/*.yaml` 添加自定义工具，通过 `deepsec/roles/*.yaml` 添加自定义角色。
 
 ---
 
 ## MCP Server
 
-DeepSec includes a built-in MCP (Model Context Protocol) Server that can be called by Claude Desktop, Cursor, and other MCP clients:
+DeepSec 内置 MCP（Model Context Protocol）Server，可被 Claude Desktop、Cursor 等 MCP 客户端调用：
 
 ```python
 from deepsec.mcp import MCPServer
@@ -519,27 +537,27 @@ server = MCPServer()
 server.run()
 ```
 
-Supported tools include Shield scanning, Spear reconnaissance, report generation, and more.
+支持的工具包括 Shield 扫描、Spear 侦察、报告生成等。
 
 ---
 
-## Testing
+## 测试
 
 ```bash
-# Python tests
+# Python 测试
 python -m pytest tests/deepsec/ -v
 
-# TypeScript tests
+# TypeScript 测试
 npm test
 
-# Rust TUI tests
+# Rust TUI 测试
 cargo test --manifest-path tui/Cargo.toml
 
-# Rust LSP tests
+# Rust LSP 测试
 cargo test --manifest-path rust-lsp/Cargo.toml
 ```
 
-Current status: **23 Python tests passed · 41 Rust TUI tests passed · TypeScript clean**
+当前状态：**23 个 Python 测试通过 · 41 个 Rust TUI 测试通过 · TypeScript 干净**
 
 ---
 
@@ -552,40 +570,42 @@ docker run --rm -v "$PWD:/workspace" deepsec:local shield scan /workspace
 
 ---
 
-## Contributing
+## 参与贡献
 
 ```bash
 git clone https://github.com/Unclecheng-li/DeepSec.git
 cd DeepSec
 
-# Python dev environment
+# Python 开发环境
 pip install -e .[dev]
 
-# Node.js IDE plugin development
+# Node.js IDE 插件开发
 nvm use  # Node.js 22 LTS
 npm install
 npm run build
 
-# Rust TUI development
+# Rust TUI 开发
 cargo build --manifest-path tui/Cargo.toml
 ```
 
-- **Report bugs** — [Open an issue](https://github.com/Unclecheng-li/DeepSec/issues)
-- **Request features** — [Start a discussion](https://github.com/Unclecheng-li/DeepSec/discussions)
-- **Submit PRs** — Fork, feature branch, pull request
+- **报 Bug** — [Open an issue](https://github.com/Unclecheng-li/DeepSec/issues)
+- **提需求** — [Start a discussion](https://github.com/Unclecheng-li/DeepSec/discussions)
+- **提交 PR** — Fork、功能分支、Pull Request
 
 ---
 
-## Documentation
+## 文档
 
-- [Architecture](docs/architecture.md) — System architecture details
-- [Shield Guide](docs/shield-guide.md) — Code audit guide
-- [Spear Guide](docs/spear-guide.md) — Penetration testing guide
-- [Skill Development](docs/skill-development.md) — Skill pack development
-- [Tool Config](docs/tool-config.md) — Tool configuration
-- [DeepSeek Optimization](docs/deepseek-optimization.md) — DeepSeek model optimization
-- [Migration Design](doc/DeepSec-改造设计文档.md) — VibeGuard to DeepSec migration design
-- [TUI Dev Guide](doc/DeepSec-TUI开发文档.md) — TUI development guide
+- [快速上手（中文）](docs/QUICKSTART.zh-CN.md) — 3 分钟跑起来
+- [Quick Start (English)](docs/QUICKSTART.md) — Get running in 3 minutes
+- [架构](docs/architecture.md) — 系统架构细节
+- [Shield 指南](docs/shield-guide.md) — 代码审计指南
+- [Spear 指南](docs/spear-guide.md) — 渗透测试指南
+- [Skill 开发](docs/skill-development.md) — 技能包开发
+- [工具配置](docs/tool-config.md) — 工具配置
+- [DeepSeek 优化](docs/deepseek-optimization.md) — DeepSeek 模型优化
+- [迁移设计](doc/DeepSec-改造设计文档.md) — VibeGuard 到 DeepSec 迁移设计
+- [TUI 开发文档](doc/DeepSec-TUI开发文档.md) — TUI 开发指南
 
 ---
 
@@ -597,8 +617,8 @@ cargo build --manifest-path tui/Cargo.toml
 
 <div align="center">
 
-<sub>Built for developers who ship AI-generated code — and need to break it before attackers do.</sub>
+<sub>为那些交付 AI 生成代码的开发者而生 — 并在攻击者之前把它打破。</sub>
 
-<sub>If DeepSec helps you, consider [starring the repo](https://github.com/Unclecheng-li/DeepSec/stargazers) or [sponsoring](https://github.com/sponsors/Unclecheng-li).</sub>
+<sub>如果 DeepSec 对你有帮助，欢迎 [star 仓库](https://github.com/Unclecheng-li/DeepSec/stargazers) 或 [赞助](https://github.com/sponsors/Unclecheng-li)。</sub>
 
 </div>

@@ -30,6 +30,11 @@ tui/target/
 # Generated scan output
 deepsec.sarif
 deepsec-report.*
+deepsec-demo.sarif
+*.sarif
+
+# Runtime data
+context_vault.jsonl
 
 # JetBrains
 jetbrains/.gradle/
