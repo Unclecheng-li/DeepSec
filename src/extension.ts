@@ -1939,39 +1939,43 @@ function isSupportedDocument(document: vscode.TextDocument): boolean {
 function configuration(): vscode.WorkspaceConfiguration {
   const primary = vscode.workspace.getConfiguration("deepsec");
   const legacy = vscode.workspace.getConfiguration("vibeguard");
-  return new Proxy(primary, {
-    get(target, property, receiver) {
-      if (property === "get") {
-        return <T>(section: string, defaultValue?: T): T => {
-          const configured = configuredWorkspaceValue<T>(target, section) ?? configuredWorkspaceValue<T>(legacy, section);
-          const fallback = legacy.get<T>(section, defaultValue as T);
-          return (configured ?? target.get<T>(section, fallback)) as T;
-        };
+  return {
+    get<T>(section: string, defaultValue?: T): T {
+      const configured = configuredWorkspaceValue<T>(primary, section) ?? configuredWorkspaceValue<T>(legacy, section);
+      const fallback = legacy.get<T>(section, defaultValue as T);
+      return (configured ?? primary.get<T>(section, fallback)) as T;
+    },
+    has(section: string): boolean {
+      return primary.has(section) || legacy.has(section);
+    },
+    inspect<T>(section: string): ReturnType<vscode.WorkspaceConfiguration["inspect"]> {
+      const primaryInspect = primary.inspect<T>(section);
+      const legacyInspect = legacy.inspect<T>(section);
+      if (!primaryInspect) {
+        return legacyInspect;
       }
-      if (property === "inspect") {
-        return <T>(section: string): any => {
-          const primaryInspect = target.inspect<T>(section);
-          const legacyInspect = legacy.inspect<T>(section);
-          if (!primaryInspect) {
-            return legacyInspect;
-          }
-          if (!legacyInspect) {
-            return primaryInspect;
-          }
-          return {
-            ...primaryInspect,
-            globalValue: primaryInspect.globalValue ?? legacyInspect.globalValue,
-            workspaceValue: primaryInspect.workspaceValue ?? legacyInspect.workspaceValue,
-            workspaceFolderValue: primaryInspect.workspaceFolderValue ?? legacyInspect.workspaceFolderValue,
-            globalLanguageValue: primaryInspect.globalLanguageValue ?? legacyInspect.globalLanguageValue,
-            workspaceLanguageValue: primaryInspect.workspaceLanguageValue ?? legacyInspect.workspaceLanguageValue,
-            workspaceFolderLanguageValue: primaryInspect.workspaceFolderLanguageValue ?? legacyInspect.workspaceFolderLanguageValue
-          };
-        };
+      if (!legacyInspect) {
+        return primaryInspect;
       }
-      return Reflect.get(target, property, receiver);
+      return {
+        ...primaryInspect,
+        globalValue: primaryInspect.globalValue ?? legacyInspect.globalValue,
+        workspaceValue: primaryInspect.workspaceValue ?? legacyInspect.workspaceValue,
+        workspaceFolderValue: primaryInspect.workspaceFolderValue ?? legacyInspect.workspaceFolderValue,
+        globalLanguageValue: primaryInspect.globalLanguageValue ?? legacyInspect.globalLanguageValue,
+        workspaceLanguageValue: primaryInspect.workspaceLanguageValue ?? legacyInspect.workspaceLanguageValue,
+        workspaceFolderLanguageValue: primaryInspect.workspaceFolderLanguageValue ?? legacyInspect.workspaceFolderLanguageValue
+      };
+    },
+    update<T>(
+      section: string,
+      value: T,
+      configurationTarget?: vscode.ConfigurationTarget | boolean | null,
+      overrideInLanguage?: boolean
+    ): Thenable<void> {
+      return primary.update(section, value, configurationTarget, overrideInLanguage);
     }
-  }) as vscode.WorkspaceConfiguration;
+  } as vscode.WorkspaceConfiguration;
 }
 
 function configuredWorkspaceValue<T>(source: vscode.WorkspaceConfiguration, key: string): T | undefined {
